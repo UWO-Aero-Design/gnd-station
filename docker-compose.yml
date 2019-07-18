@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+  backend:
+    build: ./App/backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./App/backend:/app"
+    environment:
+      FLASK_ENV: development
+
+  frontend:
+    build: ./App/frontend
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./App/frontend:/app"
+      - "/app/node_modules"
+    environment:
+      HOST: 0.0.0.0
+
+  redis:
+    image: "redis:5.0.5"
