@@ -1,12 +1,6 @@
 #Base Image = Ubuntu 18.04 (Recommended Latest Version For Development)
 FROM ubuntu:18.04
 
-#Set working directory to app directory
-WORKDIR /app
-
-#Transfer working files to app directory in image
-COPY /App /app
-
 #Update ubuntu
 RUN apt-get update
 
@@ -20,14 +14,20 @@ COPY requirements.txt /tmp
 WORKDIR /tmp
 RUN pip3 install --trusted-host pypi.python.org -r requirements.txt
 
-#Set working directory back to app directory
-WORKDIR /app
-
 #Supress insecure HTTPS warning
 RUN export PYTHONWARNINGS="ignore:Unverified HTTPS request"
 
-#Open port 80
-EXPOSE 80
+#Set working directory back to app directory
+WORKDIR /app
+
+#Transfer working files to app directory in image
+COPY . /app
+
+#Set flask environment variables
+ENV FLASK_APP app.py
+ENV FLASK_RUN_HOST 0.0.0.0
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 #Run server on open
-CMD ["python3", "app.py"]
+CMD ["flask", "run"]
