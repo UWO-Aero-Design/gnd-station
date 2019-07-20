@@ -3,10 +3,16 @@ import os
 import socket
 import redis
 import time
+import sqlite3
 
 app = Flask(__name__, static_url_path='/assets/Icons')
-
+DATABASE_PATH = '/database/database.sqlite3'
 cache = redis.Redis(host='redis',port=6379)
+
+#Database Connection
+def db_connect(path=DATABASE_PATH):
+    connection = sqlite3.connect(path)
+    return connection
 
 #Testing redis cache
 def get_hit_count():

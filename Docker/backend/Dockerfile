@@ -8,7 +8,7 @@ RUN apt-get update
 RUN apt-get -y install python3-pip
 
 #Transfer requirements file to app
-COPY requirements.txt /tmp
+COPY ../Docker/backend/requirements.txt /tmp
 
 #Install packages
 WORKDIR /tmp
