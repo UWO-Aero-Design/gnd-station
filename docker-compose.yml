@@ -4,18 +4,19 @@ services:
   backend:
     build: 
       context: ./App/backend
-      dockerfile: ./Docker/backend/Dockerfile
+      dockerfile: ../../Docker/backend/Dockerfile
     ports:
       - "5000:5000"
     volumes:
       - "./App/backend:/app"
     environment:
       FLASK_ENV: development
+    image: uwoaerodesign/groundstation:bV1.0
 
   frontend:
     build: 
       context: ./App/frontend
-      dockerfile: ./Docker/frontend/Dockerfile
+      dockerfile: ../..//Docker/frontend/Dockerfile
     ports:
       - "8080:8080"
     volumes:
@@ -23,7 +24,7 @@ services:
       - "/app/node_modules"
     environment:
       HOST: 0.0.0.0
+    image: uwoaerodesign/groundstation:fV1.0
 
   redis:
     image: "redis:5.0.5"
-
