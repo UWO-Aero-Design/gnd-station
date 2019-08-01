@@ -4,9 +4,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask-migrate import Migrate
-from config import Config
+from config import BaseConfig
 
-def create_app(config_class=Config):
+def create_app(config_class=BaseConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
