@@ -19,5 +19,8 @@ COPY . .
 
 EXPOSE 8080
 
+#Hot-reloading for Vue
+ENV CHOKIDAR_USEPOLLING true
+
 #Start Vue app
 CMD ["npm", "run", "dev"]
