@@ -1,2 +1,6 @@
-flask
+Flask==1.1.1
 redis
+Flask-SQLAlchemy==2.4
+Flask-Migrate==2.5.2
+SQLAlchemy==1.3.6
+alembic==1.0.11

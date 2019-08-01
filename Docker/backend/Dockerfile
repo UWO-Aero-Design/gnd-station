@@ -24,7 +24,7 @@ WORKDIR /app
 COPY . /app
 
 #Set flask environment variables
-ENV FLASK_APP app.py
+ENV FLASK_APP groundstation.py
 ENV FLASK_RUN_HOST 0.0.0.0
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
