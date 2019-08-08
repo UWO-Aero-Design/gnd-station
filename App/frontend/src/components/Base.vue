@@ -1,19 +1,32 @@
 <template>
 <div>
   <div>
-    Hello
+    <h1> {{ msg }} </h1>
+    <button v-on:click="pingBackend"> Connect to Backend </button>
   </div>
 </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
-  name: 'HelloWorld',
+  name: 'Base',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Hello'
+    }
+  },
+
+  methods: {
+    pingBackend: function () {
+      axios.get('http://127.0.0.1:5000/Ping')
+        .then((response) => {
+          this.msg = response.data
+        })
     }
   }
+
 }
 </script>
 
