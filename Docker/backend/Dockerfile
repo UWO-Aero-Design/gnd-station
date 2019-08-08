@@ -12,7 +12,7 @@ COPY requirements.txt /tmp
 
 #Install packages
 WORKDIR /tmp
-RUN pip3 install --trusted-host pypi.python.org -r requirements.txt
+RUN pip3 install --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r requirements.txt
 
 #Supress insecure HTTPS warning
 RUN export PYTHONWARNINGS="ignore:Unverified HTTPS request"

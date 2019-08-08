@@ -5,10 +5,14 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import BaseConfig
+from flask_cors import CORS
 
 def create_app(config_class=BaseConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    #Register CORS
+    cors = CORS(app)
 
     #Register Blueprints
     from app.base import api as base_bp

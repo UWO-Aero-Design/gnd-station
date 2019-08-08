@@ -14,6 +14,9 @@ COPY package*.json ./
 RUN npm install
 RUN npm install @vue/cli -g
 
+#Install axios
+RUN npm install --save axios
+
 #Copy project files
 COPY . .
 
