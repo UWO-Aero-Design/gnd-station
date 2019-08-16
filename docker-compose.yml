@@ -16,7 +16,7 @@ services:
   frontend:
     build: 
       context: ./App/frontend
-      dockerfile: ../..//Docker/frontend/Dockerfile
+      dockerfile: ../../Docker/frontend/Dockerfile
     ports:
       - "8080:8080"
     volumes:
