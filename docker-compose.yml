@@ -11,7 +11,7 @@ services:
       - "./App/backend:/app"
     environment:
       FLASK_ENV: development
-    image: uwoaerodesign/groundstation:bV1.0
+    image: uwoaerodesign/groundstation:bV1.02
 
   frontend:
     build: 
@@ -24,7 +24,7 @@ services:
       - "/app/node_modules"
     environment:
       HOST: 0.0.0.0
-    image: uwoaerodesign/groundstation:fV1.0
+    image: uwoaerodesign/groundstation:fV1.02
 
   redis:
     image: "redis:5.0.5"
