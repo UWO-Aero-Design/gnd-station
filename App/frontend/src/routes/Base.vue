@@ -4,6 +4,7 @@
     <h1> {{ msg }} </h1>
     <button v-on:click="pingBackend"> Connect to Backend </button>
   </div>
+  <sidebar-menu :menu="menu"/>
 </div>
 </template>
 
@@ -14,7 +15,13 @@ export default {
   name: 'Base',
   data () {
     return {
-      msg: 'Hello'
+      msg: 'Hello',
+      menu: [
+        {
+          header: true,
+          title: 'Menu'
+        }
+      ]
     }
   },
 
