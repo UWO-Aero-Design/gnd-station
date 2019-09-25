@@ -1,18 +1,29 @@
 <template>
 <div>
-  <div>
-    <h1> {{ msg }} </h1>
-    <button v-on:click="pingBackend"> Connect to Backend </button>
+  <sidebar-menu class="sidebar" :menu="menu" :hide-toggle="true"/>
+  <div class="main-box">
+    <splitpanes class="default-theme">
+      <span splitpanes-min="20">1</span>
+      <splitpanes horizontal>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+      </splitpanes>
+      <span>5</span>
+    </splitpanes>
   </div>
-  <sidebar-menu :menu="menu"/>
+
 </div>
 </template>
 
 <script>
 import axios from 'axios'
+import Splitpanes from 'splitpanes'
+import 'splitpanes/dist/splitpanes.css'
 
 export default {
   name: 'Base',
+  components: {Splitpanes},
   data () {
     return {
       msg: 'Hello',
@@ -53,5 +64,29 @@ li {
 }
 a {
   color: #42b983;
+}
+
+.main-box {
+  margin-left: 300px;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 300px;
+}
+
+.splitpanes.default-theme.splitpanes__pane {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  background-color: #2c3e50!important;
+
+}
+
+.splitpanes__pane span {
+  font-family: Helvetica, Arial, sans-serif;
+  color: #fff;
+  font-size: 5em;
+  opacity: 0.6;
 }
 </style>
