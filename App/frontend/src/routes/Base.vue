@@ -1,15 +1,9 @@
 <template>
 <div>
-  <sidebar-menu class="sidebar" :menu="menu" :hide-toggle="true"/>
+  <sidebar-menu class="sidebar" :menu="menu" :hide-toggle="true" @item-click="onItemClick"/>
   <div class="main-box">
     <splitpanes class="default-theme">
-      <span splitpanes-min="20">1</span>
-      <splitpanes horizontal>
-        <span>2</span>
-        <span>3</span>
-        <span>4</span>
-      </splitpanes>
-      <span>5</span>
+      <div v-for="pane in panes" :key="pane.i"> {{pane.text}} </div>
     </splitpanes>
   </div>
 
@@ -31,13 +25,36 @@ export default {
         {
           header: true,
           title: 'Menu'
+        },
+        {
+            title: 'Add Pane'
         }
+
+      ],
+      panes: [
+            {
+                i: 0,
+                text: 'Hello'
+            },
+            {
+                i: 1,
+                text: 'Hello2'
+            }
       ]
     }
   },
 
   methods: {
-    pingBackend: function () {
+    onItemClick (event, item) {
+        console.log(item);
+        if(item.title == "Add Pane"){
+            this.panes.push({
+                i: 2,
+                text: "new Pane"
+            });
+        }
+    },
+    pingBackend: function() {
       axios.get('http://127.0.0.1:5000/Ping')
         .then((response) => {
           this.msg = response.data
