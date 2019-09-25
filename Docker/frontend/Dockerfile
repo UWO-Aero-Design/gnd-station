@@ -12,13 +12,6 @@ COPY package*.json ./
 
 #Install Vue cli
 RUN npm install
-RUN npm install @vue/cli -g
-
-#Install axios
-RUN npm install --save axios
-
-#Install bootstrap
-RUN npm install --save bootstrap@4
 
 #Copy project files
 COPY . .
