@@ -71,3 +71,15 @@ if __name__ == "__main__":
 
     print('\nRunning serial task...')
     serial_task()
+
+# NOTE: Arduino code used for testing
+# void setup() {
+#   // put your setup code here, to run once:
+#   Serial.begin(115200);
+# }
+
+# void loop() {
+#   // put your main code here, to run repeatedly:
+#   Serial.println("hello world!");
+#   delay(1000);
+# }
