@@ -24,7 +24,7 @@
                  :key="item.i">
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(item.i)"></i>
         {{item.i}}
-        <TestComponent v-if="item.componentType == 'Map'"></TestComponent>
+        <MapComponent v-if="item.componentType == 'Map'"></MapComponent>
         <TestComponent v-if="item.componentType == 'speed'"></TestComponent>
         <br><br>
 
@@ -39,13 +39,15 @@
 import axios from 'axios'
 import VueGridLayout from 'vue-grid-layout';
 import TestComponent from "@/components/TestComponent";
+import MapComponent from "@/components/Map";
 
 export default {
   name: 'Base',
   components: {
       GridLayout: VueGridLayout.GridLayout,
       GridItem: VueGridLayout.GridItem,
-      TestComponent
+      TestComponent,
+      MapComponent
   },
   mounted() {
 
