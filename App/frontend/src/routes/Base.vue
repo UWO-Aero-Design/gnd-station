@@ -24,8 +24,8 @@
                  :key="item.i">
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(item.i)"></i>
         {{item.i}}
-        <TestComponent v-if="item.type == 'maps'"></TestComponent>
-        <TestComponent v-if="item.type == 'speed'"></TestComponent>
+        <TestComponent v-if="item.componentType == 'Map'"></TestComponent>
+        <TestComponent v-if="item.componentType == 'speed'"></TestComponent>
         <br><br>
 
       </grid-item>
@@ -59,12 +59,23 @@ export default {
           title: 'Ground Station'
         },
         {
-            title: 'Add Map'
+            title: 'Map',
+            icon: 'fas fa-map',
+            componentSize: '4Block',
+            componentType: 'Map'
         },
         {
-            title: 'Add Pane'
-        }
-
+            title: 'Data',
+            icon: 'fas fa-hdd',
+            componentSize: '2BlockH',
+            componentType: 'Data'
+        },
+        {
+            title: 'Communication',
+            icon: 'fas fa-satellite',
+            componentSize: '1Block',
+            componentType: 'Communication'
+        },
       ],
       numOfPanes: 2,
       panes: [
@@ -76,29 +87,48 @@ export default {
   },
   methods: {
     onItemClick (event, item) {
-        console.log(item);
-        if(item.title == "Add Pane"){
-            this.numOfPanes++;
-            this.panes.push({
-                "x": 0,
-                "y": 0,
-                "w": 6,
-                "h": 8,
-                "i": String(this.numOfPanes)
-            });
-        }
-
-        if(item.title == "Add Map"){
-            this.numOfPanes++;
-            this.panes.push({
-                "x": 0,
-                "y": 0,
-                "w": 8,
-                "h": 16,
-                "i": String(this.numOfPanes),
-                "type": 'maps'
-            });
-        }
+      console.log(item);
+      if (item.componentSize == "2BlockV") {
+        this.numOfPanes++;
+        this.panes.push({
+          "x": 0,
+          "y": 0,
+          "w": 4,
+          "h": 12,
+          "i": String(this.numOfPanes)
+        });
+      }
+      else if (item.componentSize == "2BlockH") {
+        this.numOfPanes++;
+        this.panes.push({
+          "x": 0,
+          "y": 0,
+          "w": 8,
+          "h": 7,
+          "i": String(this.numOfPanes)
+        });
+      }
+      else if(item.componentSize == "4Block"){
+        this.numOfPanes++;
+        this.panes.push({
+          "x": 0,
+          "y": 0,
+          "w": 8,
+          "h": 12,
+          "i": String(this.numOfPanes),
+          "componentType": String(item.componentType)
+        });
+      }
+      else {
+        this.numOfPanes++;
+        this.panes.push({
+          "x": 0,
+          "y": 0,
+          "w": 4,
+          "h": 7,
+          "i": String(this.numOfPanes)
+        });
+      }
     },
     removePane(index){
         this.numOfPanes--;
@@ -111,7 +141,6 @@ export default {
         })
     }
   }
-
 }
 </script>
 
