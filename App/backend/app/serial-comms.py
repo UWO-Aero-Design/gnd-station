@@ -46,9 +46,11 @@ def serial_task():
     data_from_serial = ''
     # Wait for the buffer to be at least a bit full and then read all bytes that are in the buffer
     while True:
-        if serial_port.in_waiting  > MIN_SERIAL_BUFFER:
-            data_from_serial = serial_port.read(serial_port.in_waiting)
-            print(data_from_serial)
+        # if serial_port.in_waiting  > MIN_SERIAL_BUFFER:
+        #     data_from_serial = serial_port.read(serial_port.in_waiting)
+        #     print(data_from_serial)
+        data_from_serial = serial_port.readline()
+        print(data_from_serial)
     
 if __name__ == "__main__":
     # Print teensy information
