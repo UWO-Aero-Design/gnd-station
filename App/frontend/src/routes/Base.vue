@@ -14,24 +14,22 @@
       :margin="[10, 10]"
       :use-css-transforms="true"
     >
-      <grid-item v-for="item in panes"
+      <grid-item v-for="(item,index) in panes"
                  style="background-color: #27293D; border: 1px black; margin: 5px; color:white;"
                  :x="item.x"
                  :y="item.y"
                  :w="item.w"
                  :h="item.h"
                  :i="item.i"
-                 :key="item.i">
-        <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(item.i)"></i>
+                 :key="index">
+        <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
         {{item.i}}
         <MapComponent v-if="item.componentType == 'Map'"></MapComponent>
         <TestComponent v-if="item.componentType == 'speed'"></TestComponent>
         <br><br>
-
       </grid-item>
     </grid-layout>
   </div>
-
 </div>
 </template>
 
@@ -54,88 +52,95 @@ export default {
   },
   data () {
     return {
-      msg: 'Hello',
+      //Sidebar menu elements
       menu: [
         {
           header: true,
           title: 'Ground Station'
         },
         {
-            title: 'Map',
-            icon: 'fas fa-map',
-            componentSize: '4Block',
-            componentType: 'Map'
+          title: 'Map',
+          icon: 'fas fa-map',
+          componentSize: '4Block',
+          componentType: 'Map'
         },
         {
-            title: 'Data',
-            icon: 'fas fa-hdd',
-            componentSize: '2BlockH',
-            componentType: 'Data'
+          title: 'Data',
+          icon: 'fas fa-hdd',
+          componentSize: '2BlockH',
+          componentType: 'Data'
         },
         {
-            title: 'Communication',
-            icon: 'fas fa-satellite',
-            componentSize: '1Block',
-            componentType: 'Communication'
+          title: 'Communication',
+          icon: 'fas fa-satellite',
+          componentSize: '1Block',
+          componentType: 'Communication'
         },
       ],
-      numOfPanes: 2,
-      panes: [
-          {"x":0,"y":0,"w":4,"h":8,"i":"0"},
-          {"x":0,"y":0,"w":4,"h":8,"i":"1"},
-          {"x":0,"y":0,"w":4,"h":8,"i":"2"}
-      ]
+      //Gridlayout elements
+      numOfPanes: 0, //Tracks current number of panes
+      paneID: 0, //Pane ID always increases to avoid having multiple panes with same ID
+      panes: []
     }
   },
   methods: {
     onItemClick (event, item) {
       console.log(item);
       if (item.componentSize == "2BlockV") {
-        this.numOfPanes++;
         this.panes.push({
           "x": 0,
           "y": 0,
           "w": 4,
           "h": 12,
-          "i": String(this.numOfPanes)
-        });
-      }
-      else if (item.componentSize == "2BlockH") {
-        this.numOfPanes++;
-        this.panes.push({
-          "x": 0,
-          "y": 0,
-          "w": 8,
-          "h": 7,
-          "i": String(this.numOfPanes)
-        });
-      }
-      else if(item.componentSize == "4Block"){
-        this.numOfPanes++;
-        this.panes.push({
-          "x": 0,
-          "y": 0,
-          "w": 8,
-          "h": 12,
-          "i": String(this.numOfPanes),
+          "i": String(this.paneID),
           "componentType": String(item.componentType)
         });
+        this.numOfPanes++;
+        this.paneID++;
+      }
+      else if (item.componentSize == "2BlockH") {
+        this.panes.push({
+          "x": 0,
+          "y": 0,
+          "w": 8,
+          "h": 7,
+          "i": String(this.paneID),
+          "componentType": String(item.componentType)
+        });
+        this.numOfPanes++;
+        this.paneID++;
+      }
+      else if(item.componentSize == "4Block"){
+        this.panes.push({
+          "x": 0,
+          "y": 0,
+          "w": 8,
+          "h": 12,
+          "i": String(this.paneID),
+          "componentType": String(item.componentType)
+        });
+        this.numOfPanes++;
+        this.paneID++;
       }
       else {
-        this.numOfPanes++;
         this.panes.push({
           "x": 0,
           "y": 0,
           "w": 4,
           "h": 7,
-          "i": String(this.numOfPanes)
+          "i": String(this.paneID),
+          "componentType": String(item.componentType)
         });
+        this.numOfPanes++;
+        this.paneID++;
       }
     },
+    //Remove panes
     removePane(index){
-        this.numOfPanes--;
-        this.$delete(this.panes, index)
+      this.numOfPanes--;
+      this.panes.splice(index,1); //Remove pane and shift proceceding values to prevent holes in array
     },
+    //Test call to backend
     pingBackend: function() {
       axios.get('http://127.0.0.1:5000/Ping')
         .then((response) => {
