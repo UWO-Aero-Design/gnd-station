@@ -37,15 +37,13 @@
 import axios from 'axios'
 import VueGridLayout from 'vue-grid-layout';
 import TestComponent from "@/components/TestComponent";
-import MapComponent from "@/components/Map";
 
 export default {
   name: 'Base',
   components: {
       GridLayout: VueGridLayout.GridLayout,
       GridItem: VueGridLayout.GridItem,
-      TestComponent,
-      MapComponent
+      TestComponent
   },
   mounted() {
 
@@ -187,4 +185,5 @@ a {
   right: 9px;
   cursor: pointer;
 }
+
 </style>
