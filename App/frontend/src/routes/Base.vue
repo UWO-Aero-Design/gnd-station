@@ -175,7 +175,7 @@ a {
 
 .sidebar {
   width: 300px;
-  background-color: #1F86F7;
+  background-color: #41B682;
 }
 
 
