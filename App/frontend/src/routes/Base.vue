@@ -59,21 +59,28 @@ export default {
         {
           title: 'Map',
           icon: 'fas fa-map',
-          componentSize: '4Block',
-          componentType: 'Map'
+          href: '/Map',
+          componentType: 'None'
         },
         {
-          title: 'Data',
-          icon: 'fas fa-hdd',
-          componentSize: '2BlockH',
-          componentType: 'Data'
-        },
-        {
-          title: 'Communication',
-          icon: 'fas fa-satellite',
-          componentSize: '1Block',
-          componentType: 'Communication'
-        },
+          title: 'Components',
+          icon: 'fas fa-dice-d6',
+          child: [
+            {
+              title: 'Data',
+              icon: 'fas fa-hdd',
+              componentSize: '2BlockH',
+              componentType: 'Data'
+            },
+            {
+              title: 'Communication',
+              icon: 'fas fa-satellite',
+              componentSize: '1Block',
+              componentType: 'Communication'
+            }
+          ],
+          componentType: 'None'
+        }
       ],
       //Gridlayout elements
       numOfPanes: 0, //Tracks current number of panes
@@ -120,7 +127,7 @@ export default {
         this.numOfPanes++;
         this.paneID++;
       }
-      else {
+      else if(item.componentType != "None"){
         this.panes.push({
           "x": 0,
           "y": 0,
