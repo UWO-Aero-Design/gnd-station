@@ -1,6 +1,7 @@
 # Requires PySerial     pip install PySerial
 import serial
 from serial.tools import list_ports
+from protocol import *
 
 def get_all_ports():
     """ Returns a list of ListPortInfo objects that represents all
@@ -29,7 +30,7 @@ def find_teensy_port():
 
 # Serial task will connect to database
 def serial_task():
-    PORT = "COM3"
+    PORT = "COM7"
     BAUDRATE = 115200
     BYTESIZE = 8
     TIMEOUT = 2
@@ -51,6 +52,9 @@ def serial_task():
         #     print(data_from_serial)
         data_from_serial = serial_port.readline()
         print(data_from_serial)
+
+        print('Beginning parsing routine')
+        r = parse(data_from_serial)
     
 if __name__ == "__main__":
     # Print teensy information
