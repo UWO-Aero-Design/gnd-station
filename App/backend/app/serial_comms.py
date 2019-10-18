@@ -30,7 +30,7 @@ def find_teensy_port():
 
 # Serial task will connect to database
 def serial_task():
-    PORT = "COM7"
+    PORT = "COM3"
     BAUDRATE = 115200
     BYTESIZE = 8
     TIMEOUT = 2
@@ -51,9 +51,6 @@ def serial_task():
         #     data_from_serial = serial_port.read(serial_port.in_waiting)
         #     print(data_from_serial)
         data_from_serial = serial_port.readline()
-        print(data_from_serial)
-
-        print('Beginning parsing routine')
         r = parse(data_from_serial)
     
 if __name__ == "__main__":
