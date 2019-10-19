@@ -4,7 +4,7 @@
 
 <script>
     export default {
-        name: "TestComponent"
+        name: "Map"
     }
 </script>
 
