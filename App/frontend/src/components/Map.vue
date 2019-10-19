@@ -1,11 +1,16 @@
 <template>
-    <h1>HELLO WORLD</h1>
+<Sidebar></Sidebar>
 </template>
 
 <script>
-    export default {
-        name: "Map"
+import Sidebar from "@/components/Sidebar";
+
+export default {
+    name: "Map",
+    components: {
+        Sidebar
     }
+}
 </script>
 
 <style scoped>

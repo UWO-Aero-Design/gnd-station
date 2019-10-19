@@ -1,5 +1,6 @@
 <template>
 <div>
+  <Sidebar @update-grid="updateGrid"></Sidebar>
   <div class="main-box">
     <grid-layout
       :layout.sync="panes"
@@ -23,7 +24,6 @@
                  :key="index">
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
         {{item.i}}
-        <MapComponent v-if="item.componentType == 'Map'"></MapComponent>
         <TestComponent v-if="item.componentType == 'speed'"></TestComponent>
         <br><br>
       </grid-item>
@@ -35,13 +35,15 @@
 <script>
 import axios from 'axios'
 import VueGridLayout from 'vue-grid-layout';
+import Sidebar from '@/components/Sidebar';
 import TestComponent from "@/components/TestComponent";
 
 export default {
-  name: 'Base',
+  name: 'Info',
   components: {
       GridLayout: VueGridLayout.GridLayout,
       GridItem: VueGridLayout.GridItem,
+      Sidebar,
       TestComponent
   },
   mounted() {
@@ -56,7 +58,7 @@ export default {
     }
   },
   methods: {
-    onItemClick (event, item) {
+    updateGrid (item) {
       console.log(item);
       if (item.componentSize == "2BlockV") {
         this.panes.push({
