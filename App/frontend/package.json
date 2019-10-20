@@ -21,6 +21,7 @@
     "vue-grid-layout": "^2.3.6",
     "vue-panzoom": "^1.1.0",
     "vue-router": "^3.0.1",
+    "vue-scrollto": "^2.17.1",
     "vue-sidebar-menu": "^4.2.2"
   },
   "devDependencies": {
