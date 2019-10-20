@@ -16,15 +16,13 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueSidebarMenu)
 
 const VueScrollTo = require('vue-scrollto');
- 
 Vue.use(VueScrollTo)
- 
-// You can also pass in the default options
+// Scroll default options
 Vue.use(VueScrollTo, {
      container: "body",
      duration: 500,
      easing: "ease",
-     offset: 0,
+     offset: -500,
      force: true,
      cancelable: true,
      onStart: false,
