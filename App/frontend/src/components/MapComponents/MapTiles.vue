@@ -8,6 +8,7 @@
         </radial-menu-item>
     </radial-menu>
     <img src="../../assets/MapAssets/plane.png" alt="Plane" id="Plane" v-bind:style="planeStyle">
+    <img src="../../assets/MapAssets/glider.png" alt="Glider" id="Glider" v-bind:style="gliderStyle">
 </div>
 </div>
 
@@ -35,6 +36,15 @@ export default {
                 left: '1000px', /*Max distance is 2535px */
                 'z-index': '2'
             },
+
+            //Glider Parameters
+            gliderStyle: {
+                position: 'absolute',
+                top: '1300px', /*Max distance is 1580px */
+                left: '2000px', /*Max distance is 2535px */
+                'z-index': '2'
+            },
+
             xOffset : '700px',
 
             //Menu Data
@@ -52,7 +62,7 @@ export default {
                 
             }
             else if (item == "Glider") {
-                newScrollX = parseInt(this.planeStyle.left,10) - currentScrollX;
+                newScrollX = parseInt(this.gliderStyle.left,10) - currentScrollX;
             }
             document.getElementById('Map').style.scrollBehavior = "smooth";
             document.getElementById('Map').scrollLeft += newScrollX;
@@ -78,10 +88,10 @@ export default {
                 y: true
             }
             if (item == "Plane") {
-                cancelScroll = this.$scrollTo('#Plane', 1000, options);
+                cancelScroll = this.$scrollTo('#Plane', 800, options);
             }
             else if (item == "Glider") {
-                cancelScroll = this.$scrollTo('#Glider', 1000, options);
+                cancelScroll = this.$scrollTo('#Glider', 800, options);
             }
             
         }
