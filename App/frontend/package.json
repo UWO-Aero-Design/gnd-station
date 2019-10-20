@@ -17,7 +17,9 @@
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
     "vue": "^2.5.2",
+    "vue-dragscroll": "^1.10.2",
     "vue-grid-layout": "^2.3.6",
+    "vue-panzoom": "^1.1.0",
     "vue-router": "^3.0.1",
     "vue-sidebar-menu": "^4.2.2"
   },

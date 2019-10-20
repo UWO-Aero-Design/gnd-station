@@ -76,12 +76,6 @@ a {
   color: #42b983;
 }
 
-.main-box {
-  margin-left: 300px;
-  height: 100vh;
-  margin-top: 0px;
-}
-
 .sidebar {
   width: 300px;
   background-color: #41B682;

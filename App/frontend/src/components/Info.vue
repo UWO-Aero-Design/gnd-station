@@ -149,12 +149,6 @@ a {
   margin-top: 0px;
 }
 
-.sidebar {
-  width: 300px;
-  background-color: #41B682;
-}
-
-
 .exit-symbol{
   position: absolute;
   top: 5px;
