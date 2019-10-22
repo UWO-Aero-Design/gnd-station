@@ -7,8 +7,8 @@
             <button class="button" @click="scrollToItem(item)">{{ item }}</button>
         </radial-menu-item>
     </radial-menu>
-    <img src="../../assets/MapAssets/plane.png" alt="Plane" id="Plane" v-bind:style="planeStyle">
-    <img src="../../assets/MapAssets/glider.png" alt="Glider" id="Glider" v-bind:style="gliderStyle">
+    <MapMarker markerType="plane" v-bind:lat="planeLoc[0]" v-bind:lon="planeLoc[1]" class="marker" id="Plane" v-bind:style="{top: planePos[1], left: planePos[0], 'z-index': 2}"></MapMarker>
+    <MapMarker markerType="glider" v-bind:lat="gliderLoc[0]" v-bind:lon="gliderLoc[1]" class="marker" id="Glider" v-bind:style="{top: gliderPos[1], left: gliderPos[0], 'z-index': 2}"></MapMarker>
 </div>
 </div>
 
@@ -17,6 +17,7 @@
 <script>
 import {dragscroll} from 'vue-dragscroll'
 import { RadialMenu, RadialMenuItem } from 'vue-radial-menu'
+import MapMarker from '@/components/MapComponents/MapMarker'
 
 export default {
     name: "MapTiles",
@@ -25,27 +26,13 @@ export default {
     },
     components: {
         RadialMenu,
-        RadialMenuItem
+        RadialMenuItem,
+        MapMarker
     },
+    props: ['planePos','gliderPos','planeLoc','gliderLoc'],
     data () {
         return {
-            //Plane Parameters
-            planeStyle: {
-                position: 'absolute',
-                top: '1000px', /*Max distance is 1580px */
-                left: '1000px', /*Max distance is 2535px */
-                'z-index': '2'
-            },
-
-            //Glider Parameters
-            gliderStyle: {
-                position: 'absolute',
-                top: '1300px', /*Max distance is 1580px */
-                left: '2000px', /*Max distance is 2535px */
-                'z-index': '2'
-            },
-
-            xOffset : '700px',
+            xOffset : '500px',
 
             //Menu Data
             menuItems: ['Plane','Glider']
@@ -58,11 +45,11 @@ export default {
             var currentScrollX = document.getElementById('Map').scrollLeft + parseInt(this.xOffset,10);
             var newScrollX = 0;
             if (item == "Plane") {
-                newScrollX = parseInt(this.planeStyle.left,10) - currentScrollX;
+                newScrollX = parseInt(this.planePos[0],10) - currentScrollX;
                 
             }
             else if (item == "Glider") {
-                newScrollX = parseInt(this.gliderStyle.left,10) - currentScrollX;
+                newScrollX = parseInt(this.gliderPos[0],10) - currentScrollX;
             }
             document.getElementById('Map').style.scrollBehavior = "smooth";
             document.getElementById('Map').scrollLeft += newScrollX;
@@ -72,7 +59,7 @@ export default {
             var VueScrollTo = require('vue-scrollto');
             var options = {
                 easing: 'ease-in',
-                offset: -500,
+                offset: -300,
                 force: true,
                 cancelable: true,
                 onStart: function(element) {
@@ -88,10 +75,10 @@ export default {
                 y: true
             }
             if (item == "Plane") {
-                cancelScroll = this.$scrollTo('#Plane', 800, options);
+                var cancelScroll = this.$scrollTo('#Plane', 800, options);
             }
             else if (item == "Glider") {
-                cancelScroll = this.$scrollTo('#Glider', 800, options);
+                var cancelScroll = this.$scrollTo('#Glider', 800, options);
             }
             
         }
@@ -103,7 +90,7 @@ export default {
 .scrollable {
     height: 100%;
     width:100%;
-    overflow-x:hidden;
+    overflow:hidden;
     direction: ltr;
     scroll-behavior: auto;
 }
@@ -136,5 +123,9 @@ export default {
     width:100%;
     border: none;
     border-radius: 50%;
+}
+
+.marker {
+    position: absolute;
 }
 </style>
