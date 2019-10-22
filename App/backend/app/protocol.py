@@ -65,7 +65,7 @@ class GPS:
         self.date = unsigned_int32(buf[0:4])
 
     def __str__(self):
-        return 'IMU \t Lat: {0}\
+        return 'GPS \t Lat: {0}\
                   \n\t Lon: {1}\
                   \n\t Speed: {2}\
                   \n\t Satellites: {3}\
@@ -75,68 +75,137 @@ class GPS:
                                          self.satellites, self.altitude, self.time, self.date)
 
 class Enviro:
-    SIZE = None
+    SIZE = 6
     def __init__(self, buf):
-        pass
+        self.pressure = unsigned_int16(buf[4:6])
+        self.humidity = unsigned_int16(buf[2:4])
+        self.temperature = unsigned_int16(buf[0:2])
 
     def __str__(self):
-        pass
+        return 'Enviro \t Pressure: {0}\
+                     \n\t Humidity: {1}\
+                     \n\t Temperature: {2}'.format(self.pressure, self.humidity, self.temperature)
 
 class Battery:
-    SIZE = None
+    SIZE = 4
     def __init__(self, buf):
-        pass
+        self.voltage = unsigned_int16(buf[2:4])
+        self.current = unsigned_int16(buf[0:2])
 
     def __str__(self):
-        pass
+        return 'Battery \t Voltage: {0}\
+                      \n\t Current: {1}'.format(self.voltage, self.current)
 
 class Config:
-    SIZE = None
+    SIZE = 0
     def __init__(self, buf):
+        # Currently empty
         pass
 
     def __str__(self):
+        # Currently empty
         pass
 
 class Status:
-    SIZE = None
+    SIZE = 6
     def __init__(self, buf):
-        pass
+        self.rssi = signed_int16(buf[4:6])
+        self.state = unsigned_int32(buf[0:4])
 
     def __str__(self):
-        pass
+        return 'Status  \t RSSI: {0}\
+                      \n\t State: {1}'.format(self.rssi, self.state)
+
 
 class Servos:
-    SIZE = None
+    SIZE = 64
     def __init__(self, buf):
-        pass
+        self.servo0 = unsigned32(buf[60:64])
+        self.servo1 = unsigned32(buf[56:60])
+        self.servo2 = unsigned32(buf[52:56])
+        self.servo3 = unsigned32(buf[48:52])
+        self.servo4 = unsigned32(buf[44:48])
+        self.servo5 = unsigned32(buf[40:44])
+        self.servo6 = unsigned32(buf[36:40])
+        self.servo7 = unsigned32(buf[32:36])
+        self.servo8 = unsigned32(buf[28:32])
+        self.servo9 = unsigned32(buf[24:28])
+        self.servo10 = unsigned32(buf[20:24])
+        self.servo11 = unsigned32(buf[16:20])
+        self.servo12 = unsigned32(buf[12:16])
+        self.servo13 = unsigned32(buf[8:12])
+        self.servo14 = unsigned32(buf[4:8])
+        self.servo15 = unsigned32(buf[0:4])
 
     def __str__(self):
-        pass
+        return 'Servo   \t Servo 0: {0}\
+                      \n\t Servo 1: {1}\
+                      \n\t Servo 2: {2}\
+                      \n\t Servo 3: {3}\
+                      \n\t Servo 4: {4}\
+                      \n\t Servo 5: {5}\
+                      \n\t Servo 6: {6}\
+                      \n\t Servo 7: {7}\
+                      \n\t Servo 8: {8}\
+                      \n\t Servo 9: {9}\
+                      \n\t Servo 10: {10}\
+                      \n\t Servo 11: {11}\
+                      \n\t Servo 12: {12}\
+                      \n\t Servo 13: {13}\
+                      \n\t Servo 14: {14}\
+                      \n\t Servo 15: {15}'.format(self.servo0, self.servo1, self.servo2, self.servo3, \
+                                                  self.servo4, self.servo5, self.servo6, self.servo7, self.servo8, \
+                                                  self.servo9, self.servo10, self.servo11, self.servo12, self.servo13, \
+                                                  self.servo14, self.servo15)
 
 class AirData:
-    SIZE = None
+    SIZE = 36
     def __init__(self, buf):
-        pass
+        self.ias = unsigned_int32(buf[32:36])
+        self.eas = unsigned_int32(buf[28:32])
+        self.tas = unsigned_int32(buf[24:28])
+        self.agl = unsigned_int32(buf[20:24])
+        self.pressure_alt = unsigned_int32(buf[16:20])
+        self.msl = unsigned_int32(buf[12:16])
+        self.density_alt = unsigned_int32(buf[8:12])
+        self.approx_temp = unsigned_int32(buf[4:8])
+        self.density = unsigned_int32(buf[0:4])
 
     def __str__(self):
-        pass
+        return 'AirData   \t IAS 0: {0}\
+                        \n\t EAS: {1}\
+                        \n\t TAS: {2}\
+                        \n\t AGL: {3}\
+                        \n\t Pressure Altitude: {4}\
+                        \n\t MSL: {5}\
+                        \n\t Density Altitude: {6}\
+                        \n\t Approx Temperature: {7}\
+                        \n\t Density: {8}'.format(self.ias, self.eas, self.tas, self.agl, \
+                                            self.pressure_alt, self.msl, self.density_alt, self.approx_temp, self.density)
 
 class Commands:
-    SIZE = None
+    SIZE = 4
     def __init__(self, buf):
-        pass
+        self.drop = int(buf[3], 10)
+        self.servos = unsigned_int16(buf[1:3])
+        self.pitch = int(buf[0], 10)
 
     def __str__(self):
-        pass
+        return 'Command \t Drop: {0}\
+                      \n\t Servos: {1}\
+                      \n\t Pitch Control: {2}'.format(self.drop, self.servos, self.pitch)
+
 
 class DropAlgo:
-    SIZE = None
+    SIZE = 4
     def __init__(self, buf):
-        pass
+        self.heading = signed_int16(buf[2:4])
+        self.distance = unsigned_int16(buf[0:2])
 
     def __str__(self):
-        pass
+        return 'Drop Algo  \t Heading: {0}\
+                         \n\t Distance: {1}'.format(self.heading, self.distance)
+
 
 def parse(buf):
     # Convert buffer of byte array into ascii encoded list of strings
