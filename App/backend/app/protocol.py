@@ -120,22 +120,22 @@ class Status:
 class Servos:
     SIZE = 64
     def __init__(self, buf):
-        self.servo0 = unsigned32(buf[60:64])
-        self.servo1 = unsigned32(buf[56:60])
-        self.servo2 = unsigned32(buf[52:56])
-        self.servo3 = unsigned32(buf[48:52])
-        self.servo4 = unsigned32(buf[44:48])
-        self.servo5 = unsigned32(buf[40:44])
-        self.servo6 = unsigned32(buf[36:40])
-        self.servo7 = unsigned32(buf[32:36])
-        self.servo8 = unsigned32(buf[28:32])
-        self.servo9 = unsigned32(buf[24:28])
-        self.servo10 = unsigned32(buf[20:24])
-        self.servo11 = unsigned32(buf[16:20])
-        self.servo12 = unsigned32(buf[12:16])
-        self.servo13 = unsigned32(buf[8:12])
-        self.servo14 = unsigned32(buf[4:8])
-        self.servo15 = unsigned32(buf[0:4])
+        self.servo0 = unsigned_int32(buf[60:64])
+        self.servo1 = unsigned_int32(buf[56:60])
+        self.servo2 = unsigned_int32(buf[52:56])
+        self.servo3 = unsigned_int32(buf[48:52])
+        self.servo4 = unsigned_int32(buf[44:48])
+        self.servo5 = unsigned_int32(buf[40:44])
+        self.servo6 = unsigned_int32(buf[36:40])
+        self.servo7 = unsigned_int32(buf[32:36])
+        self.servo8 = unsigned_int32(buf[28:32])
+        self.servo9 = unsigned_int32(buf[24:28])
+        self.servo10 = unsigned_int32(buf[20:24])
+        self.servo11 = unsigned_int32(buf[16:20])
+        self.servo12 = unsigned_int32(buf[12:16])
+        self.servo13 = unsigned_int32(buf[8:12])
+        self.servo14 = unsigned_int32(buf[4:8])
+        self.servo15 = unsigned_int32(buf[0:4])
 
     def __str__(self):
         return 'Servo   \t Servo 0: {0}\
@@ -319,8 +319,3 @@ def parse_data(sig: int, data_buf):
     if is_bit_set(sig, 11):
         if DEBUG:
             print('Drop')
-
-
-
-    
-
