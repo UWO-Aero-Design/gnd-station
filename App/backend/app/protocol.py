@@ -209,7 +209,6 @@ class DropAlgo:
 
 
 def parse(buf):
-    print(buf)
     # Convert buffer of byte array into ascii encoded list of strings
     buf = buf.decode('ascii').split(' ')
     # Used to track progress within the buffer
@@ -256,103 +255,117 @@ def parse(buf):
     buf_ptr += BYTE
 
     # Print message
-    print('\n*** NEW MESSAGE ***')
-    print('Full Message: {}'.format(buf))
-    print('Start: {}'.format(start))
-    print('Link: {} meaning from: {} and to: {}'.format(link, ID_LOOKUP[from_id], ID_LOOKUP[to_id]))
-    print('Signature: {}'.format(sig))
-    print('Buffer Length: {}'.format(p_len))
-    print('Buffer: {}'.format(data_buf))
-    print('CRC: {}'.format(crc))
-    print('End: {}'.format(end))
+    DEBUG = False
+    if DEBUG:
+        print('\n*** NEW MESSAGE ***')
+        print('Full Message: {}'.format(buf))
+        print('Start: {}'.format(start))
+        print('Link: {} meaning from: {} and to: {}'.format(link, ID_LOOKUP[from_id], ID_LOOKUP[to_id]))
+        print('Signature: {}'.format(sig))
+        print('Buffer Length: {}'.format(p_len))
+        print('Buffer: {}'.format(data_buf))
+        print('CRC: {}'.format(crc))
+        print('End: {}'.format(end))
+        print('*** MESSAGE END ***')
+
+    msg_result = {'error':False, 'data':11*[None]}
 
     # Check message first
     # TODO: Include CRC, Start and End checks
     # 9 for the extra struct elements and 1 for the new line
     if len(buf) > int(p_len, 16) + 9 + 1:
-        print('Error in message')
-        return
+        msg_result['error'] = True
+    else:
+        msg_result['data'] = parse_data(sig, data_buf)
 
-    parse_data(sig, data_buf)
+    
 
-    print('*** MESSAGE END ***')
+    return msg_result
 
 def parse_data(sig: int, data_buf):
     data_buf = data_buf.split(' ')
     data_buf = [int(i, 16) for i in data_buf] 
     ptr_in_buf = len(data_buf)
 
+    parsed_data = 11*[None]
+
     DEBUG = False
 
-    print('\nBuffer parsing...')
 
     if DEBUG == True:
+        print('\nBuffer parsing...')
         print(data_buf)
 
     # IMPROVE: this is spaghet
     if is_bit_set(sig, 1):
         if DEBUG:
             print('Pitot')
-        p = Pitot(data_buf[ptr_in_buf-Pitot.SIZE:ptr_in_buf])
+        i = Pitot(data_buf[ptr_in_buf-Pitot.SIZE:ptr_in_buf])
         ptr_in_buf -= Pitot.SIZE
-        print(p)
+        parsed_data[0] = i
     if is_bit_set(sig, 2):
         if DEBUG:
             print('IMU')
         i = IMU(data_buf[ptr_in_buf-IMU.SIZE:ptr_in_buf])
         ptr_in_buf -= IMU.SIZE
-        print(i)
+        parsed_data[1] = i
     if is_bit_set(sig, 3):
         if DEBUG:
             print('GPS')
         i = GPS(data_buf[ptr_in_buf-GPS.SIZE:ptr_in_buf])
         ptr_in_buf -= GPS.SIZE
-        print(i)
+        parsed_data[2] = i
     if is_bit_set(sig, 4):
         if DEBUG:
             print('Enviro')
         i = Enviro(data_buf[ptr_in_buf-Enviro.SIZE:ptr_in_buf])
         ptr_in_buf -= Enviro.SIZE
-        print(i)
+        parsed_data[3] = i
     if is_bit_set(sig, 5):
         if DEBUG:
             print('Batt')
         i = Battery(data_buf[ptr_in_buf-Battery.SIZE:ptr_in_buf])
         ptr_in_buf -= Battery.SIZE
-        print(i)
+        parsed_data[4] = i
     if is_bit_set(sig, 6):
         if DEBUG:
             print('Config')
         i = Config(data_buf[ptr_in_buf-Config.SIZE:ptr_in_buf])
         ptr_in_buf -= Config.SIZE
-        print(i)
+        parsed_data[5] = i
     if is_bit_set(sig, 7):
         if DEBUG:
             print('Status')
         i = Status(data_buf[ptr_in_buf-Status.SIZE:ptr_in_buf])
         ptr_in_buf -= Status.SIZE
-        print(i)
+        parsed_data[6] = i
     if is_bit_set(sig, 8):
         if DEBUG:
             print('Actuators')
         i = Servos(data_buf[ptr_in_buf-Servos.SIZE:ptr_in_buf])
         ptr_in_buf -= Servos.SIZE
-        print(i)
+        parsed_data[7] = i
     if is_bit_set(sig, 9):
         if DEBUG:
             print('AData')
         i = AirData(data_buf[ptr_in_buf-AirData.SIZE:ptr_in_buf])
         ptr_in_buf -= AirData.SIZE
-        print(i)
+        parsed_data[9] = i
     if is_bit_set(sig, 10):
         if DEBUG:
             print('Cmds')
         i = Commands(data_buf[ptr_in_buf-Commands.SIZE:ptr_in_buf])
         ptr_in_buf -= Commands.SIZE
-        print(i)
+        parsed_data[9] = i
     if is_bit_set(sig, 11):
         if DEBUG:
             print('Drop')
         i = DropAlgo(data_buf[ptr_in_buf-DropAlgo.SIZE:ptr_in_buf])
         ptr_in_buf -= DropAlgo.SIZE
-        print(i)
+        parsed_data[10] = i
+
+    if DEBUG:
+        for data in parsed_data:
+            print(data)
+        
+    return parsed_data

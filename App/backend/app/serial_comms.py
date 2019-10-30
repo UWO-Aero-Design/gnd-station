@@ -2,6 +2,7 @@
 import serial
 from serial.tools import list_ports
 from protocol import *
+import time
 
 def get_all_ports():
     """ Returns a list of ListPortInfo objects that represents all
@@ -29,60 +30,68 @@ def find_teensy_port():
     return None
 
 # Serial task will connect to database
-def serial_task():
-    PORT = "COM3"
+def serial_task(port):
+    PORT = port
     BAUDRATE = 115200
     BYTESIZE = 8
     TIMEOUT = 2
     STOPBITS = serial.STOPBITS_ONE
 
-    MIN_SERIAL_BUFFER = 100
-
-    serial_port = serial.Serial(port = PORT, baudrate = BAUDRATE,
+    try:
+        serial_port = serial.Serial(port = PORT, baudrate = BAUDRATE,
                             bytesize=BYTESIZE, timeout=TIMEOUT, stopbits=STOPBITS)
+    except serial.serialutil.SerialException:
+        print('No communications with {}'.format(PORT))
+        return
 
-    print('Port is open? ' + str(serial_port.is_open))
-    print('Waiting for buffer to fill up...')
+    # print('Port is open? ' + str(serial_port.is_open))
 
     data_from_serial = ''
-    # Wait for the buffer to be at least a bit full and then read all bytes that are in the buffer
     while True:
-        # if serial_port.in_waiting  > MIN_SERIAL_BUFFER:
-        #     data_from_serial = serial_port.read(serial_port.in_waiting)
-        #     print(data_from_serial)
-        data_from_serial = serial_port.readline()
-        r = parse(data_from_serial)
+        try:
+            data_from_serial = serial_port.readline()
+            if data_from_serial:
+                r = parse(data_from_serial)
+                if r['error']:
+                    print('Received message with errors')
+                else:
+                    print('Received message with no errors')
+                    # Add data to database here!!
+        except serial.serialutil.SerialException:
+            print('Lost communications with {}'.format(PORT))
+            return
+
     
 if __name__ == "__main__":
     # Print teensy information
-    print('\nPrinting Teensy serial port, if it exists...')
-    port = find_teensy_port()
-    if port:
-        print('Device: ' + port.device)
-        print('\tDescription: ' + port.description)
-        print('\tHardware ID: ' + port.hwid)
-    else:
-        print('Teensy is not connected')
+    # print('\nPrinting Teensy serial port, if it exists...')
+    # port = find_teensy_port()
+    # if port:
+    #     print('Device: ' + port.device)
+    #     print('\tDescription: ' + port.description)
+    #     print('\tHardware ID: ' + port.hwid)
+    # else:
+    #     print('Teensy is not connected')
 
-    # List all ports
-    print('\nPrinting all serial ports...')
-    ports = get_all_ports()
-    for index, port_info in enumerate(ports, 1):
-        print('Device ' + str(index) + ': ' + port_info.device)
-        print('\tDescription: ' + port_info.description)
-        print('\tHardware ID: ' + port_info.hwid)
+    # # List all ports
+    # print('\nPrinting all serial ports...')
+    # ports = get_all_ports()
+    # for index, port_info in enumerate(ports, 1):
+    #     print('Device ' + str(index) + ': ' + port_info.device)
+    #     print('\tDescription: ' + port_info.description)
+    #     print('\tHardware ID: ' + port_info.hwid)
 
-    print('\nRunning serial task...')
-    serial_task()
+    # System design
+        # 1) periodic task that checks if there is a teensy plugged into a port
+        #       if returns a real value, pass port to serial task and start polling it
 
-# NOTE: Arduino code used for testing
-# void setup() {
-#   // put your setup code here, to run once:
-#   Serial.begin(115200);
-# }
-
-# void loop() {
-#   // put your main code here, to run repeatedly:
-#   Serial.println("hello world!");
-#   delay(1000);
-# }
+    while True:
+        port_info = find_teensy_port()
+        if port_info:
+            break
+        else:
+            print('Waiting for Teensy')
+            time.sleep(1)
+        
+    print('Teensy Connected! \nSerial Task Starting...')
+    serial_task(port_info.device)
