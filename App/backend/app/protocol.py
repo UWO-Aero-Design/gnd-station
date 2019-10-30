@@ -56,10 +56,10 @@ class IMU:
 class GPS:
     SIZE = 21
     def __init__(self, buf):
-        self.lat = unsigned_int32(buf[17:21])
-        self.lon = unsigned_int32(buf[13:17])
+        self.lat = signed_int32(buf[17:21])
+        self.lon = signed_int32(buf[13:17])
         self.speed = unsigned_int16(buf[11:13])
-        self.satellites = int(buf[11], 10)
+        self.satellites = int(str(buf[10]), 10)
         self.altitude = unsigned_int16(buf[8:10])
         self.time = unsigned_int32(buf[4:8])
         self.date = unsigned_int32(buf[0:4])
@@ -93,18 +93,19 @@ class Battery:
         self.current = unsigned_int16(buf[0:2])
 
     def __str__(self):
-        return 'Battery \t Voltage: {0}\
+        return 'Batt \t Voltage: {0}\
                       \n\t Current: {1}'.format(self.voltage, self.current)
 
 class Config:
-    SIZE = 0
+    # Leaves config spot as 0 so size needs to be 1 even if empty
+    SIZE = 1
     def __init__(self, buf):
         # Currently empty
         pass
 
     def __str__(self):
         # Currently empty
-        pass
+        return 'Config \t is empty'
 
 class Status:
     SIZE = 6
@@ -113,7 +114,7 @@ class Status:
         self.state = unsigned_int32(buf[0:4])
 
     def __str__(self):
-        return 'Status  \t RSSI: {0}\
+        return 'Status \t RSSI: {0}\
                       \n\t State: {1}'.format(self.rssi, self.state)
 
 
@@ -138,7 +139,7 @@ class Servos:
         self.servo15 = unsigned_int32(buf[0:4])
 
     def __str__(self):
-        return 'Servo   \t Servo 0: {0}\
+        return 'Servo \t Servo 0: {0}\
                       \n\t Servo 1: {1}\
                       \n\t Servo 2: {2}\
                       \n\t Servo 3: {3}\
@@ -172,7 +173,7 @@ class AirData:
         self.density = unsigned_int32(buf[0:4])
 
     def __str__(self):
-        return 'AirData   \t IAS 0: {0}\
+        return 'AData \t IAS: {0}\
                         \n\t EAS: {1}\
                         \n\t TAS: {2}\
                         \n\t AGL: {3}\
@@ -186,12 +187,12 @@ class AirData:
 class Commands:
     SIZE = 4
     def __init__(self, buf):
-        self.drop = int(buf[3], 10)
+        self.drop = int(str(buf[3]), 10)
         self.servos = unsigned_int16(buf[1:3])
-        self.pitch = int(buf[0], 10)
+        self.pitch = int(str(buf[0]), 10)
 
     def __str__(self):
-        return 'Command \t Drop: {0}\
+        return 'Cmd \t Drop: {0}\
                       \n\t Servos: {1}\
                       \n\t Pitch Control: {2}'.format(self.drop, self.servos, self.pitch)
 
@@ -203,15 +204,16 @@ class DropAlgo:
         self.distance = unsigned_int16(buf[0:2])
 
     def __str__(self):
-        return 'Drop Algo  \t Heading: {0}\
+        return 'Drop \t Heading: {0}\
                          \n\t Distance: {1}'.format(self.heading, self.distance)
 
 
 def parse(buf):
+    print(buf)
     # Convert buffer of byte array into ascii encoded list of strings
     buf = buf.decode('ascii').split(' ')
-    
     # Used to track progress within the buffer
+   
     buf_ptr = 0
 
     # Get start byte
@@ -228,8 +230,9 @@ def parse(buf):
     
     # Get signature
     sig = buf[buf_ptr:buf_ptr+TWO_BYTES]
-    sig = ''.join(sig[::-1])
-    sig = int(sig)
+    #sig = ''.join(sig[::-1])
+    sig = [int(i, 16) for i in sig]
+    sig = unsigned_int16(sig, 'little')
     buf_ptr += TWO_BYTES
 
     # Get length
@@ -263,6 +266,13 @@ def parse(buf):
     print('CRC: {}'.format(crc))
     print('End: {}'.format(end))
 
+    # Check message first
+    # TODO: Include CRC, Start and End checks
+    # 9 for the extra struct elements and 1 for the new line
+    if len(buf) > int(p_len, 16) + 9 + 1:
+        print('Error in message')
+        return
+
     parse_data(sig, data_buf)
 
     print('*** MESSAGE END ***')
@@ -295,27 +305,54 @@ def parse_data(sig: int, data_buf):
     if is_bit_set(sig, 3):
         if DEBUG:
             print('GPS')
+        i = GPS(data_buf[ptr_in_buf-GPS.SIZE:ptr_in_buf])
+        ptr_in_buf -= GPS.SIZE
+        print(i)
     if is_bit_set(sig, 4):
         if DEBUG:
             print('Enviro')
+        i = Enviro(data_buf[ptr_in_buf-Enviro.SIZE:ptr_in_buf])
+        ptr_in_buf -= Enviro.SIZE
+        print(i)
     if is_bit_set(sig, 5):
         if DEBUG:
             print('Batt')
+        i = Battery(data_buf[ptr_in_buf-Battery.SIZE:ptr_in_buf])
+        ptr_in_buf -= Battery.SIZE
+        print(i)
     if is_bit_set(sig, 6):
         if DEBUG:
             print('Config')
+        i = Config(data_buf[ptr_in_buf-Config.SIZE:ptr_in_buf])
+        ptr_in_buf -= Config.SIZE
+        print(i)
     if is_bit_set(sig, 7):
         if DEBUG:
             print('Status')
+        i = Status(data_buf[ptr_in_buf-Status.SIZE:ptr_in_buf])
+        ptr_in_buf -= Status.SIZE
+        print(i)
     if is_bit_set(sig, 8):
         if DEBUG:
             print('Actuators')
+        i = Servos(data_buf[ptr_in_buf-Servos.SIZE:ptr_in_buf])
+        ptr_in_buf -= Servos.SIZE
+        print(i)
     if is_bit_set(sig, 9):
         if DEBUG:
             print('AData')
+        i = AirData(data_buf[ptr_in_buf-AirData.SIZE:ptr_in_buf])
+        ptr_in_buf -= AirData.SIZE
+        print(i)
     if is_bit_set(sig, 10):
         if DEBUG:
             print('Cmds')
+        i = Commands(data_buf[ptr_in_buf-Commands.SIZE:ptr_in_buf])
+        ptr_in_buf -= Commands.SIZE
+        print(i)
     if is_bit_set(sig, 11):
         if DEBUG:
             print('Drop')
+        i = DropAlgo(data_buf[ptr_in_buf-DropAlgo.SIZE:ptr_in_buf])
+        ptr_in_buf -= DropAlgo.SIZE
+        print(i)
