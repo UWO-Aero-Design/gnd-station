@@ -1,20 +1,15 @@
 <template>
-<div>
-    <Sidebar></Sidebar>
-    <div class="main-box">
-        <MapTiles v-bind:planePos="planePos" v-bind:gliderPos="gliderPos" v-bind:planeLoc="planeLoc" v-bind:gliderLoc="gliderLoc"></MapTiles>
-    </div>
+<div class="main-box">
+  <MapTiles v-bind:planePos="planePos" v-bind:gliderPos="gliderPos" v-bind:planeLoc="planeLoc" v-bind:gliderLoc="gliderLoc"></MapTiles>
 </div>
 </template>
 
 <script>
-import Sidebar from "@/components/Sidebar";
 import MapTiles from "@/components/MapComponents/MapTiles";
 
 export default {
     name: "Map",
     components: {
-        Sidebar,
         MapTiles
     },
     data () {
@@ -31,8 +26,9 @@ export default {
 
 <style scoped>
 .main-box {
-  margin-left: 300px;
+  position:relative;
   height: 100vh;
-  margin-top: 0px;
+  left: -250px;
+  width:100%;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
 <div>
-  <Sidebar @update-grid="updateGrid"></Sidebar>
+  <!-- Sidebar @update-sidebar="moveComponent" @update-grid="updateGrid" --><!-- /Sidebar -->
   <div class="main-box">
     <grid-layout
       :layout.sync="panes"
@@ -54,7 +54,13 @@ export default {
       //Gridlayout elements
       numOfPanes: 0, //Tracks current number of panes
       paneID: 0, //Pane ID always increases to avoid having multiple panes with same ID
-      panes: []
+      panes: [],
+      leftPos: '250px'
+    }
+  },
+  computed: {
+    computedLeftPos: function () {
+      return this.leftPos;
     }
   },
   methods: {
@@ -144,7 +150,7 @@ a {
 }
 
 .main-box {
-  margin-left: 300px;
+  position:relative;
   height: 100vh;
   margin-top: 0px;
 }

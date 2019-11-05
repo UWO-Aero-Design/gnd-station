@@ -1,59 +1,44 @@
 <template>
-<div>
-  <sidebar-menu class="sidebar" ref="sidebar" :menu="menu" :hide-toggle="true" @item-click="onItemClick"/>
-</div>
+  <div>
+    <Sidebar></Sidebar>
+  <multipane class="custom-resizer" layout="vertical">
+    <div class="pane">
+      <Map></Map>
+  </div>
+   <multipane-resizer></multipane-resizer>
+    <div class="pane" :style="{ flexGrow: 1 }">
+      <Info></Info>
+    </div>
+  </multipane>
+  </div>
 </template>
 
 <script>
+  import Sidebar from "@/components/Sidebar";
+  import { Multipane, MultipaneResizer } from 'vue-multipane';
+  import Map from "@/components/Map";
+  import Info from "@/components/Info";
 
 export default {
   name: 'Base',
   components: {
+    Sidebar,
+    Multipane,
+    MultipaneResizer,
+    Map,
+    Info
   },
   mounted() {
   },
   data () {
     return {
-      //Sidebar menu elements
-      menu: [
-        {
-          header: true,
-          title: 'Ground Station'
-        },
-        {
-          title: 'Map',
-          icon: 'fas fa-map',
-          href: '/map',
-          componentType: 'None'
-        },
-        {
-          title: 'Components',
-          icon: 'fas fa-dice-d6',
-          href: '/info',
-          child: [
-            {
-              title: 'Data',
-              icon: 'fas fa-hdd',
-              componentSize: '2BlockH',
-              componentType: 'Data'
-            },
-            {
-              title: 'Communication',
-              icon: 'fas fa-satellite',
-              componentSize: '1Block',
-              componentType: 'Communication'
-            }
-          ],
-          componentType: 'None'
-        }
-      ]
     }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 
 h1, h2 {
   font-weight: normal;
@@ -87,5 +72,44 @@ a {
   right: 9px;
   cursor: pointer;
 }
+
+.custom-resizer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.custom-resizer > .pane {
+  text-align: left;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #1E1E2F;
+}
+.custom-resizer > .pane ~ .pane {
+}
+.custom-resizer > .multipane-resizer {
+  margin: 0; left: 0;
+  position: relative;
+&:before {
+   display: block;
+   content: "";
+   width: 3px;
+   height: 40px;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   margin-top: -20px;
+   margin-left: -1.5px;
+   border-left: 1px solid #ccc;
+   border-right: 1px solid #ccc;
+ }
+&:hover {
+&:before {
+   border-color: #999;
+ }
+}
+}
+
 
 </style>

@@ -1,9 +1,7 @@
 <template>
-<div>
-  <sidebar-menu class="sidebar" ref="sidebar" :menu="menu" :hide-toggle="true" @item-click="onItemClick"/>
-</div>
+  <sidebar-menu class="sidebar" ref="sidebar" :menu="menu" :hide-toggle="true" :width="'220px'"
+                @toggle-collapse="onToggleCollapse" @item-click="onItemClick" :collapsed="true"/>
 </template>
-
 <script>
 
 export default {
@@ -18,7 +16,8 @@ export default {
       menu: [
         {
           header: true,
-          title: 'Ground Station'
+          title: 'Groundstation',
+          hiddenOnCollapse: true
         },
         {
           title: 'Map',
@@ -53,6 +52,11 @@ export default {
       onItemClick (event, item) {
       console.log(item);
       this.$emit('update-grid',item);
+    },
+    onToggleCollapse (collapsed) {
+        if (collapsed) {
+          this.$emit('update-sidebar','10px');
+        }
     }
   }
 }
@@ -77,15 +81,7 @@ a {
 }
 
 .sidebar {
-  width: 300px;
   background-color: #41B682;
-}
-
-.exit-symbol{
-  position: absolute;
-  top: 5px;
-  right: 9px;
-  cursor: pointer;
 }
 
 </style>

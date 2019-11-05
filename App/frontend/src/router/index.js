@@ -10,7 +10,6 @@ export default new Router({
   routes: [
     { 
       path: '/',
-      redirect: '/info',
       name: 'Base',
       component: Base,
     },
