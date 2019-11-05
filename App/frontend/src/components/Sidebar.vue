@@ -1,6 +1,6 @@
 <template>
   <sidebar-menu class="sidebar" ref="sidebar" :menu="menu" :hide-toggle="true" :width="'220px'"
-                @toggle-collapse="onToggleCollapse" @item-click="onItemClick" :collapsed="true"/>
+                @item-click="onItemClick" :collapsed="true"/>
 </template>
 <script>
 
@@ -22,25 +22,26 @@ export default {
         {
           title: 'Map',
           icon: 'fas fa-map',
-          href: '/map',
-          componentType: 'None'
+          componentType: 'Page',
+          componentName: 'Map'
         },
         {
           title: 'Components',
           icon: 'fas fa-dice-d6',
-          href: '/info',
           child: [
             {
               title: 'Data',
               icon: 'fas fa-hdd',
               componentSize: '2BlockH',
-              componentType: 'Data'
+              componentType: 'Grid',
+              componentName: 'Data'
             },
             {
               title: 'Communication',
               icon: 'fas fa-satellite',
               componentSize: '1Block',
-              componentType: 'Communication'
+              componentType: 'Grid',
+              componentName: 'Communication'
             }
           ],
           componentType: 'None'
@@ -51,12 +52,7 @@ export default {
   methods: {
       onItemClick (event, item) {
       console.log(item);
-      this.$emit('update-grid',item);
-    },
-    onToggleCollapse (collapsed) {
-        if (collapsed) {
-          this.$emit('update-sidebar','10px');
-        }
+      this.$emit('update',item);
     }
   }
 }

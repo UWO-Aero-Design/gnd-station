@@ -12,16 +12,6 @@ export default new Router({
       path: '/',
       name: 'Base',
       component: Base,
-    },
-    {
-      path: '/map',
-      name: 'Map',
-      component: Map
-    },
-    {
-      path: '/info',
-      name: 'Info',
-      component: Info
     }
   ]
 })

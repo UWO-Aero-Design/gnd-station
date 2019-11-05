@@ -1,6 +1,5 @@
 <template>
 <div>
-  <!-- Sidebar @update-sidebar="moveComponent" @update-grid="updateGrid" --><!-- /Sidebar -->
   <div class="main-box">
     <grid-layout
       :layout.sync="panes"
@@ -24,7 +23,7 @@
                  :key="index">
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
         {{item.i}}
-        <TestComponent v-if="item.componentType == 'speed'"></TestComponent>
+        <TestComponent v-if="item.componentName == 'speed'"></TestComponent>
         <br><br>
       </grid-item>
     </grid-layout>
@@ -35,7 +34,6 @@
 <script>
 import axios from 'axios'
 import VueGridLayout from 'vue-grid-layout';
-import Sidebar from '@/components/Sidebar';
 import TestComponent from "@/components/TestComponent";
 
 export default {
@@ -43,7 +41,6 @@ export default {
   components: {
       GridLayout: VueGridLayout.GridLayout,
       GridItem: VueGridLayout.GridItem,
-      Sidebar,
       TestComponent
   },
   mounted() {
@@ -66,43 +63,43 @@ export default {
   methods: {
     updateGrid (item) {
       console.log(item);
-      if (item.componentSize == "2BlockV") {
+      if (item.componentSize === "2BlockV") {
         this.panes.push({
           "x": 0,
           "y": 0,
           "w": 4,
           "h": 12,
           "i": String(this.paneID),
-          "componentType": String(item.componentType)
+          "componentName": String(item.componentName)
         });
         this.numOfPanes++;
         this.paneID++;
       }
-      else if (item.componentSize == "2BlockH") {
+      else if (item.componentSize === "2BlockH") {
         this.panes.push({
           "x": 0,
           "y": 0,
           "w": 8,
           "h": 7,
           "i": String(this.paneID),
-          "componentType": String(item.componentType)
+          "componentName": String(item.componentName)
         });
         this.numOfPanes++;
         this.paneID++;
       }
-      else if(item.componentSize == "4Block"){
+      else if(item.componentSize === "4Block"){
         this.panes.push({
           "x": 0,
           "y": 0,
           "w": 8,
           "h": 12,
           "i": String(this.paneID),
-          "componentType": String(item.componentType)
+          "componentName": String(item.componentName)
         });
         this.numOfPanes++;
         this.paneID++;
       }
-      else if(item.componentType != "None"){
+      else if(item.componentType === "Grid"){
         this.panes.push({
           "x": 0,
           "y": 0,

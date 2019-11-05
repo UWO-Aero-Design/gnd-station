@@ -1,13 +1,13 @@
 <template>
   <div>
-    <Sidebar></Sidebar>
+  <Sidebar @update="updatePage"></Sidebar>
   <multipane class="custom-resizer" layout="vertical">
     <div class="pane">
       <Map></Map>
   </div>
    <multipane-resizer></multipane-resizer>
     <div class="pane" :style="{ flexGrow: 1 }">
-      <Info></Info>
+      <Info ref="Info"></Info>
     </div>
   </multipane>
   </div>
@@ -32,6 +32,12 @@ export default {
   },
   data () {
     return {
+    }
+  },
+  methods: {
+    updatePage(item) {
+      if (item.componentType === "Grid") {}
+      this.$refs.Info.updateGrid(item);
     }
   }
 }
