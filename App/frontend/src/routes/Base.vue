@@ -2,10 +2,10 @@
   <div>
   <Sidebar @update="updatePage"></Sidebar>
   <multipane class="custom-resizer" layout="vertical">
-    <div class="pane">
+    <div v-if="this.mapActive === true" class="pane" :style="{ minWidth: '56px'}">
       <Map></Map>
-  </div>
-   <multipane-resizer></multipane-resizer>
+    </div>
+   <multipane-resizer v-if="this.mapActive === true" ></multipane-resizer>
     <div class="pane" :style="{ flexGrow: 1 }">
       <Info ref="Info"></Info>
     </div>
@@ -32,12 +32,17 @@ export default {
   },
   data () {
     return {
+      mapActive: true
     }
   },
   methods: {
     updatePage(item) {
-      if (item.componentType === "Grid") {}
-      this.$refs.Info.updateGrid(item);
+      if (item.componentType === "Grid") {
+        this.$refs.Info.updateGrid(item);
+      }
+      if (item.componentType === "Page") {
+        this.mapActive = !this.mapActive;
+      }
     }
   }
 }
@@ -64,7 +69,7 @@ a {
 .main-box {
   margin-left: 300px;
   height: 100vh;
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 .sidebar {
@@ -100,7 +105,7 @@ a {
 &:before {
    display: block;
    content: "";
-   width: 3px;
+   width: 0px;
    height: 40px;
    position: absolute;
    top: 50%;

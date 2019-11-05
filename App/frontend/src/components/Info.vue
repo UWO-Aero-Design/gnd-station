@@ -20,10 +20,11 @@
                  :w="item.w"
                  :h="item.h"
                  :i="item.i"
-                 :key="index">
+                 :key="index"
+                 :isResizable="true">
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
-        {{item.i}}
-        <TestComponent v-if="item.componentName == 'speed'"></TestComponent>
+        {{ item.i }}
+        <TestComponent v-if="item.componentName === 'speed'"></TestComponent>
         <br><br>
       </grid-item>
     </grid-layout>
@@ -149,7 +150,7 @@ a {
 .main-box {
   position:relative;
   height: 100vh;
-  margin-top: 0px;
+  left: 0px;
 }
 
 .exit-symbol{

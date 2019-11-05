@@ -124,7 +124,7 @@ export default {
 .radialMenu {
     position: fixed;
     top: 93%;
-    left: 3%;
+    left: 4%;
     background-color: #315CF4;
     z-index: 2;
     color: white;
