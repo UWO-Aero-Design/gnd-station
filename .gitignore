@@ -106,4 +106,4 @@ venv.bak/
 .idea
 
 # Maptiles
-/App/frontend/static/Maps
+/App/frontend/src/assets/MapAssets/Maps
