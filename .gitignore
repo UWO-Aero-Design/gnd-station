@@ -104,3 +104,6 @@ venv.bak/
 
 # Jetbrains project settings
 .idea
+
+# Maptiles
+/App/frontend/static/Maps

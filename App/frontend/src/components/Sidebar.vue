@@ -1,5 +1,5 @@
 <template>
-  <sidebar-menu class="sidebar" ref="sidebar" :menu="menu" :hide-toggle="true" :width="'220px'"
+  <sidebar-menu class="sidebar" ref="sidebar" :menu="menu" :hide-toggle="false" :width="'220px'"
                 @item-click="onItemClick" :collapsed="true"/>
 </template>
 <script>
