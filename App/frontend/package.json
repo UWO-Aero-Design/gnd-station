@@ -27,7 +27,8 @@
     "vue-radial-menu": "^1.1.1",
     "vue-router": "^3.0.1",
     "vue-scrollto": "^2.17.1",
-    "vue-sidebar-menu": "^4.2.2"
+    "vue-sidebar-menu": "^4.2.2",
+    "vue2-leaflet": "^2.2.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
