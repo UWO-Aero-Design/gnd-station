@@ -1,16 +1,19 @@
 <template>
 <div class="main-box">
-  <MapTiles v-bind:planePos="planePos" v-bind:gliderPos="gliderPos" v-bind:planeLoc="planeLoc" v-bind:gliderLoc="gliderLoc"></MapTiles>
+  <!-- MapTiles v-bind:planePos="planePos" v-bind:gliderPos="gliderPos" v-bind:planeLoc="planeLoc" v-bind:gliderLoc="gliderLoc" --><!-- /MapTiles -->
+  <MapLeaflet></MapLeaflet>
 </div>
 </template>
 
 <script>
-import MapTiles from "@/components/MapComponents/MapTiles";
+//import MapTiles from "@/components/MapComponents/MapTiles";
+import MapLeaflet from "@/components/MapComponents/MapLeaflet";
 
 export default {
     name: "Map",
     components: {
-        MapTiles
+        //MapTiles
+        MapLeaflet
     },
     data () {
         return {

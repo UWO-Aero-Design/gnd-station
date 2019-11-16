@@ -1,11 +1,11 @@
 <template>
   <div>
-  <Sidebar @update="updatePage"></Sidebar>
-  <multipane class="custom-resizer" layout="vertical">
-    <div v-if="this.mapActive === true" class="pane" :style="{ minWidth: '56px'}">
-      <Map></Map>
+  <!-- Sidebar @update="updatePage"></Sidebar -->
+  <multipane class="custom-resizer" layout="vertical" @paneResizeStop="redrawMapTiles">
+    <div v-if="this.mapActive === true" class="pane" :style="{ minWidth: '60px'}">
+      <MapLeaflet ref="Map"></MapLeaflet>
     </div>
-   <multipane-resizer v-if="this.mapActive === true" ></multipane-resizer>
+   <multipane-resizer v-if="this.mapActive === true"></multipane-resizer>
     <div class="pane" :style="{ flexGrow: 1 }">
       <Info ref="Info"></Info>
     </div>
@@ -16,8 +16,8 @@
 <script>
   import Sidebar from "@/components/Sidebar";
   import { Multipane, MultipaneResizer } from 'vue-multipane';
-  import Map from "@/components/Map";
   import Info from "@/components/Info";
+  import MapLeaflet from "@/components/MapComponents/MapLeaflet";
 
 export default {
   name: 'Base',
@@ -25,8 +25,8 @@ export default {
     Sidebar,
     Multipane,
     MultipaneResizer,
-    Map,
-    Info
+    Info,
+    MapLeaflet
   },
   mounted() {
   },
@@ -43,6 +43,9 @@ export default {
       if (item.componentType === "Page") {
         this.mapActive = !this.mapActive;
       }
+    },
+    redrawMapTiles() {
+      this.$refs.Map.redrawMapTiles();
     }
   }
 }
@@ -67,7 +70,7 @@ a {
 }
 
 .main-box {
-  margin-left: 300px;
+  margin-left: 100px;
   height: 100vh;
   margin-top: 0;
 }

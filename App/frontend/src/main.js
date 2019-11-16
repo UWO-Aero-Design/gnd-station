@@ -9,6 +9,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+import { Icon }  from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
 library.add(faUserSecret)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
@@ -33,6 +36,16 @@ Vue.use(VueScrollTo, {
  })
 
 Vue.config.productionTip = false
+
+
+// this part resolve an issue where the markers would not appear
+delete Icon.Default.prototype._getIconUrl;
+
+Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+});
 
 /* eslint-disable no-new */
 new Vue({
