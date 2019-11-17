@@ -35,3 +35,4 @@ services:
      - "8081:80"
     volumes:
       - "./App/frontend/map:/data"
+    command: "--verbose -c ./App/frontend/map/config.json"

@@ -107,4 +107,4 @@ venv.bak/
 
 # Maptiles
 /App/frontend/src/assets/MapAssets/Maps
-/App/frontend/map/FloridaAirfield.mbtiles
+/App/frontend/map

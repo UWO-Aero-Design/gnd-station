@@ -13,14 +13,21 @@
       @update:bounds="boundsUpdated"
       ref="Map"
     >
-      <l-tile-layer :url="url" ref="tilelayer"></l-tile-layer>
+    <l-tile-layer
+      :url="url"
+      ref="tilelayer">
+    </l-tile-layer>
+    <l-marker 
+      :lat-lng="[27.96,-82.05]"
+      :icon="planeIcon">
+    </l-marker>
     </l-map>
   </div>
 </template>
 
 <script>
 
-  import {LMap, LTileLayer, LMarker} from 'vue2-leaflet';
+  import {LMap, LTileLayer, LMarker, LIcon} from 'vue2-leaflet';
   import {latLngBounds, latLng} from "leaflet";
 
   export default {
@@ -28,7 +35,8 @@
     components: {
       LMap,
       LTileLayer,
-      LMarker
+      LMarker,
+      LIcon
     },
     data () {
       return {
@@ -42,7 +50,12 @@
         ]),
         minZoom: 15,
         maxZoom: 17,
-        maxBoundsViscosity: 1
+        maxBoundsViscosity: 1,
+        planeIcon: L.icon({
+          iconUrl: '../../../static/MapAssets/plane.png',
+          iconSize: [32,32],
+          iconAnchor: [16,16]
+        })
       };
     },
     mounted() {
