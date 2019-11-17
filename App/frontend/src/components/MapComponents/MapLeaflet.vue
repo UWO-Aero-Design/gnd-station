@@ -4,6 +4,10 @@
       style="height: 100%; width: 100%"
       :zoom="zoom"
       :center="center"
+      :maxBounds="maxBounds"
+      :minZoom="minZoom"
+      :maxZoom="maxZoom"
+      :maxBoundsViscosity="maxBoundsViscosity"
       @update:zoom="zoomUpdated"
       @update:center="centerUpdated"
       @update:bounds="boundsUpdated"
@@ -17,6 +21,7 @@
 <script>
 
   import {LMap, LTileLayer, LMarker} from 'vue2-leaflet';
+  import {latLngBounds, latLng} from "leaflet";
 
   export default {
     name: "MapLeaflet",
@@ -28,9 +33,16 @@
     data () {
       return {
         url: 'http://localhost:8081/data/FloridaAirfield/{z}/{x}/{y}.png',
-        zoom: 17,
+        zoom: 15,
         center: [27.975042,-82.024381],
-        bounds: null
+        bounds: null,
+        maxBounds: latLngBounds([
+          [27.93751,-82.06301],
+          [27.99990,-82.00014]
+        ]),
+        minZoom: 15,
+        maxZoom: 17,
+        maxBoundsViscosity: 1
       };
     },
     mounted() {
@@ -38,10 +50,11 @@
       /*if (this.$refs.Map.mapObject.zoomControl) {
         this.$refs.Map.mapObject.remove()
       }*/
+
       this.$nextTick(() => {
+        //Add zoom controller to map
         this.zoomControl = L.control.zoom({'position': 'topright'});
         this.$refs.Map.mapObject.addControl(this.zoomControl);
-        //L.tileLayer('./../../assets/MapAssets/Maps/Florida/{z}/{x}/{y}.png',{maxZoom: 17}).addTo(this.$refs.Map.mapObject);
       });
     },
     methods: {
