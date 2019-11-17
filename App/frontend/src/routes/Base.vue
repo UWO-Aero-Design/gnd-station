@@ -1,6 +1,6 @@
 <template>
   <div>
-  <!-- Sidebar @update="updatePage"></Sidebar -->
+  <Sidebar @update="updatePage"></Sidebar>
   <multipane class="custom-resizer" layout="vertical" @paneResizeStop="redrawMapTiles">
     <div v-if="this.mapActive === true" class="pane" :style="{ minWidth: '60px'}">
       <MapLeaflet ref="Map"></MapLeaflet>

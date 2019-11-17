@@ -27,9 +27,9 @@
     },
     data () {
       return {
-        url: './Florida/{z}/{x}/{y}.png',
+        url: 'http://localhost:8081/data/FloridaAirfield/{z}/{x}/{y}.png',
         zoom: 17,
-        center: [-82.024381,27.975042],
+        center: [27.975042,-82.024381],
         bounds: null
       };
     },
