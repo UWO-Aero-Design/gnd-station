@@ -134,15 +134,15 @@ export default {
     background-color: #315CF4;
     z-index: 2;
 }
-
 .button {
-    background-color: #315CF4;
-    color: white;
-    height:100%;
-    width:100%;
-    border: none;
-    border-radius: 50%;
+  background-color: #315CF4;
+  color: white;
+  height:100%;
+  width:100%;
+  border: none;
+  border-radius: 50%;
 }
+
 
 .marker {
     position: absolute;

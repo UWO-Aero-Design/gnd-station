@@ -4,6 +4,7 @@
   <multipane class="custom-resizer" layout="vertical" @paneResizeStop="redrawMapTiles">
     <div v-if="this.mapActive === true" class="pane" :style="{ minWidth: '60px'}">
       <MapLeaflet ref="Map"></MapLeaflet>
+      <!--Map ref="Map"></Map-->
     </div>
    <multipane-resizer v-if="this.mapActive === true"></multipane-resizer>
     <div class="pane" :style="{ flexGrow: 1 }">
@@ -18,6 +19,7 @@
   import { Multipane, MultipaneResizer } from 'vue-multipane';
   import Info from "@/components/Info";
   import MapLeaflet from "@/components/MapComponents/MapLeaflet";
+  import Map from "@/components/Map";
 
 export default {
   name: 'Base',
@@ -26,7 +28,8 @@ export default {
     Multipane,
     MultipaneResizer,
     Info,
-    MapLeaflet
+    MapLeaflet,
+    Map
   },
   mounted() {
   },
