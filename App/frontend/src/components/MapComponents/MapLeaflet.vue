@@ -29,20 +29,29 @@
         <MapInfo :data="planeData"></MapInfo>
       </l-popup>
     </l-marker>
-      <l-marker
-        :lat-lng="[gliderData.latitude,gliderData.longitude]"
-        :icon="gliderIcon">
-        <l-popup>
-          <MapInfo :data="gliderData"></MapInfo>
-        </l-popup>
-      </l-marker>
+    <l-marker
+      :lat-lng="[gliderData.latitude,gliderData.longitude]"
+      :icon="gliderIcon">
+      <l-popup>
+        <MapInfo :data="gliderData"></MapInfo>
+      </l-popup>
+    </l-marker>
+    <l-rectangle
+      :bounds="dropZone.bounds"
+      :l-style="dropZone.style">
+    </l-rectangle>
+    <l-circle
+      :lat-lng="target.center"
+      :radius="target.radius"
+      :l-style="target.style">
+    </l-circle>
     </l-map>
   </div>
 </template>
 
 <script>
 
-  import {LMap, LTileLayer, LMarker, LIcon, LPopup} from 'vue2-leaflet';
+  import {LMap, LTileLayer, LMarker, LIcon, LPopup, LRectangle, LCircle} from 'vue2-leaflet';
   import {latLngBounds, latLng} from "leaflet";
   import MapInfo from "@/components/MapComponents/MapInfo";
   import { RadialMenu, RadialMenuItem } from 'vue-radial-menu';
@@ -57,7 +66,9 @@
       LPopup,
       MapInfo,
       RadialMenu,
-      RadialMenuItem
+      RadialMenuItem,
+      LRectangle,
+      LCircle
     },
     data () {
       return {
@@ -86,14 +97,25 @@
           iconAnchor: [16,16]
         }),
         planeData: {
-          latitude: 27.96,
-          longitude: -82.05,
+          latitude: 27.95,
+          longitude: -82.02,
           altitude: 100
         },
         gliderData: {
           latitude: 27.94,
           longitude: -82.03,
           altitude: 50
+        },
+
+        //Dropzone and Target
+        dropZone: {
+          bounds: [[27.985,-82.02],[27.995,-82.01]],
+          style: { color: 'blue', weight: 3, fillOpacity: 0.2, fillColor: 'blue'}
+        },
+        target: {
+          center: [27.99,-82.015],
+          radius: 100,
+          style: { color: 'red', weight: 1}
         },
 
         //Menu Data
