@@ -22,7 +22,8 @@
         :url="url"
         ref="tilelayer">
       </l-tile-layer>
-      <l-marker
+      <!-- Vue2leaflet components not used due to popup binding difficulties -->
+      <!--l-marker
         :lat-lng="[planeData.latitude,planeData.longitude]"
         :icon="planeIcon">
         <l-popup>
@@ -36,6 +37,9 @@
           <MapInfo :data="gliderData"></MapInfo>
         </l-popup>
       </l-marker>
+      <l-popup ref="planePopUp">
+        <MapInfo :data="gliderData"></MapInfo>
+      </l-popup-->
       <l-rectangle
         :bounds="dropZone.bounds"
         :l-style="dropZone.style">
@@ -133,7 +137,10 @@
 
         //Flight Data
         flightPlayButton: "",
-        flightPlaySpeed: "2000"
+        flightPlaySpeed: "2000",
+
+        //Popups
+        planePopup: ""
       };
     },
     mounted() {
@@ -154,7 +161,8 @@
         this.flightPlayButton.button.style.width = '32px';
         this.flightPlayButton.button.style.height = '32px';
 
-        this.planeMarker = L.Marker.movingMarker([[27.94,-82.03],[27.95,-82.02]],[this.flightPlaySpeed]).addTo(this.$refs.Map.mapObject);
+        this.planeMarker = L.Marker.movingMarker([[27.94,-82.03],[27.95,-82.02]],[this.flightPlaySpeed],{icon: this.planeIcon})
+          .bindPopup("<p>" + "Latitude: " + this.planeData.latitude + "</p> <p> Longitude: " + this.planeData.longitude + "</p> <p> Altitude: " + this.planeData.altitude + "</p>").addTo(this.$refs.Map.mapObject);
       });
     },
     methods: {
