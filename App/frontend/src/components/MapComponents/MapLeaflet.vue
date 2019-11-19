@@ -18,43 +18,49 @@
       @update:bounds="boundsUpdated"
       ref="Map"
     >
-    <l-tile-layer
-      :url="url"
-      ref="tilelayer">
-    </l-tile-layer>
-    <l-marker 
-      :lat-lng="[planeData.latitude,planeData.longitude]"
-      :icon="planeIcon">
-      <l-popup>
-        <MapInfo :data="planeData"></MapInfo>
-      </l-popup>
-    </l-marker>
-    <l-marker
-      :lat-lng="[gliderData.latitude,gliderData.longitude]"
-      :icon="gliderIcon">
-      <l-popup>
-        <MapInfo :data="gliderData"></MapInfo>
-      </l-popup>
-    </l-marker>
-    <l-rectangle
-      :bounds="dropZone.bounds"
-      :l-style="dropZone.style">
-    </l-rectangle>
-    <l-circle
-      :lat-lng="target.center"
-      :radius="target.radius"
-      :l-style="target.style">
-    </l-circle>
+      <l-tile-layer
+        :url="url"
+        ref="tilelayer">
+      </l-tile-layer>
+      <l-marker
+        :lat-lng="[planeData.latitude,planeData.longitude]"
+        :icon="planeIcon">
+        <l-popup>
+          <MapInfo :data="planeData"></MapInfo>
+        </l-popup>
+      </l-marker>
+      <l-marker
+        :lat-lng="[gliderData.latitude,gliderData.longitude]"
+        :icon="gliderIcon">
+        <l-popup>
+          <MapInfo :data="gliderData"></MapInfo>
+        </l-popup>
+      </l-marker>
+      <l-rectangle
+        :bounds="dropZone.bounds"
+        :l-style="dropZone.style">
+      </l-rectangle>
+      <l-circle
+        :lat-lng="target.center"
+        :radius="target.radius"
+        :l-style="target.style">
+      </l-circle>
+      <l-control-layers
+        position="topright">
+      </l-control-layers>
     </l-map>
   </div>
 </template>
 
 <script>
 
-  import {LMap, LTileLayer, LMarker, LIcon, LPopup, LRectangle, LCircle} from 'vue2-leaflet';
+  import {LMap, LTileLayer, LMarker, LIcon, LPopup, LRectangle, LCircle, LControlLayers} from 'vue2-leaflet';
   import {latLngBounds, latLng} from "leaflet";
   import MapInfo from "@/components/MapComponents/MapInfo";
   import { RadialMenu, RadialMenuItem } from 'vue-radial-menu';
+  import 'leaflet-easybutton';
+  var movingMarker = require('../../assets/js/MovingMarker.js');
+
 
   export default {
     name: "MapLeaflet",
@@ -68,7 +74,8 @@
       RadialMenu,
       RadialMenuItem,
       LRectangle,
-      LCircle
+      LCircle,
+      LControlLayers
     },
     data () {
       return {
@@ -119,7 +126,14 @@
         },
 
         //Menu Data
-        menuItems: ['Plane','Glider']
+        menuItems: ['Plane','Glider'],
+
+        //Markers
+        planeMarker: "",
+
+        //Flight Data
+        flightPlayButton: "",
+        flightPlaySpeed: "2000"
       };
     },
     mounted() {
@@ -132,6 +146,15 @@
         //Add zoom controller to map
         this.zoomControl = L.control.zoom({'position': 'topright'});
         this.$refs.Map.mapObject.addControl(this.zoomControl);
+
+        //Add flight play button (State toggling not working)
+        this.flightPlayButton = L.easyButton({position: 'bottomright',states:
+            [{stateName: 'Play',icon: 'fas fa-play',title: 'Play',onClick: this.playFlight},
+              {stateName: 'Pause',icon: 'fas fa-pause',title: 'Pause',onClick: this.pauseFlight}]}).addTo(this.$refs.Map.mapObject);
+        this.flightPlayButton.button.style.width = '32px';
+        this.flightPlayButton.button.style.height = '32px';
+
+        this.planeMarker = L.Marker.movingMarker([[27.94,-82.03],[27.95,-82.02]],[this.flightPlaySpeed]).addTo(this.$refs.Map.mapObject);
       });
     },
     methods: {
@@ -154,6 +177,12 @@
         else if (item === "Glider") {
           this.$refs.Map.mapObject.flyTo([this.gliderData.latitude,this.gliderData.longitude],17);
         }
+      },
+      playFlight() {
+        this.planeMarker.start();
+      },
+      pauseFlight() {
+        this.planeMarker.pause();
       }
     }
   }

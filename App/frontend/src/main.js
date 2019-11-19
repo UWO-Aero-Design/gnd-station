@@ -12,14 +12,14 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { Icon }  from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-library.add(faUserSecret)
+library.add(faUserSecret);
 
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 
-Vue.use(VueSidebarMenu)
+Vue.use(VueSidebarMenu);
 
 const VueScrollTo = require('vue-scrollto');
-Vue.use(VueScrollTo)
+Vue.use(VueScrollTo);
 // Scroll default options
 Vue.use(VueScrollTo, {
      container: "body",
@@ -33,9 +33,9 @@ Vue.use(VueScrollTo, {
      onCancel: false,
      x: true,
      y: true
- })
+ });
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 
 // this part resolve an issue where the markers would not appear
@@ -52,4 +52,4 @@ new Vue({
   el: '#app',
   router,
   render: h => h(App)
-})
+});
