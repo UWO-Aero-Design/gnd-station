@@ -137,7 +137,8 @@
 
         //Flight Data
         flightPlayButton: "",
-        flightPlaySpeed: "2000",
+        flightPlaySpeed: "10000",
+        flightPlayingID: "",
 
         //Popups
         planePopup: ""
@@ -161,23 +162,29 @@
         this.flightPlayButton.button.style.width = '32px';
         this.flightPlayButton.button.style.height = '32px';
 
-        this.planeMarker = L.Marker.movingMarker([[27.94,-82.03],[27.95,-82.02]],[this.flightPlaySpeed],{icon: this.planeIcon})
+        this.planeMarker = L.Marker.movingMarker([[27.94,-82.03],[27.99,-82.015]],[this.flightPlaySpeed],{icon: this.planeIcon})
           .bindPopup("<p>" + "Latitude: " + this.planeData.latitude + "</p> <p> Longitude: " + this.planeData.longitude + "</p> <p> Altitude: " + this.planeData.altitude + "</p>").addTo(this.$refs.Map.mapObject);
+        this.planeMarker.on('start',this.flightUpdate);
       });
     },
     methods: {
+      //Update current zoom level
       zoomUpdated (zoom) {
         this.zoom = zoom;
       },
+      //Update current center coordinates
       centerUpdated (center) {
         this.center = center;
       },
+      //Update map boundaries
       boundsUpdated (bounds) {
         this.bounds = bounds;
       },
+      //Redraw map tiles on resize (called by base component)
       redrawMapTiles() {
         this.$refs.Map.mapObject.invalidateSize();
       },
+      //Change view location
       activateScroll(item) {
         if (item === "Plane") {
           this.$refs.Map.mapObject.flyTo([this.planeData.latitude,this.planeData.longitude],17);
@@ -186,11 +193,25 @@
           this.$refs.Map.mapObject.flyTo([this.gliderData.latitude,this.gliderData.longitude],17);
         }
       },
+      //Start marker movement
       playFlight() {
         this.planeMarker.start();
       },
+      //Pause marker movement
       pauseFlight() {
         this.planeMarker.pause();
+      },
+      //Update marker location (set on start event on marker)
+      flightUpdate() {
+        //Update at intervals of 500ms
+        this.flightPlayingID = setInterval(()=> {
+          const currentPlaneData = this.planeMarker.getLatLng();
+          this.planeData.latitude = currentPlaneData.lat;
+          this.planeData.longitude = currentPlaneData.lng;
+          this.planeMarker.setPopupContent("<p>" + "Latitude: " + this.planeData.latitude + "</p> <p> Longitude: " + this.planeData.longitude + "</p> <p> Altitude: " + this.planeData.altitude + "</p>");
+        },500);
+        //Stop updating once end event happens on marker
+        this.planeMarker.on('end',()=> {clearInterval(this.flightPlayingID);});
       }
     }
   }
