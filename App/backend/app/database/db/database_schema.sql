@@ -10,14 +10,14 @@ CREATE TABLE IF NOT EXISTS Glider (
 );
 CREATE TABLE IF NOT EXISTS FlightPath (
 	FlightPathID INTEGER NOT NULL,
-	PilotName CHARACTER(50) NOT NULL,
+	PilotName VARCHAR(50) NOT NULL,
 	LocationID INTEGER NOT NULL,
-	AirplaneType CHARACTER(20) NOT NULL,
+	AirplaneType VARCHAR(20) NOT NULL,
 	PlaneID INTEGER NOT NULL,
 	PlaneVersion INTEGER NOT NULL,
 	GliderID INTEGER NOT NULL,
 	GliderVersion INTEGER NOT NULL,
-    PRIMARY KEY (FlightPathID)
+    PRIMARY KEY (FlightPathID),
 	FOREIGN KEY (PlaneID) REFERENCES Plane(PlaneID),
     FOREIGN KEY (PlaneVersion) REFERENCES Plane(PlaneVersion),
     FOREIGN KEY (GliderID) REFERENCES Glider(GliderID),
@@ -35,12 +35,12 @@ CREATE TABLE IF NOT EXISTS GpsValue (
 	Speed DOUBLE NOT NULL,
 	Satellite DOUBLE NOT NULL,
 	Altitude DOUBLE NOT NULL,
-	Time DOUBLE NOT NULL,
-	Date INTEGER NOT NULL,
+	GPSTime DOUBLE NOT NULL, -- need to modify based on incoming data
+	GPSDate INTEGER NOT NULL, -- need to modify based on incoming data
 	FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
-	PRIMARY KEY (FlightPathID, PointID)
-	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID)
+	PRIMARY KEY (FlightPathID, PointID),
+	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID),
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
 );
 CREATE TABLE IF NOT EXISTS ImuValues (
@@ -58,8 +58,8 @@ CREATE TABLE IF NOT EXISTS ImuValues (
 	GyroscopeZ DOUBLE NOT NULL,
 	FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
-	PRIMARY KEY (FlightPathID, PointID)
-	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID)
+	PRIMARY KEY (FlightPathID, PointID),
+	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID),
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
 );
 CREATE TABLE IF NOT EXISTS EnvironmentalSensorData (
@@ -68,22 +68,27 @@ CREATE TABLE IF NOT EXISTS EnvironmentalSensorData (
 	Temperature DOUBLE NOT NULL,
     FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
-	PRIMARY KEY (FlightPathID, PointID)
-	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID)
+	PRIMARY KEY (FlightPathID, PointID),
+	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID),
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
 );
 CREATE TABLE IF NOT EXISTS BatteryStatus (
-	Voltage DOUBLE NOT NULL,
-	Current DOUBLE NOT NULL,
+	BatteryVoltage DOUBLE NOT NULL,
+	BatteryCurrent DOUBLE NOT NULL,
     FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
-	PRIMARY KEY (FlightPathID, PointID)
-	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID)
+	PRIMARY KEY (FlightPathID, PointID),
+	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID),
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
 );
 CREATE TABLE IF NOT EXISTS SystemStatus (
 	Rssi DOUBLE NOT NULL,
-	State DOUBLE NOT NULL
+	State DOUBLE NOT NULL,
+    FlightPathID INTEGER NOT NULL,
+	PointID INTEGER NOT NULL,
+	PRIMARY KEY (FlightPathID, PointID),
+	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID),
+	FOREIGN KEY (PointID) REFERENCES Point(PointID)
 );
 CREATE TABLE IF NOT EXISTS ServoData (
 	Servo0 DOUBLE NOT NULL,
@@ -104,7 +109,7 @@ CREATE TABLE IF NOT EXISTS ServoData (
 	Servo15 DOUBLE NOT NULL,
     FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
-	PRIMARY KEY (FlightPathID, PointID)
-	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID)
+	PRIMARY KEY (FlightPathID, PointID),
+	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID),
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
 );
