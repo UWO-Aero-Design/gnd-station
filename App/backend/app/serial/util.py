@@ -1,4 +1,17 @@
-# File containing functions pertaining to bits and bytes manipulation
+# Serial utility functions
+
+def calculate_chksum(buffer):
+    """ Calculate simple checksum by XOR'ing each byte in the buffer
+        Returns the checksum
+    """
+    checksum = 0
+    
+    for b in buffer:
+        if not b == '\n':
+            checksum ^= int(b, 16)
+    
+    return checksum
+
 
 def is_bit_set(n, k):
     ''' 

@@ -1,9 +1,12 @@
-# File containing functions that dictate how a serial buffer will be parsed based on the aero message protocol
-from byte_manip import signed_int16, signed_int32, unsigned_int16, unsigned_int32, is_bit_set
+# Serial message definit
+from util import *
 
 BYTE = 1
 TWO_BYTES = 2
 FOUR_BYTES = 4
+
+START_BYTE = 0xAA
+END_BYTE = 0xFF
 
 ID_LOOKUP = {
     0 : 'Gnd Station',
@@ -14,6 +17,7 @@ ID_LOOKUP = {
 
 class Pitot:
     SIZE = 2
+    ID = 0
     def __init__(self, buf):
         self.differential_pressure = signed_int16(buf)
 
@@ -22,6 +26,7 @@ class Pitot:
 
 class IMU:
     SIZE = 24
+    ID = 1
     def __init__(self, buf):
         self.ax = signed_int16(buf[22:24])
         self.ay = signed_int16(buf[20:22])
@@ -55,6 +60,7 @@ class IMU:
 
 class GPS:
     SIZE = 21
+    ID = 2
     def __init__(self, buf):
         self.lat = signed_int32(buf[17:21])
         self.lon = signed_int32(buf[13:17])
@@ -76,6 +82,7 @@ class GPS:
 
 class Enviro:
     SIZE = 6
+    ID = 3
     def __init__(self, buf):
         self.pressure = unsigned_int16(buf[4:6])
         self.humidity = unsigned_int16(buf[2:4])
@@ -88,6 +95,7 @@ class Enviro:
 
 class Battery:
     SIZE = 4
+    ID = 4
     def __init__(self, buf):
         self.voltage = unsigned_int16(buf[2:4])
         self.current = unsigned_int16(buf[0:2])
@@ -99,6 +107,7 @@ class Battery:
 class Config:
     # Leaves config spot as 0 so size needs to be 1 even if empty
     SIZE = 1
+    ID = 5
     def __init__(self, buf):
         # Currently empty
         pass
@@ -109,6 +118,7 @@ class Config:
 
 class Status:
     SIZE = 6
+    ID = 6
     def __init__(self, buf):
         self.rssi = signed_int16(buf[4:6])
         self.state = unsigned_int32(buf[0:4])
@@ -120,6 +130,7 @@ class Status:
 
 class Servos:
     SIZE = 64
+    ID = 7
     def __init__(self, buf):
         self.servo0 = unsigned_int32(buf[60:64])
         self.servo1 = unsigned_int32(buf[56:60])
@@ -161,6 +172,7 @@ class Servos:
 
 class AirData:
     SIZE = 36
+    ID = 8
     def __init__(self, buf):
         self.ias = unsigned_int32(buf[32:36])
         self.eas = unsigned_int32(buf[28:32])
@@ -186,6 +198,7 @@ class AirData:
 
 class Commands:
     SIZE = 4
+    ID = 9
     def __init__(self, buf):
         self.drop = int(str(buf[3]), 10)
         self.servos = unsigned_int16(buf[1:3])
@@ -199,6 +212,7 @@ class Commands:
 
 class DropAlgo:
     SIZE = 4
+    ID = 10
     def __init__(self, buf):
         self.heading = signed_int16(buf[2:4])
         self.distance = unsigned_int16(buf[0:2])
@@ -206,166 +220,3 @@ class DropAlgo:
     def __str__(self):
         return 'Drop \t Heading: {0}\
                          \n\t Distance: {1}'.format(self.heading, self.distance)
-
-
-def parse(buf):
-    # Convert buffer of byte array into ascii encoded list of strings
-    buf = buf.decode('ascii').split(' ')
-    # Used to track progress within the buffer
-   
-    buf_ptr = 0
-
-    # Get start byte
-    start = buf[buf_ptr:buf_ptr+BYTE]
-    start = ''.join(start[::-1])
-    buf_ptr += BYTE
-
-    # # Get link
-    link = buf[buf_ptr:buf_ptr+TWO_BYTES]
-    link = ''.join(link[::-1])
-    from_id = int(link[0])
-    to_id = int(link[1])
-    buf_ptr += TWO_BYTES
-    
-    # Get signature
-    sig = buf[buf_ptr:buf_ptr+TWO_BYTES]
-    #sig = ''.join(sig[::-1])
-    sig = [int(i, 16) for i in sig]
-    sig = unsigned_int16(sig, 'little')
-    buf_ptr += TWO_BYTES
-
-    # Get length
-    p_len = buf[buf_ptr:buf_ptr+BYTE]
-    p_len = ''.join(p_len[::-1])
-    buf_ptr += BYTE
-
-    # Get buffer
-    data_buf = buf[buf_ptr:buf_ptr+int(p_len, 16)]
-    data_buf = ' '.join(data_buf[::-1])
-    buf_ptr += int(p_len, 16)
-
-    # Get CRC
-    crc = buf[buf_ptr:buf_ptr+TWO_BYTES]
-    crc = ''.join(crc[::-1])
-    buf_ptr += TWO_BYTES
-
-    # Get end
-    end = buf[buf_ptr:buf_ptr+BYTE]
-    end = ''.join(end[::-1])
-    buf_ptr += BYTE
-
-    # Print message
-    DEBUG = False
-    if DEBUG:
-        print('\n*** NEW MESSAGE ***')
-        print('Full Message: {}'.format(buf))
-        print('Start: {}'.format(start))
-        print('Link: {} meaning from: {} and to: {}'.format(link, ID_LOOKUP[from_id], ID_LOOKUP[to_id]))
-        print('Signature: {}'.format(sig))
-        print('Buffer Length: {}'.format(p_len))
-        print('Buffer: {}'.format(data_buf))
-        print('CRC: {}'.format(crc))
-        print('End: {}'.format(end))
-        print('*** MESSAGE END ***')
-
-    msg_result = {'error':False, 'data':11*[None]}
-
-    # Check message first
-    # TODO: Include CRC, Start and End checks
-    # 9 for the extra struct elements and 1 for the new line
-    if len(buf) > int(p_len, 16) + 9 + 1:
-        msg_result['error'] = True
-    else:
-        msg_result['data'] = parse_data(sig, data_buf)
-
-    
-
-    return msg_result
-
-def parse_data(sig: int, data_buf):
-    data_buf = data_buf.split(' ')
-    data_buf = [int(i, 16) for i in data_buf] 
-    ptr_in_buf = len(data_buf)
-
-    parsed_data = 11*[None]
-
-    DEBUG = False
-
-
-    if DEBUG == True:
-        print('\nBuffer parsing...')
-        print(data_buf)
-
-    # IMPROVE: this is spaghet
-    if is_bit_set(sig, 1):
-        if DEBUG:
-            print('Pitot')
-        i = Pitot(data_buf[ptr_in_buf-Pitot.SIZE:ptr_in_buf])
-        ptr_in_buf -= Pitot.SIZE
-        parsed_data[0] = i
-    if is_bit_set(sig, 2):
-        if DEBUG:
-            print('IMU')
-        i = IMU(data_buf[ptr_in_buf-IMU.SIZE:ptr_in_buf])
-        ptr_in_buf -= IMU.SIZE
-        parsed_data[1] = i
-    if is_bit_set(sig, 3):
-        if DEBUG:
-            print('GPS')
-        i = GPS(data_buf[ptr_in_buf-GPS.SIZE:ptr_in_buf])
-        ptr_in_buf -= GPS.SIZE
-        parsed_data[2] = i
-    if is_bit_set(sig, 4):
-        if DEBUG:
-            print('Enviro')
-        i = Enviro(data_buf[ptr_in_buf-Enviro.SIZE:ptr_in_buf])
-        ptr_in_buf -= Enviro.SIZE
-        parsed_data[3] = i
-    if is_bit_set(sig, 5):
-        if DEBUG:
-            print('Batt')
-        i = Battery(data_buf[ptr_in_buf-Battery.SIZE:ptr_in_buf])
-        ptr_in_buf -= Battery.SIZE
-        parsed_data[4] = i
-    if is_bit_set(sig, 6):
-        if DEBUG:
-            print('Config')
-        i = Config(data_buf[ptr_in_buf-Config.SIZE:ptr_in_buf])
-        ptr_in_buf -= Config.SIZE
-        parsed_data[5] = i
-    if is_bit_set(sig, 7):
-        if DEBUG:
-            print('Status')
-        i = Status(data_buf[ptr_in_buf-Status.SIZE:ptr_in_buf])
-        ptr_in_buf -= Status.SIZE
-        parsed_data[6] = i
-    if is_bit_set(sig, 8):
-        if DEBUG:
-            print('Actuators')
-        i = Servos(data_buf[ptr_in_buf-Servos.SIZE:ptr_in_buf])
-        ptr_in_buf -= Servos.SIZE
-        parsed_data[7] = i
-    if is_bit_set(sig, 9):
-        if DEBUG:
-            print('AData')
-        i = AirData(data_buf[ptr_in_buf-AirData.SIZE:ptr_in_buf])
-        ptr_in_buf -= AirData.SIZE
-        parsed_data[9] = i
-    if is_bit_set(sig, 10):
-        if DEBUG:
-            print('Cmds')
-        i = Commands(data_buf[ptr_in_buf-Commands.SIZE:ptr_in_buf])
-        ptr_in_buf -= Commands.SIZE
-        parsed_data[9] = i
-    if is_bit_set(sig, 11):
-        if DEBUG:
-            print('Drop')
-        i = DropAlgo(data_buf[ptr_in_buf-DropAlgo.SIZE:ptr_in_buf])
-        ptr_in_buf -= DropAlgo.SIZE
-        parsed_data[10] = i
-
-    if DEBUG:
-        for data in parsed_data:
-            print(data)
-        
-    return parsed_data
