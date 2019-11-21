@@ -33,4 +33,5 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
 #Run server on open
-CMD ["flask", "run"]
+#CMD ["flask", "run"]
+CMD ["python3","groundstation.py"]

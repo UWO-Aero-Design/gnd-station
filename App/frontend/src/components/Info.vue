@@ -24,7 +24,7 @@
                  :isResizable="true">
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
         {{ item.i }}
-        <TestComponent v-if="item.componentName === 'speed'"></TestComponent>
+        <MapInfo v-if="item.componentName === 'MapInfo'"></MapInfo>
         <br><br>
       </grid-item>
     </grid-layout>
@@ -35,14 +35,14 @@
 <script>
 import axios from 'axios'
 import VueGridLayout from 'vue-grid-layout';
-import TestComponent from "@/components/TestComponent";
+import MapInfo from "@/components/MapComponents/MapInfo";
 
 export default {
   name: 'Info',
   components: {
       GridLayout: VueGridLayout.GridLayout,
       GridItem: VueGridLayout.GridItem,
-      TestComponent
+      MapInfo
   },
   mounted() {
 

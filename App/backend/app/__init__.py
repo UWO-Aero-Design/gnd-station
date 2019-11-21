@@ -6,13 +6,18 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import BaseConfig
 from flask_cors import CORS
+from flask_socketio import SocketIO
 
-def create_app(config_class=BaseConfig):
+socketio = SocketIO()
+
+#def create_app(config_class=BaseConfig):
+def create_app(debug=False):
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    #app.config.from_object(config_class)
+    app.debug = debug
 
     #Register CORS
-    cors = CORS(app)
+    #cors = CORS(app)
 
     #Register Blueprints
     from app.base import api as base_bp
@@ -41,5 +46,7 @@ def create_app(config_class=BaseConfig):
 
     from app.status import api as status_bp
     app.register_blueprint(status_bp, url_prefix='/status')
+
+    socketio.init_app(app,cors_allowed_origins="*")
 
     return app

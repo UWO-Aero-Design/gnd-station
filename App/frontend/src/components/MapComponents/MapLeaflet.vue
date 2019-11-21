@@ -40,6 +40,10 @@
       <l-popup ref="planePopUp">
         <MapInfo :data="gliderData"></MapInfo>
       </l-popup-->
+      <l-polyline
+        :lat-lngs="[[27.94,-82.03],[27.99,-82.015]]"
+        :color="'blue'" v-if="this.flightPlaying === true">
+      </l-polyline>
       <l-rectangle
         :bounds="dropZone.bounds"
         :l-style="dropZone.style">
@@ -58,7 +62,7 @@
 
 <script>
 
-  import {LMap, LTileLayer, LMarker, LIcon, LPopup, LRectangle, LCircle, LControlLayers} from 'vue2-leaflet';
+  import {LMap, LTileLayer, LMarker, LIcon, LPopup, LRectangle, LCircle, LControlLayers, LPolyline} from 'vue2-leaflet';
   import {latLngBounds, latLng} from "leaflet";
   import MapInfo from "@/components/MapComponents/MapInfo";
   import { RadialMenu, RadialMenuItem } from 'vue-radial-menu';
@@ -79,7 +83,8 @@
       RadialMenuItem,
       LRectangle,
       LCircle,
-      LControlLayers
+      LControlLayers,
+      LPolyline
     },
     data () {
       return {
@@ -139,6 +144,7 @@
         flightPlayButton: "",
         flightPlaySpeed: "10000",
         flightPlayingID: "",
+        flightPlaying: "",
 
         //Popups
         planePopup: ""
@@ -204,6 +210,7 @@
       //Update marker location (set on start event on marker)
       flightUpdate() {
         //Update at intervals of 500ms
+        this.flightPlaying = true;
         this.flightPlayingID = setInterval(()=> {
           const currentPlaneData = this.planeMarker.getLatLng();
           this.planeData.latitude = currentPlaneData.lat;
@@ -211,7 +218,7 @@
           this.planeMarker.setPopupContent("<p>" + "Latitude: " + this.planeData.latitude + "</p> <p> Longitude: " + this.planeData.longitude + "</p> <p> Altitude: " + this.planeData.altitude + "</p>");
         },500);
         //Stop updating once end event happens on marker
-        this.planeMarker.on('end',()=> {clearInterval(this.flightPlayingID);});
+        this.planeMarker.on('end',()=> {clearInterval(this.flightPlayingID);this.flightPlaying = false});
       }
     }
   }

@@ -42,6 +42,13 @@ export default {
               componentSize: '1Block',
               componentType: 'Grid',
               componentName: 'Communication'
+            },
+            {
+              title: 'Map Data',
+              icon: 'fas fa-crosshairs',
+              componentSize: '2BlockH',
+              componentType: 'Grid',
+              componentName: 'MapInfo'
             }
           ],
           componentType: 'None'

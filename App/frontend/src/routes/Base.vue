@@ -35,7 +35,8 @@ export default {
   },
   data () {
     return {
-      mapActive: true
+      mapActive: true,
+      response: 'No response yet'
     }
   },
   methods: {
@@ -50,6 +51,9 @@ export default {
     redrawMapTiles() {
       this.$refs.Map.redrawMapTiles();
     }
+  },
+  created () {
+    this.$socket.emit('hello', this.message)
   }
 }
 </script>
