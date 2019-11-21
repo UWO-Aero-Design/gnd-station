@@ -7,7 +7,8 @@ def parse(buf):
     # Convert buffer of byte array into ascii encoded list of strings
     buf = buf.decode('ascii').split(' ')
     # Used to track progress within the buffer
-    
+    # print(buf)
+
     # TODO: Stuff this into a class perhaps?
     buf_ptr = 0
 
@@ -84,7 +85,7 @@ def extract_from_buffer(signature: int, buf):
 
     parsed_data = 11*[None]
 
-    DEBUG = True
+    DEBUG = False
 
     if DEBUG == True:
         print('\nBuffer parsing...')

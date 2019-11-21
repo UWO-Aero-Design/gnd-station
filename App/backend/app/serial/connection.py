@@ -97,14 +97,19 @@ def port_read(serial_port, event=None):
 
     data_from_serial = serial_port.readline()
     if data_from_serial:
-        result, error = parse(data_from_serial)
-        if error:
-            print('Received message with errors')
-        else:
-            print('Received message with no errors')
-            if event:
-                # Can pass result into event
-                event(result)
+        try:
+            result, error = parse(data_from_serial)
+
+            if error:
+                print('Received message with errors')
+            else:
+                print('Received message with no errors')
+                if event:
+                    # Can pass result into event
+                    event(result)
+        except:
+            print('Exception while parsing message')
+        
     else:
         print('Failed to receive message')
 
