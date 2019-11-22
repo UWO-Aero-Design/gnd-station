@@ -1,5 +1,6 @@
-# Serial message definit
-from util import *
+# Serial message definitions
+from app.Serial import util
+from app.Serial.util import *
 
 BYTE = 1
 TWO_BYTES = 2

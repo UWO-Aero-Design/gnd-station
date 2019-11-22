@@ -1,5 +1,12 @@
 # Serial module
 #   Must install PySerial
+""" import builder
+import connection
+import definitions
+import events
+import parser
+import util """
+
 
 # Contains:
 #   builder.py --> used to build messages to send over serial

@@ -1,7 +1,9 @@
 # Message parser
 # File containing functions that dictate how a serial buffer will be parsed based on the aero message protocol
-from definitions import *
-from util import calculate_chksum
+from app.Serial import definitions
+from app.Serial.definitions import *
+from app.Serial import util
+from app.Serial.util import calculate_chksum
 
 def parse(buf):
     # Convert buffer of byte array into ascii encoded list of strings

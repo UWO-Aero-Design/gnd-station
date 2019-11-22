@@ -101,3 +101,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+.idea
+
+App/frontend/src/assets/MapAssets/Maps/Florida
+App/frontend/map

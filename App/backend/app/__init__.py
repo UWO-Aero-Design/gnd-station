@@ -6,6 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import BaseConfig
 from flask_cors import CORS
+from redis import Redis
+import rq
 
 def create_app(config_class=BaseConfig):
     app = Flask(__name__)
@@ -13,6 +15,9 @@ def create_app(config_class=BaseConfig):
 
     #Register CORS
     cors = CORS(app)
+
+    app.redis = Redis.from_url(app.config['REDIS_URL'])
+    app.task_queue = rq.Queue('serial', connection=app.redis)
 
     #Register Blueprints
     from app.base import api as base_bp

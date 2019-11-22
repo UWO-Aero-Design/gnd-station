@@ -5,10 +5,13 @@ import serial
 from serial.tools import list_ports
 
 # Message parser
-from parse import parse
+from app.Serial import parse
+from app.Serial.parse import parse
+
 
 # Event for serial
-from events import post_serial_read, pre_serial_write
+from app.Serial import events 
+from app.Serial.events import post_serial_read, pre_serial_write
 
 # Configuration for Serial connection
 class SerialConfig:
@@ -124,7 +127,7 @@ def port_write(serial_port, event):
         serial_port.write(data)
     
 # Run file as script to test functionality
-if __name__ == "__main__":
+def serial_data():
     # Wait for Teensy to be plugged in before communicating with it
     # Communicate with teensy until it has been unplugged
     # Wait for a Teensy to be connected again
@@ -135,7 +138,7 @@ if __name__ == "__main__":
                 break
             else:
                 print('Waiting for Teensy')
-                time.sleep(1)
+                time.sleep(2)
             
         print('Teensy Connected! \nSerial Task Starting...')
 
