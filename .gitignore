@@ -101,3 +101,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#Jetbrain
+.idea
+
+#Map assets
+App/frontend/map/FloridaAirfield.mbtiles
+App/frontend/map/FloridaAirfieldVector.mbtiles
+App/frontend/map/config.json
+App/frontend/src/assets/MapAssets/Maps/Florida
