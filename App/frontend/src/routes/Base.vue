@@ -20,6 +20,7 @@
   import Info from "@/components/Info";
   import MapLeaflet from "@/components/MapComponents/MapLeaflet";
   import Map from "@/components/Map";
+  import axios from 'axios';
 
 export default {
   name: 'Base',
@@ -32,11 +33,18 @@ export default {
     Map
   },
   mounted() {
+    var connect = this.startUp;
+    axios.get('http://localhost:5000/Ping')
+      .then(function(response) {
+        alert("Backend Started");
+      });
   },
   data () {
     return {
       mapActive: true,
-      response: 'No response yet'
+      response: 'No response yet',
+      isConnected: false,
+      startUp: false
     }
   },
   methods: {
@@ -52,8 +60,12 @@ export default {
       this.$refs.Map.redrawMapTiles();
     }
   },
-  created () {
-    this.$socket.emit('hello', this.message)
+  sockets: {
+    connectStatus: function(status) {
+      if (status.connect === "true") {
+        this.isConnected = true;
+      }
+    }
   }
 }
 </script>

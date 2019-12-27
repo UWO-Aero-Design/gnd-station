@@ -105,6 +105,9 @@ venv.bak/
 # Jetbrains project settings
 .idea
 
+#VSCode project settings
+.vscode
+
 # Maptiles
 /App/frontend/src/assets/MapAssets/Maps
 /App/frontend/map

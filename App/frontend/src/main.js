@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { Icon }  from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
+import socketio from 'socket.io-client';
 import VueSocketio from 'vue-socket.io';
 
 library.add(faUserSecret);
@@ -40,7 +41,8 @@ Vue.use(VueScrollTo, {
 Vue.config.productionTip = false;
 
 //Websocket stuff
-Vue.use(VueSocketio,'http://localhost:5000');
+export const SocketInstance = socketio('http://localhost:5000');
+Vue.use(VueSocketio,SocketInstance);
 
 
 // this part resolve an issue where the markers would not appear

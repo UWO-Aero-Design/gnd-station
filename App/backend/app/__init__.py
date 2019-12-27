@@ -17,7 +17,7 @@ def create_app(debug=False):
     app.debug = debug
 
     #Register CORS
-    #cors = CORS(app)
+    cors = CORS(app)
 
     #Register Blueprints
     from app.base import api as base_bp
