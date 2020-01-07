@@ -2,9 +2,22 @@
 <div>
   <sidebar-menu class="sidebar" :menu="menu" :hide-toggle="true" @item-click="onItemClick"/>
   <div class="main-box">
-    <splitpanes class="default-theme">
+    <!--splitpanes class="default-theme">
       <div v-for="pane in panes" :key="pane.i"> {{pane.text}} </div>
-    </splitpanes>
+    </splitpanes-->
+    <h1>
+      {{ isConnected }}
+    </h1>
+    <h2>
+      Latitude: {{ data.lat }} <br/>
+      Longitude: {{ data.lon }} <br/>
+      Altitude: {{ data.altitude }} <br/>
+      Speed: {{ data.speed }} <br/>
+      Satellites: {{ data.satellites }} <br/>
+      Time: {{ data.time }} <br/>
+      Date: {{ data.date }} <br/>
+    </h2>
+    <button @item-click="pingBackend"> Re-Connect </button>
   </div>
 
 </div>
@@ -40,10 +53,13 @@ export default {
                 i: 1,
                 text: 'Hello2'
             }
-      ]
+      ],
+      isConnected: 'Not connected',
+      data: '',
+      startUp: false,
+      response: 'No response yet'
     }
   },
-
   methods: {
     onItemClick (event, item) {
         console.log(item);
@@ -54,11 +70,26 @@ export default {
             });
         }
     },
-    pingBackend: function() {
-      axios.get('http://127.0.0.1:5000/Ping')
-        .then((response) => {
-          this.msg = response.data
-        })
+    pingBackend (event,item) {
+      axios.get('http://localhost:5000/Ping')
+      .then(function(response) {
+        alert("Backend Started");
+      });
+    }
+  },
+  mounted() {
+    var connect = this.startUp;
+    axios.get('http://localhost:5000/Ping')
+      .then(function(response) {
+        alert("Backend Started");
+      });
+  },
+  sockets: {
+    connectStatus: function(status) {
+      this.isConnected = status;
+    },
+    dataChannel: function(data) {
+      this.data = data;
     }
   }
 

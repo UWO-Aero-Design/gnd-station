@@ -8,10 +8,14 @@ from serial.tools import list_ports
 from app.Serial import parse
 from app.Serial.parse import parse
 
-
 # Event for serial
 from app.Serial import events 
 from app.Serial.events import post_serial_read, pre_serial_write
+
+from flask_socketio import emit,send
+from .. import socketio
+import eventlet
+eventlet.monkey_patch()
 
 # Configuration for Serial connection
 class SerialConfig:
@@ -138,9 +142,12 @@ def serial_data():
                 break
             else:
                 print('Waiting for Teensy')
+                socketio.emit('connectStatus','Waiting for Connection')
                 time.sleep(2)
             
         print('Teensy Connected! \nSerial Task Starting...')
+        socketio.emit('connectStatus','Groundstation Connection Established')
+        time.sleep(2)
 
         # Start serial task
         serial_task(port = port_info, 

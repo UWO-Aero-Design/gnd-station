@@ -102,7 +102,9 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+#IDE settings
 .idea
+.vscode
 
 App/frontend/src/assets/MapAssets/Maps/Florida
 App/frontend/map
