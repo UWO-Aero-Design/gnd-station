@@ -14,8 +14,6 @@ from app.Serial.events import post_serial_read, pre_serial_write
 
 from flask_socketio import emit,send
 from .. import socketio
-import eventlet
-eventlet.monkey_patch()
 
 # Configuration for Serial connection
 class SerialConfig:
@@ -112,6 +110,7 @@ def port_read(serial_port, event=None):
             else:
                 print('Received message with no errors')
                 if event:
+                    print("Passing Event")
                     # Can pass result into event
                     event(result)
         except:
