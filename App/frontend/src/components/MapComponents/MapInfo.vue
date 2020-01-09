@@ -1,8 +1,12 @@
 <template>
   <div class="infoBox">
-    <h1>Latitude: {{ latitude }}</h1>
-    <h1>Longitude: {{ longitude }}</h1>
-    <h1>Altitude: {{ altitude }}</h1>
+    <h1>Latitude: {{ GPSData.latitude }}</h1>
+    <h1>Longitude: {{ GPSData.longitude }}</h1>
+    <h1>Altitude: {{ GPSData.altitude }}</h1>
+    <h1>Satellites: {{ GPSData.satellites }}</h1>
+    <h1>Speed: {{ GPSData.speed }}</h1>
+    <h1>Time: {{ GPSData.time }}</h1>
+    <h1>Date: {{ GPSData.date }}</h1>
   </div>
 </template>
 
@@ -18,9 +22,7 @@
     data () {
       return {
         isConnected: false,
-        latitude: '0',
-        longitude: '0',
-        altitude: '0'
+        GPSData: ''
       };
     },
     methods: {
@@ -30,9 +32,7 @@
       this.isConnected = true;
     },
     dataChannel: function(data) {
-      this.latitude = data.latitude;
-      this.longitude = data.longitude;
-      this.altitude = data.altitude;
+      this.GPSData = data;
     }
     }
   }
@@ -41,5 +41,10 @@
 <style scoped>
   .infoBox {
     color: white;
+  }
+
+  h1 {
+    position: relative;
+    left: 20px;
   }
 </style>

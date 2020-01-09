@@ -54,10 +54,6 @@ Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
-//Websocket stuff
-export const SocketInstance = socketio('http://localhost:5000');
-Vue.use(VueSocketio,SocketInstance);
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
