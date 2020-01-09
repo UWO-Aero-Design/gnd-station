@@ -28,5 +28,11 @@ services:
 
   redis:
     image: "redis:5.0.5"
+
+  maps:
+    image: "klokantech/tileserver-gl"
     ports:
-     - "6379:6379"
+     - "8081:80"
+    volumes:
+      - "./App/frontend/map:/data"
+    command: "--verbose -c ./App/frontend/map/config.json"

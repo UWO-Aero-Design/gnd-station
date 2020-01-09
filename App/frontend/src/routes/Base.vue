@@ -1,149 +1,36 @@
 <template>
-<div>
-  <sidebar-menu class="sidebar" :menu="menu" :hide-toggle="true" @item-click="onItemClick"/>
-  <div class="main-box">
-    <grid-layout
-      :layout.sync="panes"
-      :col-num="12"
-      :row-height="30"
-      :is-draggable="true"
-      :is-resizable="false"
-      :is-mirrored="false"
-      :vertical-compact="true"
-      :prevent-collision="false"
-      :margin="[10, 10]"
-      :use-css-transforms="true"
-    >
-      <grid-item v-for="(item,index) in panes"
-                 style="background-color: #27293D; border: 1px black; margin: 5px; color:white;"
-                 :x="item.x"
-                 :y="item.y"
-                 :w="item.w"
-                 :h="item.h"
-                 :i="item.i"
-                 :key="index">
-        <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
-        {{item.i}}
-        <MapComponent v-if="item.componentType == 'Map'"></MapComponent>
-        <TestComponent v-if="item.componentType == 'speed'"></TestComponent>
-        <br><br>
-      </grid-item>
-    </grid-layout>
+  <div>
+  <Sidebar @update="updatePage"></Sidebar>
+  <multipane class="custom-resizer" layout="vertical" @paneResizeStop="redrawMapTiles">
+    <div v-if="this.mapActive === true" class="pane" :style="{ minWidth: '60px'}">
+      <MapLeaflet ref="Map"></MapLeaflet>
+      <!--Map ref="Map"></Map-->
+    </div>
+   <multipane-resizer v-if="this.mapActive === true"></multipane-resizer>
+    <div class="pane" :style="{ flexGrow: 1 }">
+      <Info ref="Info"></Info>
+    </div>
+  </multipane>
   </div>
-</div>
 </template>
 
 <script>
-import axios from 'axios'
-import VueGridLayout from 'vue-grid-layout';
-import TestComponent from "@/components/TestComponent";
+  import Sidebar from "@/components/Sidebar";
+  import { Multipane, MultipaneResizer } from 'vue-multipane';
+  import Info from "@/components/Info";
+  import MapLeaflet from "@/components/MapComponents/MapLeaflet";
+  import Map from "@/components/Map";
+  import axios from 'axios';
 
 export default {
   name: 'Base',
   components: {
-      GridLayout: VueGridLayout.GridLayout,
-      GridItem: VueGridLayout.GridItem,
-      TestComponent
-  },
-  mounted() {
-
-  },
-  data () {
-    return {
-      //Sidebar menu elements
-      menu: [
-        {
-          header: true,
-          title: 'Ground Station'
-        },
-        {
-          title: 'Map',
-          icon: 'fas fa-map',
-          componentSize: '4Block',
-          componentType: 'Map'
-        },
-        {
-          title: 'Data',
-          icon: 'fas fa-hdd',
-          componentSize: '2BlockH',
-          componentType: 'Data'
-        },
-        {
-          title: 'Communication',
-          icon: 'fas fa-satellite',
-          componentSize: '1Block',
-          componentType: 'Communication'
-        },
-      ],
-      //Gridlayout elements
-      numOfPanes: 0, //Tracks current number of panes
-      paneID: 0, //Pane ID always increases to avoid having multiple panes with same ID
-      panes: []
-    }
-  },
-  methods: {
-    onItemClick (event, item) {
-      console.log(item);
-      if (item.componentSize == "2BlockV") {
-        this.panes.push({
-          "x": 0,
-          "y": 0,
-          "w": 4,
-          "h": 12,
-          "i": String(this.paneID),
-          "componentType": String(item.componentType)
-        });
-        this.numOfPanes++;
-        this.paneID++;
-      }
-      else if (item.componentSize == "2BlockH") {
-        this.panes.push({
-          "x": 0,
-          "y": 0,
-          "w": 8,
-          "h": 7,
-          "i": String(this.paneID),
-          "componentType": String(item.componentType)
-        });
-        this.numOfPanes++;
-        this.paneID++;
-      }
-      else if(item.componentSize == "4Block"){
-        this.panes.push({
-          "x": 0,
-          "y": 0,
-          "w": 8,
-          "h": 12,
-          "i": String(this.paneID),
-          "componentType": String(item.componentType)
-        });
-        this.numOfPanes++;
-        this.paneID++;
-      }
-      else {
-        this.panes.push({
-          "x": 0,
-          "y": 0,
-          "w": 4,
-          "h": 7,
-          "i": String(this.paneID),
-          "componentType": String(item.componentType)
-        });
-        this.numOfPanes++;
-        this.paneID++;
-      }
-    },
-        //Remove panes
-    removePane(index){
-      this.numOfPanes--;
-      this.panes.splice(index,1); //Remove pane and shift proceceding values to prevent holes in array
-    },
-    pingBackend (event,item) {
-      axios.get('http://localhost:5000/Ping')
-      .then(function(response) {
-        alert("Backend Started");
-      });
-    }
+    Sidebar,
+    Multipane,
+    MultipaneResizer,
+    Info,
+    MapLeaflet,
+    Map
   },
   mounted() {
     var connect = this.startUp;
@@ -151,6 +38,33 @@ export default {
       .then(function(response) {
         alert("Backend Started");
       });
+  },
+  data () {
+    return {
+      mapActive: true,
+      response: 'No response yet',
+      isConnected: false,
+      startUp: false
+    }
+  },
+  methods: {
+    updatePage(item) {
+      if (item.componentType === "Grid") {
+        this.$refs.Info.updateGrid(item);
+      }
+      if (item.componentType === "Page") {
+        this.mapActive = !this.mapActive;
+      }
+    },
+    redrawMapTiles() {
+      this.$refs.Map.redrawMapTiles();
+    },
+    pingBackend (event,item) {
+      axios.get('http://localhost:5000/Ping')
+      .then(function(response) {
+        alert("Backend Started");
+      });
+    }
   },
   sockets: {
     connectStatus: function(status) {
@@ -164,7 +78,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 
 h1, h2 {
   font-weight: normal;
@@ -182,16 +96,15 @@ a {
 }
 
 .main-box {
-  margin-left: 300px;
+  margin-left: 100px;
   height: 100vh;
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 .sidebar {
   width: 300px;
-  background-color: #1F86F7;
+  background-color: #41B682;
 }
-
 
 .exit-symbol{
   position: absolute;
@@ -199,5 +112,44 @@ a {
   right: 9px;
   cursor: pointer;
 }
+
+.custom-resizer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.custom-resizer > .pane {
+  text-align: left;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #1E1E2F;
+}
+.custom-resizer > .pane ~ .pane {
+}
+.custom-resizer > .multipane-resizer {
+  margin: 0; left: 0;
+  position: relative;
+&:before {
+   display: block;
+   content: "";
+   width: 0px;
+   height: 40px;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   margin-top: -20px;
+   margin-left: -1.5px;
+   border-left: 1px solid #ccc;
+   border-right: 1px solid #ccc;
+ }
+&:hover {
+&:before {
+   border-color: #999;
+ }
+}
+}
+
 
 </style>
