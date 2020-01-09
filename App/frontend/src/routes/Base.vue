@@ -133,17 +133,31 @@ export default {
         this.paneID++;
       }
     },
-    //Remove panes
+        //Remove panes
     removePane(index){
       this.numOfPanes--;
       this.panes.splice(index,1); //Remove pane and shift proceceding values to prevent holes in array
     },
-    //Test call to backend
-    pingBackend: function() {
-      axios.get('http://127.0.0.1:5000/Ping')
-        .then((response) => {
-          this.msg = response.data
-        })
+    pingBackend (event,item) {
+      axios.get('http://localhost:5000/Ping')
+      .then(function(response) {
+        alert("Backend Started");
+      });
+    }
+  },
+  mounted() {
+    var connect = this.startUp;
+    axios.get('http://localhost:5000/Ping')
+      .then(function(response) {
+        alert("Backend Started");
+      });
+  },
+  sockets: {
+    connectStatus: function(status) {
+      this.isConnected = status;
+    },
+    dataChannel: function(data) {
+      this.data = data;
     }
   }
 }

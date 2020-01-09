@@ -18,7 +18,7 @@ RUN pip3 install --trusted-host pypi.python.org --trusted-host files.pythonhoste
 RUN export PYTHONWARNINGS="ignore:Unverified HTTPS request"
 
 #Install SQLite3
-RUN apt-get install sqlite3
+RUN apt-get update && apt-get -y install sqlite3
 
 #Set working directory back to app directory
 WORKDIR /app
@@ -33,4 +33,5 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
 #Run server on open
-CMD ["flask", "run"]
+#CMD ["flask", "run"]
+CMD ["python3","groundstation.py"]

@@ -103,6 +103,14 @@ venv.bak/
 .mypy_cache/
 
 
+#IDE settings
+.idea
+.vscode
+
+App/frontend/src/assets/MapAssets/Maps/Florida
+App/frontend/map
+
+
 #Jetbrain
 .idea
 
@@ -119,4 +127,5 @@ App/frontend/src/assets/MapAssets/Maps/Florida
 # Maptiles
 /App/frontend/src/assets/MapAssets/Maps
 /App/frontend/map
+
 
