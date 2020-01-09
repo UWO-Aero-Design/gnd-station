@@ -58,13 +58,20 @@ export default {
     },
     redrawMapTiles() {
       this.$refs.Map.redrawMapTiles();
+    },
+    pingBackend (event,item) {
+      axios.get('http://localhost:5000/Ping')
+      .then(function(response) {
+        alert("Backend Started");
+      });
     }
   },
   sockets: {
     connectStatus: function(status) {
-      if (status.connect === "true") {
-        this.isConnected = true;
-      }
+      this.isConnected = status;
+    },
+    dataChannel: function(data) {
+      this.data = data;
     }
   }
 }

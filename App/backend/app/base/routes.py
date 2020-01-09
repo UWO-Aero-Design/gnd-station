@@ -1,13 +1,11 @@
 from app.base import api
-from flask import session,jsonify
-from flask_socketio import emit,send
-from .. import socketio
 import threading
 import time
-import math
-
-import eventlet
-eventlet.monkey_patch()
+import redis
+from rq import Queue,Connection
+from flask import render_template, jsonify, request, current_app, session
+from app import Serial
+from app.Serial import connection
 
 @api.route('/')
 def index():
@@ -15,32 +13,22 @@ def index():
 
 @api.route('/Ping')
 def ping():
-    return jsonify({'status':'pinged'})
+    return jsonify({'status':'ping'})
 
-@socketio.on('Test')
-def send_test(data):
-    print("Hi")
-    emit('dataChannel',"hi")
-    
+""" @api.route('/readdata')
+def readdata():
+    with Connection(redis.from_url(current_app.config['REDIS_URL'])):
+        q = Queue()
+        task = q.enqueue(create_task)
+    response_object = {
+        'status': 'success',
+        'data': {
+            'task_id': task.get_id()\
+        }
+    }
+    return jsonify(response_object), 202 """
+
 @api.before_app_first_request
 def activate_job():
-    def run_task():
-        latc = 27.96
-        lonc = -82.02
-        alt = 0
-        t = 1
-        r = 0.01
-        while True:
-            lat = latc + r*math.cos(t)
-            lon = lonc + r*math.cos(t)
-            alt = alt + 1
-            t = t + 1
-            socketio.emit('dataChannel',{'latitude':lat,'longitude':lon,'altitude':alt})
-            socketio.emit('connectStatus',{'connect':'true'})
-
-            time.sleep(1)
-
-    #thread = threading.Thread(target=Serial.connection.serial_data)
-    #thread.start()
-    thread = threading.Thread(target=run_task)
+    thread = threading.Thread(target=Serial.connection.serial_data)
     thread.start()

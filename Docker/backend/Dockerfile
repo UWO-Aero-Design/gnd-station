@@ -18,7 +18,7 @@ RUN pip3 install --trusted-host pypi.python.org --trusted-host files.pythonhoste
 RUN export PYTHONWARNINGS="ignore:Unverified HTTPS request"
 
 #Install SQLite3
-RUN apt-get install sqlite3
+RUN apt-get update && apt-get -y install sqlite3
 
 #Set working directory back to app directory
 WORKDIR /app

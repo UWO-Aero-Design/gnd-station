@@ -7,6 +7,8 @@ from flask_migrate import Migrate
 from config import BaseConfig
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from redis import Redis
+import rq
 
 socketio = SocketIO()
 
@@ -18,6 +20,9 @@ def create_app(debug=False):
 
     #Register CORS
     cors = CORS(app)
+
+    #app.redis = Redis.from_url(app.config['REDIS_URL'])
+    #app.task_queue = rq.Queue('serial', connection=app.redis)
 
     #Register Blueprints
     from app.base import api as base_bp
