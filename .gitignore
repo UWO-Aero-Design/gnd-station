@@ -105,6 +105,9 @@ venv.bak/
 #Jetbrain
 .idea
 
+#VSCode
+.vscode
+
 #Map assets
 App/frontend/map/FloridaAirfield.mbtiles
 App/frontend/map/FloridaAirfieldVector.mbtiles
