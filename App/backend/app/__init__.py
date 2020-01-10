@@ -2,6 +2,7 @@
 
 #Imports
 from flask import Flask
+from config import BaseConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import BaseConfig
@@ -10,16 +11,23 @@ from flask_socketio import SocketIO
 from redis import Redis
 import rq
 
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+#Flask extensions
 socketio = SocketIO()
+dbase = SQLAlchemy()
 
 #def create_app(config_class=BaseConfig):
 def create_app(debug=False):
     app = Flask(__name__)
-    #app.config.from_object(config_class)
+    app.config.from_object(BaseConfig)
     app.debug = debug
 
-    #Register CORS
+    #Initialize flask extensions
     cors = CORS(app)
+    dbase.init_app(app)
+    socketio.init_app(app,cors_allowed_origins="*")
 
     #app.redis = Redis.from_url(app.config['REDIS_URL'])
     #app.task_queue = rq.Queue('serial', connection=app.redis)
@@ -51,7 +59,5 @@ def create_app(debug=False):
 
     from app.status import api as status_bp
     app.register_blueprint(status_bp, url_prefix='/status')
-
-    socketio.init_app(app,cors_allowed_origins="*")
 
     return app

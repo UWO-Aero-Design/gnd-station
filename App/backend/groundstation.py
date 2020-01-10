@@ -1,6 +1,6 @@
 #Main application module
 
-from app import create_app,socketio
+from app import create_app,socketio,dbase
 
 app = create_app(debug=True)    
 
