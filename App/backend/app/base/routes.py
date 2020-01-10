@@ -36,19 +36,20 @@ def readdata():
 @api.before_app_first_request
 def activate_job():
     #Database setup
-    flightid = 1
-    locationid = 1
-    planeid = 1
-    planeversion = 1
-    gliderid = 1
-    gliderversion = 1
+    # flightid = 1
+    # locationid = 1
+    # planeid = 1
+    # planeversion = 1
+    # gliderid = 1
+    # gliderversion = 1
 
-    databaseObj = databasehelperclass.planetable(planeid,planeversion)
-    databaseinsertion(databaseObj)
+    # databaseObj = databasehelperclass.planetable(planeid,planeversion)
+    # databaseinsertion(databaseObj)
 
-    databaseObj = databasehelperclass.glidertable(gliderid,gliderversion)
-    databaseinsertion(databaseObj)
+    # databaseObj = databasehelperclass.glidertable(gliderid,gliderversion)
+    # databaseinsertion(databaseObj)
 
+    #Start background serial thread
     thread = threading.Thread(target=Serial.connection.serial_data)
     thread.start()
 

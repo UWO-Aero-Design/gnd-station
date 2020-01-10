@@ -25,7 +25,7 @@ def create_app(debug=False):
     app.debug = debug
 
     #Initialize flask extensions
-    cors = CORS(app)
+    cors = CORS(app) #Cors not usable for now
     dbase.init_app(app)
     socketio.init_app(app,cors_allowed_origins="*")
 
