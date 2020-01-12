@@ -36,21 +36,39 @@ def readdata():
 @api.before_app_first_request
 def activate_job():
     #Database setup
-    # flightid = 1
-    # locationid = 1
-    # planeid = 1
-    # planeversion = 1
-    # gliderid = 1
-    # gliderversion = 1
+    flightid = 1
+    locationid = 1
+    planeid = 1
+    planeversion = 1
+    gliderid = 1
+    gliderversion = 1
+    pilotname = "Asim"
+    airplanetype = "Plane"
+    
+    #Clear previous data
+    databasehelperclass.planetable.query.delete()
+    databasehelperclass.glidertable.query.delete()
+    databasehelperclass.flightpathtable.query.delete()
+    databasehelperclass.pointtable.query.delete()
+    databasehelperclass.gpsvaluetable.query.delete()
+    databasehelperclass.imuvaluestable.query.delete()
+    databasehelperclass.environmentalsensortable.query.delete()
+    databasehelperclass.batterystatustable.query.delete()
+    databasehelperclass.systemstatustable.query.delete()
+    databasehelperclass.servodatatable.query.delete()
+    dbase.session.commit()
 
-    # databaseObj = databasehelperclass.planetable(planeid,planeversion)
-    # databaseinsertion(databaseObj)
+    databaseObj = databasehelperclass.planetable(planeid,planeversion)
+    databaseinsertion(databaseObj)
 
-    # databaseObj = databasehelperclass.glidertable(gliderid,gliderversion)
-    # databaseinsertion(databaseObj)
+    databaseObj = databasehelperclass.glidertable(gliderid,gliderversion)
+    databaseinsertion(databaseObj)
+
+    databaseObj = databasehelperclass.flightpathtable(flightid,pilotname,locationid,airplanetype,planeid,planeversion,gliderid,gliderversion)
+    databaseinsertion(databaseObj)
 
     #Start background serial thread
-    thread = threading.Thread(target=Serial.connection.serial_data)
+    thread = threading.Thread(target=Serial.connection.serial_data, args=[current_app._get_current_object()])
     thread.start()
 
 def databaseinsertion(obj):

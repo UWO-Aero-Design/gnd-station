@@ -15,6 +15,11 @@ from app.Serial.events import post_serial_read, pre_serial_write
 from flask_socketio import emit,send
 from .. import socketio
 
+from app import database
+from app.database import databasehelperclass
+
+from .. import dbase
+
 # Configuration for Serial connection
 class SerialConfig:
     def __init__(self, baud, bytesize, timeout, stopbits):
@@ -58,7 +63,7 @@ def find_teensy_port():
     return None
 
 # Serial task will connect to database
-def serial_task(port : str, config : SerialConfig = None, on_read = None, on_write = None):
+def serial_task(app,port : str, config : SerialConfig = None, on_read = None, on_write = None):
     """ Continuously executes a serial task with callbacks for when a
         read event occurs and for when a write event occurs
 
@@ -87,14 +92,14 @@ def serial_task(port : str, config : SerialConfig = None, on_read = None, on_wri
     while True:
         # read, write, repeat until communications with port is lost
         try:
-            port_read(serial_port, on_read)
-            port_write(serial_port, on_write)
+            port_read(app,serial_port, on_read)
+            port_write(app,serial_port, on_write)
             
         except serial.serialutil.SerialException:
             print('Lost communications with {}'.format(port.device))
             return
 
-def port_read(serial_port, event=None):
+def port_read(app,serial_port, event=None):
     """ Read a line of data from serial_port
 
         If a post read event was passed in, execute it
@@ -112,28 +117,30 @@ def port_read(serial_port, event=None):
                 if event:
                     print("Passing Event")
                     # Can pass result into event
-                    event(result)
+                    event(app,result)
         except:
             print('Exception while parsing message')
         
     else:
         print('Failed to receive message')
 
-def port_write(serial_port, event):
+def port_write(app, serial_port, event):
     """ Send a line of data to serial_port
 
         event is used to build the message required for the port
     """
     
-    data = event()
+    data = event(app)
     if data:
         serial_port.write(data)
     
 # Run file as script to test functionality
-def serial_data():
+def serial_data(app):
     # Wait for Teensy to be plugged in before communicating with it
     # Communicate with teensy until it has been unplugged
     # Wait for a Teensy to be connected again
+
+    #dbase.session.close()
     while True:
         while True:
             port_info = find_teensy_port()
@@ -149,8 +156,16 @@ def serial_data():
         time.sleep(2)
 
         # Start serial task
-        serial_task(port = port_info, 
+        serial_task(app,
+                    port = port_info, 
                     on_read = post_serial_read,
                     on_write = pre_serial_write)
 
         print('Teensy Disconnected! \nSerial Task Ended')
+
+def databaseinsertion(obj):
+    #databasehelperclass.db.session.add(obj)
+    #databasehelperclass.db.session.commit()
+
+    dbase.session.add(obj)
+    dbase.session.commit()

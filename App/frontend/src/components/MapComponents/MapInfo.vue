@@ -1,7 +1,7 @@
 <template>
   <div class="infoBox">
-    <h1>Latitude: {{ GPSData.latitude }}</h1>
-    <h1>Longitude: {{ GPSData.longitude }}</h1>
+    <h1>Latitude: {{ GPSData.lat }}</h1>
+    <h1>Longitude: {{ GPSData.lon }}</h1>
     <h1>Altitude: {{ GPSData.altitude }}</h1>
     <h1>Satellites: {{ GPSData.satellites }}</h1>
     <h1>Speed: {{ GPSData.speed }}</h1>
