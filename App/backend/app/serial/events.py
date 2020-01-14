@@ -6,7 +6,7 @@ import time
 import random
 
 from app import database
-from app.database import databasehelperclass
+from app.database import databasehelperclass,queryDatabase
 
 from .. import dbase
 
@@ -93,17 +93,23 @@ def post_serial_read(app,data = None):
 
 # Event handler that is called before a write. should return a message to send over serial or None
 def pre_serial_write(app,data = None):
-    if data:
+    print('Serial write')
+    flightID = 1
+    with app.app_context():
+        databaseObj = queryDatabase.QueryDatabase(flightID)
 
-        print('Serial write with data')
-    else:
-        print('Serial write')
+        IMU = databaseObj.getIMUValuesForFlightPoint(point)
+        GPS = databaseObj.getGPSValuesForFlightPoint(point)
+        Env = databaseObj.getEnvironmentalSensorValuesForFlightPoint(point)
+        Battery = databaseObj.getBatteryStatusValuesForFlightPoint(point)
+        System = databaseObj.getSystemStatusValuesForFlightPoint(point)
+        Servo = databaseObj.getServoDataValuesForFlightPoint(point)
+
     # The plan here is to return a string of bytes to send over the serial port
 
 def databaseinsertion(obj):
     #databasehelperclass.db.session.add(obj)
     #databasehelperclass.db.session.commit()
 
-    print("Hi")
     dbase.session.add(obj)
     dbase.session.commit()
