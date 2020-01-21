@@ -5,13 +5,31 @@ from app import Serial
 from app.Serial import events
 
 from app import database
-from app.database import databasehelperclass
+from app.database import databasehelperclass,queryDatabase
 
-from .. import dbase
+from .. import serialWriteEvent
+from .. import serialDataOut
 
-@api.route('/cmd')
+#TODO: Change to POST endpoint for variable commands
+@api.route('/cmd/')
 def sendCMD():
+    point = 1
+    flightID = 1
+    databaseObj = queryDatabase.QueryDatabase(flightID)
 
-    #Pass data for serial prep
-    Serial.events.pre_serial_write('hello')
+    global serialDataOut
+
+    serialDataOut.IMU = databaseObj.getIMUValuesForFlightPoint(point)
+    serialDataOut.GPS = databaseObj.getGPSValuesForFlightPoint(point)
+    serialDataOut.Env = databaseObj.getEnvironmentalSensorValuesForFlightPoint(point)
+    serialDataOut.Battery = databaseObj.getBatteryStatusValuesForFlightPoint(point)
+    serialDataOut.System = databaseObj.getSystemStatusValuesForFlightPoint(point)
+    serialDataOut.Servo = databaseObj.getServoDataValuesForFlightPoint(point)
+
+    serialDataOut.Cmd = 1
+
+    global serialWriteEvent
+    serialWriteEvent.set()
+    print("Data request set")
+
     return 'Data write request sent'

@@ -14,9 +14,17 @@ import rq
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+from threading import Event, Thread
+
+from .data import serialDataPrepackage
+
 #Flask extensions
 socketio = SocketIO()
 dbase = SQLAlchemy()
+
+#Data Object
+serialWriteEvent = Event()
+serialDataOut = serialDataPrepackage()
 
 #def create_app(config_class=BaseConfig):
 def create_app(debug=False):

@@ -1,6 +1,6 @@
 #Main application module
 
-from app import create_app,socketio,dbase
+from app import create_app,socketio,dbase,serialWriteEvent,serialDataOut
 
 app = create_app(debug=True)    
 app.app_context().push()

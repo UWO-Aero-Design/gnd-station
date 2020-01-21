@@ -19,6 +19,7 @@ from app import database
 from app.database import databasehelperclass
 
 from .. import dbase
+from .. import serialWriteEvent
 
 # Configuration for Serial connection
 class SerialConfig:
@@ -129,10 +130,15 @@ def port_write(app, serial_port, event):
 
         event is used to build the message required for the port
     """
-    
-    data = event(app)
-    if data:
-        serial_port.write(data)
+    global serialWriteEvent
+
+    if serialWriteEvent.isSet():
+        print("Sending Data")
+        data = event(app)
+        #serial_port.write(data)
+        serialWriteEvent.clear()
+    else:
+        print("No data to send")
     
 # Run file as script to test functionality
 def serial_data(app):
