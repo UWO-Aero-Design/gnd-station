@@ -6,8 +6,11 @@ import struct
 import serial
 from serial.tools import list_ports
 
-from util import *
-from definitions import *
+from app.Serial import util
+from app.Serial.util import *
+
+from app.Serial import definitions
+from app.Serial.definitions import *
 
 class MessageBuilder:
     def __init__(self):
@@ -156,8 +159,6 @@ if __name__ == "__main__":
         write_val = builder.build(0,2)
         print(write_val)
         print(len(write_val))
-
-
 
         #if not serial_port.out_waiting:
         if not serial_port.out_waiting > 0:

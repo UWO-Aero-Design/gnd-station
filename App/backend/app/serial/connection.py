@@ -134,8 +134,18 @@ def port_write(app, serial_port, event):
 
     if serialWriteEvent.isSet():
         print("Sending Data")
-        data = event(app)
-        #serial_port.write(data)
+        dataOut = event(app)
+
+        if not serial_port.out_waiting > 0:
+            serial_port.write(dataOut)
+            print("Data Sent")
+        
+        time.sleep(1)
+
+        if serial_port.in_waiting:
+            data = serial_port.readline().decode('ascii').strip()
+            print( data )
+
         serialWriteEvent.clear()
     else:
         print("No data to send")

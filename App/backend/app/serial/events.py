@@ -11,6 +11,12 @@ from app.database import databasehelperclass,queryDatabase
 from .. import dbase
 from .. import serialDataOut
 
+from app.Serial import builder
+from app.Serial.builder import *
+
+from app.Serial import definitions
+from app.Serial.definitions import *
+
 import eventlet
 eventlet.monkey_patch()
 
@@ -97,10 +103,40 @@ def pre_serial_write(app,data = None):
     print('Serial write data gather')
     global serialDataOut
 
+    builder = MessageBuilder()
+
+    i = IMU()
+    i.ax = int(serialDataOut.IMU[0][1])
+
+    # p = Pitot()
+    # p.differential_pressure = 255
+
+    # i = IMU()
+    # i.ax = 31245
+
+    # g = GPS()
+    # g.lat = 31245
+    # g.lon = 31245
+
+    # e = Enviro()
+    # e.pressure = 31245
+    # e.humidity = 31245
+    # e.temperature = 31245
+
+    # print(uint16_to_bytes(31245))
+    
+    # builder.add(p)
+    builder.add(i)
+    # builder.add(e)
+
+    write_val = builder.build(0,2)
+    print(write_val)
+    print(len(write_val))
+
     #TODO: Preprocessing stuff
     
     #Replace serialDataOut with string of bytes
-    return serialDataOut
+    return write_val
     # The plan here is to return a string of bytes to send over the serial port
 
 def databaseinsertion(obj):

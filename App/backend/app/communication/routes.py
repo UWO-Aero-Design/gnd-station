@@ -10,15 +10,21 @@ from app.database import databasehelperclass,queryDatabase
 from .. import serialWriteEvent
 from .. import serialDataOut
 
-#TODO: Change to POST endpoint for variable commands
-@api.route('/cmd/')
+@api.route('/sendcmd', methods=['POST'])
 def sendCMD():
-    point = 1
-    flightID = 1
-    databaseObj = queryDatabase.QueryDatabase(flightID)
+    if not request.json:
+        return 'Command wrong format'
+
+    flightID = request.json['flightID']
+    point = request.json['point']
 
     global serialDataOut
 
+    serialDataOut.cmdDrop = request.json['drop']
+    serialDataOut.cmdServo = request.json['servo']
+    serialDataOut.cmdPitch = request.json['pitch']
+
+    databaseObj = queryDatabase.QueryDatabase(flightID)
     serialDataOut.IMU = databaseObj.getIMUValuesForFlightPoint(point)
     serialDataOut.GPS = databaseObj.getGPSValuesForFlightPoint(point)
     serialDataOut.Env = databaseObj.getEnvironmentalSensorValuesForFlightPoint(point)
@@ -26,10 +32,16 @@ def sendCMD():
     serialDataOut.System = databaseObj.getSystemStatusValuesForFlightPoint(point)
     serialDataOut.Servo = databaseObj.getServoDataValuesForFlightPoint(point)
 
-    serialDataOut.Cmd = 1
-
     global serialWriteEvent
     serialWriteEvent.set()
     print("Data request set")
 
-    return 'Data write request sent'
+    response_object = {
+        'drop': request.json['drop'],
+        'servo': request.json['servo'],
+        'pitch': request.json['pitch'],
+        'point': request.json['point'],
+        'flightID': request.json['flightID']
+    }
+
+    return jsonify(response_object), 202

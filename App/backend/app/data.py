@@ -8,4 +8,7 @@ class serialDataPrepackage:
         self.Battery = None
         self.System = None
         self.Servo = None
-        self.Cmd = None
+
+        self.cmdDrop = None
+        self.cmdServo = None
+        self.cmdPitch = None
