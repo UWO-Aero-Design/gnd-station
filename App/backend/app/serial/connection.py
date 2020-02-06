@@ -21,6 +21,8 @@ from app.database import databasehelperclass
 from .. import dbase
 from .. import serialWriteEvent
 
+import time
+
 # Configuration for Serial connection
 class SerialConfig:
     def __init__(self, baud, bytesize, timeout, stopbits):
@@ -95,6 +97,7 @@ def serial_task(app,port : str, config : SerialConfig = None, on_read = None, on
         try:
             port_read(app,serial_port, on_read)
             port_write(app,serial_port, on_write)
+            time.sleep(0.1)
             
         except serial.serialutil.SerialException:
             print('Lost communications with {}'.format(port.device))
@@ -137,6 +140,8 @@ def port_write(app, serial_port, event):
         dataOut = event(app)
 
         if not serial_port.out_waiting > 0:
+            print(serial_port.is_open)
+            serial_port.flush()
             serial_port.write(dataOut)
             print("Data Sent")
         

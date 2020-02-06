@@ -5,6 +5,9 @@ from app.Serial.definitions import *
 from app.Serial import util
 from app.Serial.util import calculate_chksum
 
+# from definitions import *
+# from util import calculate_chksum
+
 def parse(buf):
     # Convert buffer of byte array into ascii encoded list of strings
     buf = buf.decode('ascii').split(' ')

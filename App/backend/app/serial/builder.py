@@ -12,6 +12,9 @@ from app.Serial.util import *
 from app.Serial import definitions
 from app.Serial.definitions import *
 
+# from util import *
+# from definitions import *
+
 class MessageBuilder:
     def __init__(self):
         self.elements = [None]*11
@@ -72,9 +75,6 @@ class MessageBuilder:
 
         return byte_str
 
-
-
-
 class SerialConfig:
     def __init__(self, baud, bytesize, timeout, stopbits):
         # TODO: Add data encapsulation
@@ -121,7 +121,7 @@ if __name__ == "__main__":
             time.sleep(2)
 
     try:
-        serial_port = serial.Serial(port = 'COM3', 
+        serial_port = serial.Serial(port = 'COM7', 
                                     baudrate = c.baud,
                                     bytesize=c.bytesize, 
                                     timeout=c.timeout, 
@@ -164,7 +164,7 @@ if __name__ == "__main__":
         if not serial_port.out_waiting > 0:
             serial_port.write(write_val)
         
-        time.sleep(1)
+        time.sleep(5)
 
         if serial_port.in_waiting:
             data = serial_port.readline().decode('ascii').strip()

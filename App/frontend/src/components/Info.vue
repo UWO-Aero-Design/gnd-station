@@ -25,6 +25,7 @@
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
         {{ item.i }}
         <MapInfo v-if="item.componentName === 'MapInfo'"></MapInfo>
+        <Commands v-if="item.componentName === 'Commands'"></Commands>
         <br><br>
       </grid-item>
     </grid-layout>
@@ -36,13 +37,15 @@
 import axios from 'axios'
 import VueGridLayout from 'vue-grid-layout';
 import MapInfo from "@/components/MapComponents/MapInfo";
+import Commands from "@/components/Commands";
 
 export default {
   name: 'Info',
   components: {
       GridLayout: VueGridLayout.GridLayout,
       GridItem: VueGridLayout.GridItem,
-      MapInfo
+      MapInfo,
+      Commands
   },
   mounted() {
 
@@ -100,7 +103,7 @@ export default {
         this.numOfPanes++;
         this.paneID++;
       }
-      else if(item.componentType === "Grid"){
+      else {
         this.panes.push({
           "x": 0,
           "y": 0,

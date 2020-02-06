@@ -3,6 +3,8 @@
 from app.Serial import util
 from app.Serial.util import *
 
+#from util import *
+
 BYTE = 1
 TWO_BYTES = 2
 FOUR_BYTES = 4

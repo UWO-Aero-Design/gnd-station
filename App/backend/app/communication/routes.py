@@ -24,13 +24,13 @@ def sendCMD():
     serialDataOut.cmdServo = request.json['servo']
     serialDataOut.cmdPitch = request.json['pitch']
 
-    databaseObj = queryDatabase.QueryDatabase(flightID)
-    serialDataOut.IMU = databaseObj.getIMUValuesForFlightPoint(point)
-    serialDataOut.GPS = databaseObj.getGPSValuesForFlightPoint(point)
-    serialDataOut.Env = databaseObj.getEnvironmentalSensorValuesForFlightPoint(point)
-    serialDataOut.Battery = databaseObj.getBatteryStatusValuesForFlightPoint(point)
-    serialDataOut.System = databaseObj.getSystemStatusValuesForFlightPoint(point)
-    serialDataOut.Servo = databaseObj.getServoDataValuesForFlightPoint(point)
+    # databaseObj = queryDatabase.QueryDatabase(flightID)
+    # serialDataOut.IMU = databaseObj.getIMUValuesForFlightPoint(point)
+    # serialDataOut.GPS = databaseObj.getGPSValuesForFlightPoint(point)
+    # serialDataOut.Env = databaseObj.getEnvironmentalSensorValuesForFlightPoint(point)
+    # serialDataOut.Battery = databaseObj.getBatteryStatusValuesForFlightPoint(point)
+    # serialDataOut.System = databaseObj.getSystemStatusValuesForFlightPoint(point)
+    # serialDataOut.Servo = databaseObj.getServoDataValuesForFlightPoint(point)
 
     global serialWriteEvent
     serialWriteEvent.set()
