@@ -25,7 +25,7 @@
     },
     methods: {
         sendDrop() {
-            axios.post('http://localhost:5000/communication/sendcmd',{
+            axios.post('http://localhost:5000/api/communication/sendcmd',{
                 body: this.commandBody
             })
             .then(response => {})

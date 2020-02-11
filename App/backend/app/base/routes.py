@@ -7,15 +7,22 @@ from flask import render_template, jsonify, request, current_app, session
 from app import Serial
 from app.Serial import connection
 
+from flask import current_app as app
+
 from app import database
 from app.database import databasehelperclass
 
 from .. import dbase
 
+import requests
+
 
 #Serve vue app
-@api.route('/')
-def index(path):
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    if app.debug:
+        return requests.get('http://localhost:8080/{}'.format(path)).text
     return render_template("index.html")
 
 #Test Ping
