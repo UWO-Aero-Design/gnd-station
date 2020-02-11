@@ -8,12 +8,16 @@ from app import database
 from app.database import databasehelperclass,queryDatabase
 
 from .. import serialWriteEvent
+
+from flask_cors import cross_origin
 from .. import serialDataOut
 
 @api.route('/sendcmd', methods=['POST'])
 def sendCMD():
     if not request.json:
         return 'Command wrong format'
+
+    print("Command Sent")
 
     flightID = request.json['flightID']
     point = request.json['point']

@@ -12,13 +12,16 @@ from app.database import databasehelperclass
 
 from .. import dbase
 
-@api.route('/')
-def index():
-    return "Hello"
 
-@api.route('/Ping')
+#Serve vue app
+@api.route('/')
+def index(path):
+    return render_template("index.html")
+
+#Test Ping
+@api.route('/ping')
 def ping():
-    return jsonify({'status':'ping'})
+    return jsonify({'status':'pong'})
 
 """ @api.route('/readdata')
 def readdata():

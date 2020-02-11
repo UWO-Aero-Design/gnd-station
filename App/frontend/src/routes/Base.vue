@@ -34,7 +34,7 @@ export default {
   },
   mounted() {
     var connect = this.startUp;
-    axios.get('http://localhost:5000/Ping')
+    axios.get('http://localhost:5000/ping')
       .then(function(response) {
         alert("Backend Started");
       });

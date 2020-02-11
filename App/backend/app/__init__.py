@@ -28,12 +28,14 @@ serialDataOut = serialDataPrepackage()
 
 #def create_app(config_class=BaseConfig):
 def create_app(debug=False):
-    app = Flask(__name__)
+    app = Flask(__name__,static_folder = "../../dist/static",template_folder = "../../dist")
     app.config.from_object(BaseConfig)
     app.debug = debug
 
     #Initialize flask extensions
-    cors = CORS(app) #Cors not usable for now
+    CORS(app,origins="http://localhost",
+      allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
+      supports_credentials=True) #Cors not usable for now
     
     dbase.init_app(app)
     socketio.init_app(app,cors_allowed_origins="*")
@@ -47,27 +49,27 @@ def create_app(debug=False):
         app.register_blueprint(base_bp)
 
         from app.communication import api as communication_bp
-        app.register_blueprint(communication_bp, url_prefix='/communication')
+        app.register_blueprint(communication_bp, url_prefix='/api/communication')
 
         from app.error import api as error_bp
-        app.register_blueprint(error_bp, url_prefix='/error')
+        app.register_blueprint(error_bp, url_prefix='/api/error')
 
         from app.flight import api as flight_bp
-        app.register_blueprint(flight_bp, url_prefix='/flight')
+        app.register_blueprint(flight_bp, url_prefix='/api/flight')
 
         from app.fpv import api as fpv_bp
-        app.register_blueprint(fpv_bp, url_prefix='/fpv')
+        app.register_blueprint(fpv_bp, url_prefix='/api/fpv')
 
         from app.info import api as info_bp
-        app.register_blueprint(info_bp, url_prefix='/info')
+        app.register_blueprint(info_bp, url_prefix='/api/info')
 
         from app.map import api as map_bp
-        app.register_blueprint(map_bp, url_prefix='/map')
+        app.register_blueprint(map_bp, url_prefix='/api/map')
 
         from app.payload import api as payload_bp
-        app.register_blueprint(payload_bp, url_prefix='/payload')
+        app.register_blueprint(payload_bp, url_prefix='/api/payload')
 
         from app.status import api as status_bp
-        app.register_blueprint(status_bp, url_prefix='/status')
+        app.register_blueprint(status_bp, url_prefix='/api/status')
 
-        return app
+    return app

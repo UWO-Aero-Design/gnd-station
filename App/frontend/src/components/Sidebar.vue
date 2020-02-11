@@ -49,6 +49,13 @@ export default {
               componentSize: '2BlockH',
               componentType: 'Grid',
               componentName: 'MapInfo'
+            },
+            {
+              title: 'Commands',
+              icon: 'fas fa-gamepad',
+              componentSize: '2BlockH',
+              componentType: 'Grid',
+              componentName: 'Commands'
             }
           ],
           componentType: 'None'

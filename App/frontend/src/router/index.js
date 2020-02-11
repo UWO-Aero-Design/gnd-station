@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Base from '@/routes/Base'
-import Map from '@/components/Map'
-import Info from '@/components/Info'
+import NotFound from '@/routes/NotFound'
 
 Vue.use(Router)
 
@@ -12,6 +11,11 @@ export default new Router({
       path: '/',
       name: 'Base',
       component: Base,
+    },
+    {
+      path: '*',
+      name: 'NotFound',
+      component: NotFound
     }
   ]
 })
