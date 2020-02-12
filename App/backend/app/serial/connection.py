@@ -5,12 +5,12 @@ import serial
 from serial.tools import list_ports
 
 # Message parser
-from app.Serial import parse
-from app.Serial.parse import parse
+from app.serial import parse
+from app.serial.parse import parse
 
 # Event for serial
-from app.Serial import events 
-from app.Serial.events import post_serial_read, pre_serial_write
+from app.serial import events 
+from app.serial.events import post_serial_read, pre_serial_write
 
 from flask_socketio import emit,send
 from .. import socketio

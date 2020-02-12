@@ -11,11 +11,11 @@ from app.database import databasehelperclass,queryDatabase
 from .. import dbase
 from .. import serialDataOut
 
-from app.Serial import builder
-from app.Serial.builder import *
+from app.serial import builder
+from app.serial.builder import *
 
-from app.Serial import definitions
-from app.Serial.definitions import *
+from app.serial import definitions
+from app.serial.definitions import *
 
 # from builder import *
 # from definitions import *

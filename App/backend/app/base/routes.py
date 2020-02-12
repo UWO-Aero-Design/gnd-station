@@ -4,8 +4,8 @@ import time
 import redis
 from rq import Queue,Connection
 from flask import render_template, jsonify, request, current_app, session
-from app import Serial
-from app.Serial import connection
+from app import serial
+from app.serial import connection
 
 from app import database
 from app.database import databasehelperclass

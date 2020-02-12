@@ -1,7 +1,7 @@
 # Serial message definitions
 
-from app.Serial import util
-from app.Serial.util import *
+from app.serial import util
+from app.serial.util import *
 
 #from util import *
 

@@ -6,11 +6,11 @@ import struct
 import serial
 from serial.tools import list_ports
 
-from app.Serial import util
-from app.Serial.util import *
+from app.serial import util
+from app.serial.util import *
 
-from app.Serial import definitions
-from app.Serial.definitions import *
+from app.serial import definitions
+from app.serial.definitions import *
 
 # from util import *
 # from definitions import *
