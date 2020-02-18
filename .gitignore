@@ -124,3 +124,6 @@ App/frontend/src/assets/MapAssets/Maps/Florida
 # Maptiles
 /App/frontend/src/assets/MapAssets/Maps
 /App/frontend/map
+
+#Database
+*.db
