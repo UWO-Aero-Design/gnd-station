@@ -19,6 +19,8 @@ if ans == yes:
         batterystatustable.query.delete()
         systemstatustable.query.delete()
         servodatatable.query.delete()
+        pitottubetable.query.delete()
+        commandstable.query.delete()
         db.session.commit()
 else:
     print("You selected No, Bye!")

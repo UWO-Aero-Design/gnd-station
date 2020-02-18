@@ -56,15 +56,15 @@ class pointtable(dbase.Model):
 
 class gpsvaluetable(dbase.Model):
     __tablename__ = 'GpsValue'
-    Latitude = dbase.Column('Latitude',dbase.Float)
-    Longitude = dbase.Column('Longitude',dbase.Float)
-    Speed = dbase.Column('Speed',dbase.Float)
-    Satellite = dbase.Column('Satellite',dbase.Float)
-    Altitude = dbase.Column('Altitude',dbase.Float)
-    GPSTime = dbase.Column('GPSTime',dbase.Float)
-    GPSDate = dbase.Column('GPSDate',dbase.Integer)
-    FlightPathID = dbase.Column('FlightPathID',dbase.Integer,primary_key = True)
-    PointID = dbase.Column('PointID',dbase.Integer,primary_key = True)
+    Latitude = db.Column('Latitude',db.Float)
+    Longitude = db.Column('Longitude',db.Float)
+    Speed = db.Column('Speed',db.Float)
+    Satellite = db.Column('Satellite',db.Integer)
+    Altitude = db.Column('Altitude',db.Float)
+    GPSTime = db.Column('GPSTime',db.BigInteger)
+    GPSDate = db.Column('GPSDate',db.BigInteger)
+    FlightPathID = db.Column('FlightPathID',db.Integer,primary_key = True)
+    PointID = db.Column('PointID',db.Integer,primary_key = True)
 
     def __init__(self,latitude,longitude,speed,satellite,altitude,time,date,flightpathid,pointid):
         self.Latitude = latitude
@@ -113,38 +113,65 @@ class imuvaluestable(dbase.Model):
 
 class environmentalsensortable(dbase.Model):
     __tablename__ = 'EnvironmentalSensorData'
-    Pressure = dbase.Column('Pressure',dbase.Float)
-    Humidity = dbase.Column('Humidity',dbase.Float)
-    Temperature = dbase.Column('Temperature',dbase.Float)
-    FlightPathID = dbase.Column('FlightPathID',dbase.Integer, primary_key = True)
-    PointID = dbase.Column('PointID',dbase.Integer, primary_key = True)
+    Pressure = db.Column('Pressure',db.Float)
+    Humidity = db.Column('Humidity',db.Float)
+    Temperature = db.Column('Temperature',db.Float)
+    BatteryVoltage = db.Column('BatteryVoltage',db.Float)
+    BatteryCurrent = db.Column('BatteryCurrent',db.Float)
+    FlightPathID = db.Column('FlightPathID',db.Integer, primary_key = True)
+    PointID = db.Column('PointID',db.Integer, primary_key = True)
 
-    def __init__(self,pressure,humidity,temperature,flightpathid,pointid):
+    def __init__(self,pressure,humidity,temperature,batteryvoltage,batterycurrent,flightpathid,pointid):
         self.Pressure = pressure 
         self.Humidity = humidity 
         self.Temperature = temperature 
+        self.BatteryVoltage = batteryvoltage
+        self.BatteryCurrent = batterycurrent
         self.FlightPathID = flightpathid 
         self.PointID = pointid 
+    
+    @property
+    def serialize(self):
+        return{
+            'Pressure': self.Pressure,
+            'Humidity': self.Humidity,
+            'Temperature':self.Temperature,
+            'BatteryVoltage':self.BatteryVoltage,
+            'BatteryCurrent':self.BatteryCurrent,
+            'FlightPathID':self.FlightPathID,
+            'PointID':self.Point
+        }
 
 class batterystatustable(dbase.Model):
     __tablename__ = 'BatteryStatus'
-    BatteryVoltage = dbase.Column('BatteryVoltage',dbase.Float)
-    BatteryCurrent = dbase.Column('BatteryCurrent',dbase.Float)
-    FlightPathID = dbase.Column('FlightPathID',dbase.Integer, primary_key = True)
-    PointID = dbase.Column('PointID',dbase.Integer, primary_key = True)
+    BatteryVoltage = db.Column('BatteryVoltage',db.Float)
+    BatteryCurrent = db.Column('BatteryCurrent',db.Float)
+    Rssi = db.Column('Rssi',db.Float)
+    FlightPathID = db.Column('FlightPathID',db.Integer, primary_key = True)
+    PointID = db.Column('PointID',db.Integer, primary_key = True)
     
-    def __init__ (self,voltage, current, flightpathid, pointid):
+    def __init__ (self,voltage, current,rssi, flightpathid, pointid):
         self.BatteryVoltage = voltage 
-        self.BatteryCurrent = current 
+        self.BatteryCurrent = current
+        self.Rssi = rssi
         self.FlightPathID = flightpathid 
         self.PointID = pointid 
+    @property
+    def serialize(self):
+        return{
+            'BatteryVoltage':self.BatteryVoltage,
+            'BatteryCurrent':self.BatteryCurrent,
+            'Rssi':self.Rssi,
+            'FlightPathID':self.FlightPathID,
+            'PointID':self.PointID
+        }
 
 class systemstatustable(dbase.Model):
     __tablename__ = 'SystemStatus'
-    Rssi = dbase.Column('Rssi',dbase.Float)
-    State =   dbase.Column('State',dbase.Float)
-    FlightPathID = dbase.Column('FlightPathID',dbase.Integer,primary_key = True)
-    PointID = dbase.Column('PointID', dbase.Integer, primary_key = True)
+    Rssi = db.Column('Rssi',db.BigInteger)
+    State =   db.Column('State',db.Float)
+    FlightPathID = db.Column('FlightPathID',db.Integer,primary_key = True)
+    PointID = db.Column('PointID', db.Integer, primary_key = True)
 
     def __init__ (self,rssi,state,flightpathid,pointid):
         self.Rssi = rssi 
@@ -154,24 +181,24 @@ class systemstatustable(dbase.Model):
 
 class servodatatable(dbase.Model):
     __tablename__ = 'ServoData'
-    Servo0 = dbase.Column('Servo0',dbase.Float)
-    Servo1 = dbase.Column('Servo1',dbase.Float)
-    Servo2 = dbase.Column('Servo2',dbase.Float)
-    Servo3 = dbase.Column('Servo3',dbase.Float)
-    Servo4 = dbase.Column('Servo4',dbase.Float)
-    Servo5 = dbase.Column('Servo5',dbase.Float)
-    Servo6 = dbase.Column('Servo6',dbase.Float)
-    Servo7 = dbase.Column('Servo7',dbase.Float)
-    Servo8 = dbase.Column('Servo8',dbase.Float)
-    Servo9 = dbase.Column('Servo9',dbase.Float)
-    Servo10 = dbase.Column('Servo10',dbase.Float)
-    Servo11 = dbase.Column('Servo11',dbase.Float)
-    Servo12 = dbase.Column('Servo12',dbase.Float)
-    Servo13 = dbase.Column('Servo13',dbase.Float)
-    Servo14 = dbase.Column('Servo14',dbase.Float)
-    Servo15 = dbase.Column('Servo15',dbase.Float)
-    FlightPathID = dbase.Column('FlightPathID',dbase.Integer, primary_key = True)
-    PointID = dbase.Column('PointID',dbase.Integer, primary_key = True)
+    Servo0 = db.Column('Servo0',db.BigInteger)
+    Servo1 = db.Column('Servo1',db.BigInteger)
+    Servo2 = db.Column('Servo2',db.BigInteger)
+    Servo3 = db.Column('Servo3',db.BigInteger)
+    Servo4 = db.Column('Servo4',db.BigInteger)
+    Servo5 = db.Column('Servo5',db.BigInteger)
+    Servo6 = db.Column('Servo6',db.BigInteger)
+    Servo7 = db.Column('Servo7',db.BigInteger)
+    Servo8 = db.Column('Servo8',db.BigInteger)
+    Servo9 = db.Column('Servo9',db.BigInteger)
+    Servo10 = db.Column('Servo10',db.BigInteger)
+    Servo11 = db.Column('Servo11',db.BigInteger)
+    Servo12 = db.Column('Servo12',db.BigInteger)
+    Servo13 = db.Column('Servo13',db.BigInteger)
+    Servo14 = db.Column('Servo14',db.BigInteger)
+    Servo15 = db.Column('Servo15',db.BigInteger)
+    FlightPathID = db.Column('FlightPathID',db.Integer, primary_key = True)
+    PointID = db.Column('PointID',db.Integer, primary_key = True)
 
     def __init__ (self,servo0,servo1,servo2,servo3,servo4,servo5,servo6,servo7,servo8,servo9,servo10,servo11,servo12,servo13,servo14,servo15,flightpathid,pointid):
         self.Servo0 = servo0 
@@ -193,4 +220,91 @@ class servodatatable(dbase.Model):
         self.FlightPathID = flightpathid 
         self.PointID = pointid
 
-        
+class pitottubetable(db.Model):
+    __tablename__ = 'PitotTubeData'
+    DiffPressure = db.Column('DiffPressure',db.Float)
+    FlightPathID = db.Column('FlightPathID',db.Integer,primary_key = True)
+    PointID = db.Column('PointID', db.Integer, primary_key = True)
+
+    def __init__ (self,diffpressure,flightpathid,pointid):
+        self.DiffPressure = diffpressure
+        self.FlightPathID = flightpathid 
+        self.PointID = pointid
+
+    @property
+    def serialize(self):
+        return{
+            'DiffPressure':self.DiffPressure,
+            'FlightPathID':self.FlightPathID,
+            'PointID':self.PointID
+        }  
+
+class commandstable(db.Model):
+    __tablename__ = 'Commands'
+    DropLoad = db.Column('DropLoad',db.BigInteger)
+    Servo0 = db.Column('Servo0',db.BigInteger)
+    Servo1 = db.Column('Servo1',db.BigInteger)
+    Servo2 = db.Column('Servo2',db.BigInteger)
+    Servo3 = db.Column('Servo3',db.BigInteger)
+    Servo4 = db.Column('Servo4',db.BigInteger)
+    Servo5 = db.Column('Servo5',db.BigInteger)
+    Servo6 = db.Column('Servo6',db.BigInteger)
+    Servo7 = db.Column('Servo7',db.BigInteger)
+    Servo8 = db.Column('Servo8',db.BigInteger)
+    Servo9 = db.Column('Servo9',db.BigInteger)
+    Servo10 = db.Column('Servo10',db.BigInteger)
+    Servo11 = db.Column('Servo11',db.BigInteger)
+    Servo12 = db.Column('Servo12',db.BigInteger)
+    Servo13 = db.Column('Servo13',db.BigInteger)
+    Servo14 = db.Column('Servo14',db.BigInteger)
+    Servo15 = db.Column('Servo15',db.BigInteger)
+    Pitch = db.Column('Pitch',db.Float)
+    FlightPathID = db.Column('FlightPathID',db.Integer,primary_key = True)
+    PointID = db.Column('PointID', db.Integer, primary_key = True)
+
+    def __init__ (self,dropload,servo0, servo1, servo2, servo3, servo4, servo5, servo6, servo7, servo8, servo9, servo10, servo11, servo12, servo13, servo14, servo15,pitch, flightpathid,pointid):
+        self.DropLoad = dropload
+        self.Servo0 = servo0
+        self.Servo1 = servo1
+        self.Servo2 = servo2
+        self.Servo3 = servo3
+        self.Servo4 = servo4 
+        self.Servo5 = servo5 
+        self.Servo6 = servo6 
+        self.Servo7 = servo7 
+        self.Servo8 = servo8 
+        self.Servo9 = servo9 
+        self.Servo10 = servo10 
+        self.Servo11 = servo11 
+        self.Servo12 = servo12 
+        self.Servo13 = servo13 
+        self.Servo14 = servo14 
+        self.Servo15 = servo15
+        self.Pitch = pitch
+        self.FlightPathID = flightpathid 
+        self.PointID = pointid
+
+    @property
+    def serialize(self):
+        return{
+            'DropLoad':self.DropLoad,
+            'Servo0':self.Servo0,
+            'Servo1':self.Servo1,
+            'Servo2':self.Servo2,
+            'Servo3':self.Servo3,
+            'Servo4':self.Servo4,
+            'Servo5':self.Servo5,
+            'Servo6':self.Servo6,
+            'Servo7':self.Servo7,
+            'Servo8':self.Servo8,
+            'Servo9':self.Servo9,
+            'Servo10':self.Servo10,
+            'Servo11':self.Servo11,
+            'Servo12':self.Servo12,
+            'Servo13':self.Servo13,
+            'Servo14':self.Servo14,
+            'Servo15':self.Servo15,
+            'Pitch':self.Pitch,
+            'FlightPathID':self.FlightPathID,
+            'PointID':self.PointID
+        }    

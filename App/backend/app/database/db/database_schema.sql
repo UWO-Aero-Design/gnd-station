@@ -30,13 +30,13 @@ CREATE TABLE IF NOT EXISTS Point (
 	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID)
 );
 CREATE TABLE IF NOT EXISTS GpsValue (
-	Latitude DOUBLE NOT NULL,
-	Longitude DOUBLE NOT NULL,
-	Speed DOUBLE NOT NULL,
-	Satellite DOUBLE NOT NULL,
-	Altitude DOUBLE NOT NULL,
-	GPSTime DOUBLE NOT NULL, -- need to modify based on incoming data
-	GPSDate INTEGER NOT NULL, -- need to modify based on incoming data
+	Latitude FLOAT NOT NULL,
+	Longitude FLOAT NOT NULL,
+	Speed FLOAT NOT NULL,
+	Satellite INTEGER NOT NULL,
+	Altitude FLOAT NOT NULL,
+	GPSTime BIGINT NOT NULL, -- need to modify based on incoming data
+	GPSDate BIGINT NOT NULL, -- need to modify based on incoming data
 	FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
 	PRIMARY KEY (FlightPathID, PointID),
@@ -44,18 +44,18 @@ CREATE TABLE IF NOT EXISTS GpsValue (
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
 );
 CREATE TABLE IF NOT EXISTS ImuValues (
-	AccelerometerX DOUBLE NOT NULL,
-	AccelerometerY DOUBLE NOT NULL,
-	AccelerometerZ DOUBLE NOT NULL,
-	Yaw DOUBLE NOT NULL,
-	Pitch DOUBLE NOT NULL,
-	Roll DOUBLE NOT NULL,
-	MagnetometerX DOUBLE NOT NULL,
-	MagnetometerY DOUBLE NOT NULL,
-	MagnetometerZ DOUBLE NOT NULL,
-	GyroscopeX DOUBLE NOT NULL,
-	GyroscopeY DOUBLE NOT NULL,
-	GyroscopeZ DOUBLE NOT NULL,
+	AccelerometerX FLOAT NOT NULL,
+	AccelerometerY FLOAT NOT NULL,
+	AccelerometerZ FLOAT NOT NULL,
+	Yaw FLOAT NOT NULL,
+	Pitch FLOAT NOT NULL,
+	Roll FLOAT NOT NULL,
+	MagnetometerX FLOAT NOT NULL,
+	MagnetometerY FLOAT NOT NULL,
+	MagnetometerZ FLOAT NOT NULL,
+	GyroscopeX FLOAT NOT NULL,
+	GyroscopeY FLOAT NOT NULL,
+	GyroscopeZ FLOAT NOT NULL,
 	FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
 	PRIMARY KEY (FlightPathID, PointID),
@@ -63,9 +63,11 @@ CREATE TABLE IF NOT EXISTS ImuValues (
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
 );
 CREATE TABLE IF NOT EXISTS EnvironmentalSensorData (
-	Pressure DOUBLE NOT NULL,
-	Humidity DOUBLE NOT NULL,
-	Temperature DOUBLE NOT NULL,
+	Pressure FLOAT NOT NULL,
+	Humidity FLOAT NOT NULL,
+	Temperature FLOAT NOT NULL,
+	BatteryVoltage FLOAT NOT NULL,
+	BatteryCurrent FLOAT NOT NULL,
     FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
 	PRIMARY KEY (FlightPathID, PointID),
@@ -73,17 +75,19 @@ CREATE TABLE IF NOT EXISTS EnvironmentalSensorData (
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
 );
 CREATE TABLE IF NOT EXISTS BatteryStatus (
-	BatteryVoltage DOUBLE NOT NULL,
-	BatteryCurrent DOUBLE NOT NULL,
+	BatteryVoltage FLOAT NOT NULL,
+	BatteryCurrent FLOAT NOT NULL,
+	Rssi FLOAT NOT NULL,
     FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
 	PRIMARY KEY (FlightPathID, PointID),
 	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID),
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
+    FOREIGN KEY (Rssi) REFERENCES SystemStatus(Rssi)
 );
 CREATE TABLE IF NOT EXISTS SystemStatus (
-	Rssi DOUBLE NOT NULL,
-	State DOUBLE NOT NULL,
+	Rssi FLOAT NOT NULL,
+	State BIGINT NOT NULL,
     FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
 	PRIMARY KEY (FlightPathID, PointID),
@@ -91,25 +95,78 @@ CREATE TABLE IF NOT EXISTS SystemStatus (
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
 );
 CREATE TABLE IF NOT EXISTS ServoData (
-	Servo0 DOUBLE NOT NULL,
-	Servo1 DOUBLE NOT NULL,
-	Servo2 DOUBLE NOT NULL,
-	Servo3 DOUBLE NOT NULL,
-	Servo4 DOUBLE NOT NULL,
-	Servo5 DOUBLE NOT NULL,
-	Servo6 DOUBLE NOT NULL,
-	Servo7 DOUBLE NOT NULL,
-	Servo8 DOUBLE NOT NULL,
-	Servo9 DOUBLE NOT NULL,
-	Servo10 DOUBLE NOT NULL,
-	Servo11 DOUBLE NOT NULL,
-	Servo12 DOUBLE NOT NULL,
-	Servo13 DOUBLE NOT NULL,
-	Servo14 DOUBLE NOT NULL,
-	Servo15 DOUBLE NOT NULL,
+	Servo0 BIGINT NOT NULL,
+	Servo1 BIGINT NOT NULL,
+	Servo2 BIGINT NOT NULL,
+	Servo3 BIGINT NOT NULL,
+	Servo4 BIGINT NOT NULL,
+	Servo5 BIGINT NOT NULL,
+	Servo6 BIGINT NOT NULL,
+	Servo7 BIGINT NOT NULL,
+	Servo8 BIGINT NOT NULL,
+	Servo9 BIGINT NOT NULL,
+	Servo10 BIGINT NOT NULL,
+	Servo11 BIGINT NOT NULL,
+	Servo12 BIGINT NOT NULL,
+	Servo13 BIGINT NOT NULL,
+	Servo14 BIGINT NOT NULL,
+	Servo15 BIGINT NOT NULL,
     FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
 	PRIMARY KEY (FlightPathID, PointID),
 	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID),
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
 );
+
+CREATE TABLE IF NOT EXISTS PitotTubeData (
+    DiffPressure FLOAT NOT NULL,
+    FlightPathID INTEGER NOT NULL,
+	PointID INTEGER NOT NULL,
+	PRIMARY KEY (FlightPathID, PointID),
+	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID),
+	FOREIGN KEY (PointID) REFERENCES Point(PointID)
+);
+
+CREATE TABLE IF NOT EXISTS Commands (
+    DropLoad BIGINT NOT NULL,
+    Servo0 BIGINT NOT NULL,
+	Servo1 BIGINT NOT NULL,
+	Servo2 BIGINT NOT NULL,
+	Servo3 BIGINT NOT NULL,
+	Servo4 BIGINT NOT NULL,
+	Servo5 BIGINT NOT NULL,
+	Servo6 BIGINT NOT NULL,
+	Servo7 BIGINT NOT NULL,
+	Servo8 BIGINT NOT NULL,
+	Servo9 BIGINT NOT NULL,
+	Servo10 BIGINT NOT NULL,
+	Servo11 BIGINT NOT NULL,
+	Servo12 BIGINT NOT NULL,
+	Servo13 BIGINT NOT NULL,
+	Servo14 BIGINT NOT NULL,
+	Servo15 BIGINT NOT NULL,
+    Pitch FLOAT NOT NULL,
+    FlightPathID INTEGER NOT NULL,
+	PointID INTEGER NOT NULL,
+	PRIMARY KEY (FlightPathID, PointID),
+	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID),
+	FOREIGN KEY (PointID) REFERENCES Point(PointID)
+    FOREIGN KEY (Servo0) REFERENCES ServoData(Servo0)
+    FOREIGN KEY (Servo1) REFERENCES ServoData(Servo1)
+    FOREIGN KEY (Servo2) REFERENCES ServoData(Servo2)
+    FOREIGN KEY (Servo3) REFERENCES ServoData(Servo3)
+    FOREIGN KEY (Servo4) REFERENCES ServoData(Servo4)
+    FOREIGN KEY (Servo5) REFERENCES ServoData(Servo5)
+    FOREIGN KEY (Servo6) REFERENCES ServoData(Servo6)
+    FOREIGN KEY (Servo7) REFERENCES ServoData(Servo7)
+    FOREIGN KEY (Servo8) REFERENCES ServoData(Servo8)
+    FOREIGN KEY (Servo9) REFERENCES ServoData(Servo9)
+    FOREIGN KEY (Servo10) REFERENCES ServoData(Servo10)
+    FOREIGN KEY (Servo11) REFERENCES ServoData(Servo11)
+    FOREIGN KEY (Servo12) REFERENCES ServoData(Servo12)
+    FOREIGN KEY (Servo13) REFERENCES ServoData(Servo13)
+    FOREIGN KEY (Servo14) REFERENCES ServoData(Servo14)
+    FOREIGN KEY (Servo15) REFERENCES ServoData(Servo15)
+    FOREIGN KEY (Pitch) REFERENCES ImuVales(Pitch)
+);
+
