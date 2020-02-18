@@ -32,7 +32,11 @@
             .catch(e => {
                 this.errors.push(e);
             });
-            alert("Command Sent");
+            this.$notify({
+              group: 'commandNotifications',
+              title: 'Command Status',
+              text: 'Command Sent'
+            });
         }
     }
   }
