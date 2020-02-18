@@ -141,15 +141,15 @@ def port_write(app, serial_port, event):
 
         if not serial_port.out_waiting > 0:
             print(serial_port.is_open)
-            serial_port.flush()
+            #serial_port.flush()
             serial_port.write(dataOut)
             print("Data Sent")
         
         time.sleep(1)
 
-        if serial_port.in_waiting:
-            data = serial_port.readline().decode('ascii').strip()
-            print( data )
+        # if serial_port.in_waiting:
+        #     data = serial_port.readline().decode('ascii').strip()
+        #     print( data )
 
         serialWriteEvent.clear()
     else:

@@ -68,7 +68,7 @@ def activate_job():
     databaseinsertion(databaseObj)
 
     #Start background serial thread
-    thread = threading.Thread(target=Serial.connection.serial_data, args=[current_app._get_current_object()])
+    thread = threading.Thread(target=serial.connection.serial_data, args=[current_app._get_current_object()])
     thread.start()
 
 def databaseinsertion(obj):
