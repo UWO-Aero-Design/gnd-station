@@ -9,6 +9,8 @@ from databasehelperclass import environmentalsensortable
 from databasehelperclass import batterystatustable 
 from databasehelperclass import systemstatustable
 from databasehelperclass import servodatatable 
+from databasehelperclass import pitottubetable
+from databasehelperclass import commandstable
 import random
 from random import randint
 
@@ -23,7 +25,7 @@ flightpathtable.query.delete()
 db.session.commit()
 #fill flightpath table
 
-#add flightpath id #2
+#add flightpath id #1
 exobj = flightpathtable(
     1,
     "test1",
@@ -79,14 +81,12 @@ for i in range(0,count):
 #fill values with flight path id # 1
 for i in range(0,count):
     exobj = gpsvaluetable(
-    i,
-    i,
-    i,
-    i,
-    i,
-    i,
     float(i),
     float(i),
+    float(i),
+    i,
+    float(i),
+    i,
     i,
     1,
     i)
@@ -94,15 +94,13 @@ for i in range(0,count):
     db.session.commit()
 #fill values with flight path id # 2
 for i in range(0,count):
-   exobj = gpsvaluetable(
-    i,
-    i,
-    i,
-    i,
-    i,
-    i,
+    exobj = gpsvaluetable(
     float(i),
     float(i),
+    float(i),
+    i,
+    float(i),
+    i,
     i,
     2,
     i)
@@ -113,18 +111,18 @@ for i in range(0,count):
 #flight path id # 1
 for i in range(0,count):
     exobj = imuvaluestable(
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
         1,
         i)
     db.session.add(exobj)
@@ -132,18 +130,18 @@ for i in range(0,count):
 #flight path id # 2
 for i in range(0,count):
     exobj = imuvaluestable(
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
-        i,
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
         2,
         i)
     db.session.add(exobj)
@@ -153,9 +151,11 @@ for i in range(0,count):
 #flightpath id #1
 for i in range(0,count):
     exobj = environmentalsensortable(
-        i,
-        i,
-        i,
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
         1,
         i)
     db.session.add(exobj)
@@ -163,9 +163,11 @@ for i in range(0,count):
 #flightpath id #2
 for i in range(0,count):
     exobj = environmentalsensortable(
-        i,
-        i,
-        i,
+        float(i),
+        float(i),
+        float(i),
+        float(i),
+        float(i),
         2,
         i)
     db.session.add(exobj)
@@ -174,24 +176,24 @@ for i in range(0,count):
 #fill battery status table
 #flightpathid #1
 for i in range(0,count):
-    exobj = batterystatustable(float(i),float(i),1,i)
+    exobj = batterystatustable(float(i),float(i),float(i),1,i)
     db.session.add(exobj)
     db.session.commit()
 #flightpathid #2
 for i in range(0,count):
-    exobj = batterystatustable(float(i),float(i),2,i)
+    exobj = batterystatustable(float(i),float(i),float(i),2,i)
     db.session.add(exobj)
     db.session.commit()
 
 #fill system status status table
 #flightpathid #1
 for i in range(0,count):
-    exobj = systemstatustable(i,i,1,i)
+    exobj = systemstatustable(float(i),i,1,i)
     db.session.add(exobj)
     db.session.commit()
 #flightpathid #2
 for i in range(0,count):
-    exobj = systemstatustable(i,i,2,i)
+    exobj = systemstatustable(float(i),i,2,i)
     db.session.add(exobj)
     db.session.commit()
 
@@ -238,6 +240,72 @@ for i in range(0,count):
         i,
         i,
         i,
+        2,
+        i)
+    db.session.add(exobj)
+    db.session.commit()
+
+#fill pitottube table
+#flightpathid #1
+for i in range(0,count):
+    exobj = pitottubetable(float(i),1,i)
+    db.session.add(exobj)
+    db.session.commit()
+#flightpathid #2
+for i in range(0,count):
+    exobj = pitottubetable(float(i),2,i)
+    db.session.add(exobj)
+    db.session.commit()
+
+
+#fill Commands table
+#flightpathid #1
+for i in range(0,count):
+    exobj = commandstable(
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        float(i),
+        1,
+        i)
+    db.session.add(exobj)
+    db.session.commit()
+
+#flightpathid #2
+for i in range(0,count):
+    exobj = commandstable(
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        i,
+        float(i),
         2,
         i)
     db.session.add(exobj)
