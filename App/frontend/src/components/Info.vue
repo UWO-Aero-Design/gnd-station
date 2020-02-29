@@ -23,9 +23,9 @@
                  :key="index"
                  :isResizable="true">
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
-        {{ item.i }}
+        <div style="position:absolute;left:10px;top:10px;">{{ item.componentName }}</div>
         <MapInfo v-if="item.componentName === 'MapInfo'"></MapInfo>
-        <Commands v-if="item.componentName === 'Commands'"></Commands>
+        <Commands v-if="item.componentName === 'Command Console'"></Commands>
         <br><br>
       </grid-item>
     </grid-layout>

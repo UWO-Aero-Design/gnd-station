@@ -19,14 +19,16 @@ def sendCMD():
 
     print("Command Sent")
 
-    flightID = request.json['flightID']
-    point = request.json['point']
+    commands = request.json['body']
+
+    flightID = commands['flightID']
+    point = commands['point']
 
     global serialDataOut
 
-    serialDataOut.cmdDrop = request.json['drop']
-    serialDataOut.cmdServo = request.json['servo']
-    serialDataOut.cmdPitch = request.json['pitch']
+    serialDataOut.cmdDrop = commands['drop']
+    serialDataOut.cmdServo = commands['servo']
+    serialDataOut.cmdPitch = commands['pitch']
 
     databaseObj = queryDatabase.QueryDatabase(flightID)
     serialDataOut.IMU = databaseObj.getIMUValuesForFlightPoint(point)
@@ -41,11 +43,11 @@ def sendCMD():
     print("Data request set")
 
     response_object = {
-        'drop': request.json['drop'],
-        'servo': request.json['servo'],
-        'pitch': request.json['pitch'],
-        'point': request.json['point'],
-        'flightID': request.json['flightID']
+        'drop': commands['drop'],
+        'servo': commands['servo'],
+        'pitch': commands['pitch'],
+        'point': commands['point'],
+        'flightID': commands['flightID']
     }
 
     return jsonify(response_object), 202

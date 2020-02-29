@@ -34,7 +34,8 @@
     "vue-scrollto": "^2.17.1",
     "vue-sidebar-menu": "^4.2.2",
     "vue-socket.io": "^2.1.1-b",
-    "vue2-leaflet": "^2.2.1"
+    "vue2-leaflet": "^2.2.1",
+    "vuescroll": "^4.15.0-beta.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

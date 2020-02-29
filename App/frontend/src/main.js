@@ -17,6 +17,8 @@ import VueSocketio from 'vue-socket.io';
 
 import Notifications from 'vue-notification'
 
+import vuescroll from 'vuescroll';
+
 library.add(faUserSecret);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
@@ -57,6 +59,8 @@ Icon.Default.mergeOptions({
 });
 
 Vue.use(Notifications);
+
+Vue.use(vuescroll);
 
 /* eslint-disable no-new */
 new Vue({
