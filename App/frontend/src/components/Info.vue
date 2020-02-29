@@ -71,8 +71,8 @@ export default {
         this.panes.push({
           "x": 0,
           "y": 0,
-          "w": 4,
-          "h": 12,
+          "w": 5.5,
+          "h": 16.5,
           "i": String(this.paneID),
           "componentName": String(item.componentName)
         });

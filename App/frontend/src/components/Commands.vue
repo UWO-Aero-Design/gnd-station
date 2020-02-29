@@ -1,24 +1,27 @@
 <template>
   <div class="infoBox">
     <div class="dropbox">
-      <button class="dropbutton" @click="sendDrop(1)"> <i class="fas fa-globe-americas"/> </button>
-      <button class="dropbutton" style="top:120px" @click="sendDrop(2)"> <i class="fa fa-paper-plane"/> </button>
-      <button class="dropbutton" style="top:200px" @click="sendDrop(3)"> <i class="fa fa-paper-plane"/> </button>
-      <button class="dropbutton" style="top:280px" @click="sendDrop(4)"> <i class="fa fa-tint"/> </button>
+      <button class="dropbutton" @click="sendDrop(0)"> <i class="fa fa-door-open"/> </button>
+      <button class="dropbutton" style="top:100px" @click="sendDrop(1)"> <i class="fa fa-door-closed"/> </button>
+      <button class="dropbutton" style="top:160px" @click="sendDrop(2)"> <i class="fa fa-paper-plane"/> </button>
+      <button class="dropbutton" style="top:220px" @click="sendDrop(3)"> <i class="fa fa-tint"/> </button>
+      <button class="dropbutton" style="top:280px" @click="sendDrop(4)"> <i class="fas fa-globe-americas"/> </button>>
     </div>
     <div class="pitchbox">
-      <button class="pitchbutton"  @click="sendPitch"> <i class="fas fa-plane-departure"/> </button>
-      <button class="pitchbutton" style="top:80px" @click="sendPitch"> <i class="fas fa-plane-departure"/> </button>
+      <button class="pitchbutton"  @click="sendPitch(0)"> <i class="fas fa-plane-departure"/> </button>
+      <button class="pitchbutton" style="top:60px" @click="sendPitch(1)"> <i class="fas fa-plane-departure"/> </button>
+      <button class="pitchbutton" style="top:120px" @click="sendPitch(2)"> <i class="fas fa-wrench"/> </button>
+      <button class="pitchbutton" style="top:180px" @click="sendPitch(3)"> <i class="fas fa-exchange-alt"/> </button>
       <h3 style="position: absolute;top:-50px; left:20px"> Pitch </h3>
     </div>
     <div class="servoboxon">
         <!-- h3 class="servoformat" v-for="n in 8"> Servo {{ n }} </h3 -->
-        <button class="servobutton" v-for="n in 8" @click="sendServo"> {{ n }} </button>
+        <button class="servobutton" v-for="(item,index) in buttonLabels" @click="sendServo(index-1,item)"> {{ item }} </button>
         <h3 style="position: absolute;top:-30px; left:50px;"> Servo </h3>
     </div>
     <div class="servoboxoff">
         <!-- h3 class="servoformat" v-for="n in 8"> Servo {{ n }} </h3 -->
-        <button class="servobutton" v-for="n in 8" @click="sendServo"> {{ n }} </button>
+        <button class="servobutton" v-for="(item,index) in buttonLabels" @click="sendServo(index-1+8,item)"> {{ item }} </button>
     </div>
     
   </div>
@@ -41,15 +44,10 @@
             point: '1',
             flightID: '1'
           },
-          servoBoxScrollOps: {
-          vuescroll: {
-            mode: 'native'
-          },
-          scrollPanel: {},
-          rail: {},
-          bar: {}
-        }
-      };
+          buttonLabels: [
+            'Left Glider Drop','Right Glider Drop','Left Door','Right Door','Water Drop','Front Habitat Drop','Back Habitat Drop'
+          ]
+      }
     },
     methods: {
       //Post request to command api
@@ -78,29 +76,35 @@
         };
         var type = '';
         switch (item) {
+          case 0:
+            console.log("Open Drop Doors command");
+            cmd.drop = '0';
+            type = 'Open Drop Doors'
+            break;
+          
           case 1:
-            console.log("Drop water command");
+            console.log("Close Drop Doors command");
             cmd.drop = '1';
-            type = 'Water Drop'
+            type = 'Close Drop Doors'
             break;
           
           case 2:
-            console.log("Drop glider 1 command");
+            console.log("Drop Gliders command");
             cmd.drop = '2';
-            type = 'Glider 1 Drop'
+            type = 'Drop Gliders'
             break;
           
           case 3:
-            console.log("Drop glider 2 command");
+            console.log("Drop Water command");
             cmd.drop = '3';
-            type = 'Glider 2 Drop'
+            type = 'Water Drop'
             break;
-          
+
           case 4:
             console.log("Drop habitat command");
             cmd.drop = '4';
             type = 'Habitat Drop'
-            break;
+          break;
 
           default:
             console.log("No command");
@@ -108,25 +112,58 @@
         }
         this.sendCMD(cmd,type);
       },
-      sendServo() {
+      sendServo(item,label) {
         var cmd = {
           drop: '0',
-          servo: '1',
+          servo: '0',
           pitch: '0',
           point: this.point,
           flightID: this.flightID
         };
-        this.sendCMD(cmd,'Servo');
+        cmd.servo = item;
+        var type = "Servo ";
+        if (item < 7) {
+          type = type.concat(label," (Servo ",(item + 1).toString(),") Open");
+        }
+        else {
+          type = type.concat(label," (Servo ",(item + 1 - 8).toString(),") Close");
+        }
+        this.sendCMD(cmd,type);
       },
-      sendPitch() {
+      sendPitch(item) {
         var cmd = {
           drop: '0',
           servo: '0',
-          pitch: '1',
+          pitch: '0',
           point: this.point,
           flightID: this.flightID
         };
-        this.sendCMD(cmd,'Pitch');
+        var type = '';
+        switch(item) {
+          case 0:
+            console.log("Pitch Up Glider 1 Command");
+            cmd.pitch = '0';
+            type = 'Glider 1 Pitch Up';
+            break;
+          case 1:
+            console.log("Pitch Up Glider 2 Command");
+            cmd.pitch = '1';
+            type = 'Glider 2 Pitch Up';
+            break;
+          case 2:
+            console.log("Test Servo Range Command");
+            cmd.pitch = '2';
+            type = 'Test Servo Range';
+            break;
+          case 3:
+            console.log("Auto/Manual Mode Swap Command");
+            cmd.pitch = '3';
+            type = 'Swap Auto/Manual Mode'
+          default:
+            console.log("No command")
+            break;
+        }
+        this.sendCMD(cmd,type);
       }
     }
   }
@@ -143,8 +180,8 @@
   button {
     display: inline-block;
     width: 7em;
-    padding: 15px 25px;
-    font-size: 24px;
+    padding: 10px 15px;
+    font-size: 20px;
     cursor: pointer;
     text-align: center;
     text-decoration: none;
@@ -153,7 +190,7 @@
     background-color: #4CAF50;
     border: none;
     border-radius: 15px;
-    box-shadow: 0 9px #999;
+    box-shadow: 0 8px #999;
     transition-duration: 0.4s;
   }
 
@@ -178,6 +215,7 @@
     position: relative;
     left: 50px;
     top: 10px;
+    font-size: 15px;
   }
 
   .pitchbutton {
@@ -199,7 +237,7 @@
   .servoboxon {
     position: absolute;
     top: 20px;
-    left: 200px;
+    left: 130px;
     display: flex;
     flex-direction: column
   }
@@ -212,7 +250,7 @@
   .servoboxoff {
     position: absolute;
     top: 20px;
-    left: 400px;
+    left: 250px;
     display: flex;
     flex-direction: column;
   }
