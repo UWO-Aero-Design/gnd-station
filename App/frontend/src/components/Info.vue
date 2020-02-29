@@ -72,7 +72,7 @@ export default {
           "x": 0,
           "y": 0,
           "w": 5.5,
-          "h": 16.5,
+          "h": 19.5,
           "i": String(this.paneID),
           "componentName": String(item.componentName)
         });

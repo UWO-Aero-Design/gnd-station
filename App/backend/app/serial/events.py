@@ -105,8 +105,15 @@ def pre_serial_write(app,data = None):
 
     builder = MessageBuilder()
 
-    i = IMU()
-    i.ax = int(serialDataOut.IMU[0][1])
+    c = Commands()
+    c.drop = serialDataOut.cmdDrop
+    c.servos = serialDataOut.cmdServo
+    c.pitch = serialDataOut.cmdPitch
+
+    builder.add(c)
+
+    # i = IMU()
+    # i.ax = int(serialDataOut.IMU[0][1])
 
     # p = Pitot()
     # p.differential_pressure = 255
@@ -126,10 +133,10 @@ def pre_serial_write(app,data = None):
     # print(uint16_to_bytes(31245))
     
     # builder.add(p)
-    builder.add(i)
+    # builder.add(i)
     # builder.add(e)
 
-    write_val = builder.build(0,2)
+    write_val = builder.build(0,serialDataOut.destination)
     print(write_val)
     print(len(write_val))
 

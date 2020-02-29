@@ -17,26 +17,49 @@ def sendCMD():
     if not request.json:
         return 'Command wrong format'
 
-    print("Command Sent")
+    print("Command Received")
 
     commands = request.json['body']
 
-    flightID = commands['flightID']
-    point = commands['point']
+    #flightID = commands['flightID']
+    #point = commands['point']
+
+    #Extra place at front for no command
+    dropString = ['0','0','0','0','0','0']
+    pitchString = ['0','0','0','0','0','0','0']
+    servoString = ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0']
+
+    #Negative index for reverse order
+    dropString[int(commands['drop'])] = 1
+    pitchString[int(commands['pitch'])] = 1
+    servoString[int(commands['servo'])] = 1
+
+    #Convert list to string of bits
+    drop = ''.join(map(str,dropString))
+    pitch = ''.join(map(str,pitchString))
+    servo = ''.join(map(str,servoString))
+
+    #Remove first element
+    drop = int(drop[1:],base=2)
+    pitch = int(pitch[1:],base=2)
+    servo = int(servo[1:],base=2)
 
     global serialDataOut
 
-    serialDataOut.cmdDrop = commands['drop']
-    serialDataOut.cmdServo = commands['servo']
-    serialDataOut.cmdPitch = commands['pitch']
+    serialDataOut.cmdDrop = drop
+    serialDataOut.cmdServo = pitch
+    serialDataOut.cmdPitch = servo
+    serialDataOut.destination = commands['destination']
 
-    databaseObj = queryDatabase.QueryDatabase(flightID)
-    serialDataOut.IMU = databaseObj.getIMUValuesForFlightPoint(point)
-    serialDataOut.GPS = databaseObj.getGPSValuesForFlightPoint(point)
-    serialDataOut.Env = databaseObj.getEnvironmentalSensorValuesForFlightPoint(point)
-    serialDataOut.Battery = databaseObj.getBatteryStatusValuesForFlightPoint(point)
-    serialDataOut.System = databaseObj.getSystemStatusValuesForFlightPoint(point)
-    serialDataOut.Servo = databaseObj.getServoDataValuesForFlightPoint(point)
+    print(commands['destination'])
+
+    # databaseObj = queryDatabase.QueryDatabase(flightID)
+    # serialDataOut.IMU = databaseObj.getIMUValuesForFlightPoint(point)
+    # serialDataOut.GPS = databaseObj.getGPSValuesForFlightPoint(point)
+    # serialDataOut.Env = databaseObj.getEnvironmentalSensorValuesForFlightPoint(point)
+    # serialDataOut.Battery = databaseObj.getBatteryStatusValuesForFlightPoint(point)
+    # serialDataOut.System = databaseObj.getSystemStatusValuesForFlightPoint(point)
+    # serialDataOut.Servo = databaseObj.getServoDataValuesForFlightPoint(point)
 
     global serialWriteEvent
     serialWriteEvent.set()
