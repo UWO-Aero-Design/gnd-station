@@ -103,7 +103,7 @@ export default {
         this.numOfPanes++;
         this.paneID++;
       }
-      else if(item.componentType === "Grid"){
+      else {
         this.panes.push({
           "x": 0,
           "y": 0,
