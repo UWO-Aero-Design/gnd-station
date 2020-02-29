@@ -25,14 +25,14 @@ def sendCMD():
     #point = commands['point']
 
     #Extra place at front for no command
-    dropString = ['0','0','0','0','0','0']
-    pitchString = ['0','0','0','0','0','0','0']
-    servoString = ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0']
+    dropString = [0,0,0,0,0,0]
+    pitchString = [0,0,0,0,0,0,0]
+    servoString = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
     #Negative index for reverse order
-    dropString[int(commands['drop'])] = 1
-    pitchString[int(commands['pitch'])] = 1
-    servoString[int(commands['servo'])] = 1
+    dropString[-int(commands['drop'])] = 1
+    pitchString[-int(commands['pitch'])] = 1
+    servoString[-int(commands['servo'])] = 1
 
     #Convert list to string of bits
     drop = ''.join(map(str,dropString))
@@ -43,6 +43,16 @@ def sendCMD():
     drop = int(drop[1:],base=2)
     pitch = int(pitch[1:],base=2)
     servo = int(servo[1:],base=2)
+
+    print("Bitfield")
+    print(dropString)
+    print(pitchString)
+    print(servoString)
+
+    print("Integer Conversion")
+    print(drop)
+    print(pitch)
+    print(servo)
 
     global serialDataOut
 
