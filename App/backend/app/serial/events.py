@@ -115,8 +115,8 @@ def pre_serial_write(app,data = None):
 
     builder.add(c)
 
-    # i = IMU()
-    # i.ax = int(serialDataOut.IMU[0][1])
+    #i = IMU()
+    #i.ax = 10
 
     # p = Pitot()
     # p.differential_pressure = 255

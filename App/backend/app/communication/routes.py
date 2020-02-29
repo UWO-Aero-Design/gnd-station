@@ -47,11 +47,11 @@ def sendCMD():
     global serialDataOut
 
     serialDataOut.cmdDrop = drop
-    serialDataOut.cmdServo = pitch
-    serialDataOut.cmdPitch = servo
-    serialDataOut.destination = commands['destination']
+    serialDataOut.cmdServo = servo
+    serialDataOut.cmdPitch = pitch
+    serialDataOut.destination = int(commands['destination'])
 
-    print(commands['destination'])
+    print("Going to",commands['destination'])
 
     # databaseObj = queryDatabase.QueryDatabase(flightID)
     # serialDataOut.IMU = databaseObj.getIMUValuesForFlightPoint(point)
