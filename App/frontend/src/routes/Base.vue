@@ -33,7 +33,6 @@ export default {
     Map
   },
   mounted() {
-    var connect = this.startUp;
     axios.get('http://localhost:5000/ping')
       .then(function(response) {
         alert("Backend Started");
@@ -62,7 +61,7 @@ export default {
     pingBackend (event,item) {
       axios.get('http://localhost:5000/Ping')
       .then(function(response) {
-        alert("Backend Started");
+        //alert("Backend Started");
       });
     }
   },

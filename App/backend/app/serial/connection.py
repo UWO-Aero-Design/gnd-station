@@ -5,12 +5,12 @@ import serial
 from serial.tools import list_ports
 
 # Message parser
-from app.Serial import parse
-from app.Serial.parse import parse
+from app.serial import parse
+from app.serial.parse import parse
 
 # Event for serial
-from app.Serial import events 
-from app.Serial.events import post_serial_read, pre_serial_write
+from app.serial import events 
+from app.serial.events import post_serial_read, pre_serial_write
 
 from flask_socketio import emit,send
 from .. import socketio
@@ -20,6 +20,8 @@ from app.database import databasehelperclass
 
 from .. import dbase
 from .. import serialWriteEvent
+
+import time
 
 # Configuration for Serial connection
 class SerialConfig:
@@ -95,6 +97,7 @@ def serial_task(app,port : str, config : SerialConfig = None, on_read = None, on
         try:
             port_read(app,serial_port, on_read)
             port_write(app,serial_port, on_write)
+            time.sleep(0.1)
             
         except serial.serialutil.SerialException:
             print('Lost communications with {}'.format(port.device))
@@ -137,14 +140,16 @@ def port_write(app, serial_port, event):
         dataOut = event(app)
 
         if not serial_port.out_waiting > 0:
+            print(serial_port.is_open)
+            #serial_port.flush()
             serial_port.write(dataOut)
             print("Data Sent")
         
         time.sleep(1)
 
-        if serial_port.in_waiting:
-            data = serial_port.readline().decode('ascii').strip()
-            print( data )
+        # if serial_port.in_waiting:
+        #     data = serial_port.readline().decode('ascii').strip()
+        #     print( data )
 
         serialWriteEvent.clear()
     else:

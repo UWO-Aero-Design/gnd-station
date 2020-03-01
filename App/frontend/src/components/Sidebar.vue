@@ -53,9 +53,9 @@ export default {
             {
               title: 'Commands',
               icon: 'fas fa-gamepad',
-              componentSize: '2BlockH',
+              componentSize: '2BlockV',
               componentType: 'Grid',
-              componentName: 'Commands'
+              componentName: 'Command Console'
             }
           ],
           componentType: 'None'

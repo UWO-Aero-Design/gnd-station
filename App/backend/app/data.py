@@ -12,3 +12,4 @@ class serialDataPrepackage:
         self.cmdDrop = None
         self.cmdServo = None
         self.cmdPitch = None
+        self.destination = None

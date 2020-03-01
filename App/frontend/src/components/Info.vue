@@ -23,9 +23,9 @@
                  :key="index"
                  :isResizable="true">
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
-        {{ item.i }}
+        <div style="position:absolute;left:10px;top:10px;">{{ item.componentName }}</div>
         <MapInfo v-if="item.componentName === 'MapInfo'"></MapInfo>
-        <Commands v-if="item.componentName === 'Commands'"></Commands>
+        <Commands v-if="item.componentName === 'Command Console'"></Commands>
         <br><br>
       </grid-item>
     </grid-layout>
@@ -71,8 +71,8 @@ export default {
         this.panes.push({
           "x": 0,
           "y": 0,
-          "w": 4,
-          "h": 12,
+          "w": 5.5,
+          "h": 19.5,
           "i": String(this.paneID),
           "componentName": String(item.componentName)
         });
@@ -103,7 +103,7 @@ export default {
         this.numOfPanes++;
         this.paneID++;
       }
-      else if(item.componentType === "Grid"){
+      else {
         this.panes.push({
           "x": 0,
           "y": 0,

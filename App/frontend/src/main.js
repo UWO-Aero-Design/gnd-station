@@ -15,6 +15,10 @@ import 'leaflet/dist/leaflet.css'
 import socketio from 'socket.io-client';
 import VueSocketio from 'vue-socket.io';
 
+import Notifications from 'vue-notification'
+
+import vuescroll from 'vuescroll';
+
 library.add(faUserSecret);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
@@ -53,6 +57,10 @@ Icon.Default.mergeOptions({
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
+
+Vue.use(Notifications);
+
+Vue.use(vuescroll);
 
 /* eslint-disable no-new */
 new Vue({
