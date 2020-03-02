@@ -32,44 +32,56 @@ export default {
             {
               title: 'IMU',
               icon: 'fas fa-sync',
-              componentSize: '2BlockH',
+              componentSize: 'Custom',
               componentType: 'Grid',
-              componentName: 'IMU Info'
+              componentName: 'IMU Info',
+              w: 2,
+              h: 10
             },
             {
               title: 'GPS',
               icon: 'fas fa-crosshairs',
-              componentSize: '2BlockH',
+              componentSize: 'Custom',
               componentType: 'Grid',
-              componentName: 'GPS Info'
+              componentName: 'GPS Info',
+              w: 2,
+              h: 6
             },
             {
               title: 'Environment',
               icon: 'fas fa-seedling',
-              componentSize: '2BlockH',
+              componentSize: 'Custom',
               componentType: 'Grid',
-              componentName: 'Environment Info'
+              componentName: 'Environment Info',
+              w: 2,
+              h: 3.5
             },
             {
               title: 'Battery',
               icon: 'fas fa-battery-three-quarters',
-              componentSize: '2BlockH',
+              componentSize: 'Custom',
               componentType: 'Grid',
-              componentName: 'Battery Info'
+              componentName: 'Battery Info',
+              w: 2,
+              h: 2.5
             },
             {
               title: 'Status',
               icon: 'fas fa-satellite',
-              componentSize: '2BlockH',
+              componentSize: 'Custom',
               componentType: 'Grid',
-              componentName: 'Status Info'
+              componentName: 'Status Info',
+              w: 2,
+              h: 2.5
             },
             {
               title: 'Servo',
               icon: 'fas fa-tachometer-alt',
-              componentSize: '2BlockH',
+              componentSize: 'Custom',
               componentType: 'Grid',
-              componentName: 'Servo Info'
+              componentName: 'Servo Info',
+              w: 2,
+              h: 6.5
             }
           ],
           componentType: 'None'

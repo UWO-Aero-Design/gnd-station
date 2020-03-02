@@ -21,7 +21,7 @@
                  :h="item.h"
                  :i="item.i"
                  :key="index"
-                 :isResizable="true">
+                 :isResizable="false">
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
         <div style="position:absolute;left:10px;top:10px;">{{ item.componentName }}</div>
         <GPSInfo v-if="item.componentName === 'GPS Info'"></GPSInfo>
@@ -122,10 +122,10 @@ export default {
         this.panes.push({
           "x": 0,
           "y": 0,
-          "w": 4,
-          "h": 7,
+          "w": item.w,
+          "h": item.h,
           "i": String(this.paneID),
-          "componentType": String(item.componentType)
+          "componentName": String(item.componentName)
         });
         this.numOfPanes++;
         this.paneID++;
