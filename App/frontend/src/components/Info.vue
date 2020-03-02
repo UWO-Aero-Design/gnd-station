@@ -27,6 +27,7 @@
         <GPSInfo v-if="item.componentName === 'GPS Info'"></GPSInfo>
         <IMUInfo v-if="item.componentName === 'IMU Info'"></IMUInfo>
         <EnviroInfo v-if="item.componentName === 'Environment Info'"></EnviroInfo>
+        <BatteryInfo v-if="item.componentName === 'Battery Info'"></BatteryInfo>
         <Commands v-if="item.componentName === 'Command Console'"></Commands>
         <br><br>
       </grid-item>
@@ -41,6 +42,7 @@ import VueGridLayout from 'vue-grid-layout';
 import GPSInfo from "@/components/InfoComponents/GPSInfo";
 import IMUInfo from "@/components/InfoComponents/IMUInfo";
 import EnviroInfo from "@/components/InfoComponents/EnviroInfo";
+import BatteryInfo from "@/components/InfoComponents/BatteryInfo";
 import Commands from "@/components/Commands";
 
 export default {
@@ -51,6 +53,7 @@ export default {
       GPSInfo,
       IMUInfo,
       EnviroInfo,
+      BatteryInfo,
       Commands
   },
   mounted() {

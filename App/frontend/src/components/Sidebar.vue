@@ -51,6 +51,13 @@ export default {
               componentName: 'Environment Info'
             },
             {
+              title: 'Battery',
+              icon: 'fas fa-battery-three-quarters',
+              componentSize: '2BlockH',
+              componentType: 'Grid',
+              componentName: 'Battery Info'
+            },
+            {
               title: 'Communication',
               icon: 'fas fa-satellite',
               componentSize: '1Block',
