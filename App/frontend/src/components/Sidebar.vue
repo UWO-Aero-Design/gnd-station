@@ -63,6 +63,13 @@ export default {
               componentSize: '2BlockH',
               componentType: 'Grid',
               componentName: 'Status Info'
+            },
+            {
+              title: 'Servo',
+              icon: 'fas fa-tachometer-alt',
+              componentSize: '2BlockH',
+              componentType: 'Grid',
+              componentName: 'Servo Info'
             }
           ],
           componentType: 'None'

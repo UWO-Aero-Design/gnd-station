@@ -29,6 +29,7 @@
         <EnviroInfo v-if="item.componentName === 'Environment Info'"></EnviroInfo>
         <BatteryInfo v-if="item.componentName === 'Battery Info'"></BatteryInfo>
         <StatusInfo v-if="item.componentName === 'Status Info'"></StatusInfo>
+        <ServoInfo v-if="item.componentName === 'Servo Info'"></ServoInfo>
         <Commands v-if="item.componentName === 'Command Console'"></Commands>
         <br><br>
       </grid-item>
@@ -45,6 +46,7 @@ import IMUInfo from "@/components/InfoComponents/IMUInfo";
 import EnviroInfo from "@/components/InfoComponents/EnviroInfo";
 import BatteryInfo from "@/components/InfoComponents/BatteryInfo";
 import StatusInfo from "@/components/InfoComponents/StatusInfo";
+import ServoInfo from "@/components/InfoComponents/ServoInfo";
 import Commands from "@/components/Commands";
 
 export default {
@@ -57,6 +59,7 @@ export default {
       EnviroInfo,
       BatteryInfo,
       StatusInfo,
+      ServoInfo,
       Commands
   },
   mounted() {
