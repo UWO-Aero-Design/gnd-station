@@ -26,6 +26,7 @@
         <div style="position:absolute;left:10px;top:10px;">{{ item.componentName }}</div>
         <GPSInfo v-if="item.componentName === 'GPS Info'"></GPSInfo>
         <IMUInfo v-if="item.componentName === 'IMU Info'"></IMUInfo>
+        <EnviroInfo v-if="item.componentName === 'Environment Info'"></EnviroInfo>
         <Commands v-if="item.componentName === 'Command Console'"></Commands>
         <br><br>
       </grid-item>
@@ -39,6 +40,7 @@ import axios from 'axios'
 import VueGridLayout from 'vue-grid-layout';
 import GPSInfo from "@/components/InfoComponents/GPSInfo";
 import IMUInfo from "@/components/InfoComponents/IMUInfo";
+import EnviroInfo from "@/components/InfoComponents/EnviroInfo";
 import Commands from "@/components/Commands";
 
 export default {
@@ -48,6 +50,7 @@ export default {
       GridItem: VueGridLayout.GridItem,
       GPSInfo,
       IMUInfo,
+      EnviroInfo,
       Commands
   },
   mounted() {

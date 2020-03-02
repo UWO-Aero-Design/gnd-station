@@ -44,6 +44,13 @@ export default {
               componentName: 'GPS Info'
             },
             {
+              title: 'Environment',
+              icon: 'fas fa-seedling',
+              componentSize: '2BlockH',
+              componentType: 'Grid',
+              componentName: 'Environment Info'
+            },
+            {
               title: 'Communication',
               icon: 'fas fa-satellite',
               componentSize: '1Block',
