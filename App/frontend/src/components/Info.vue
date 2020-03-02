@@ -24,7 +24,8 @@
                  :isResizable="true">
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
         <div style="position:absolute;left:10px;top:10px;">{{ item.componentName }}</div>
-        <MapInfo v-if="item.componentName === 'MapInfo'"></MapInfo>
+        <GPSInfo v-if="item.componentName === 'GPS Info'"></GPSInfo>
+        <IMUInfo v-if="item.componentName === 'IMU Info'"></IMUInfo>
         <Commands v-if="item.componentName === 'Command Console'"></Commands>
         <br><br>
       </grid-item>
@@ -36,7 +37,8 @@
 <script>
 import axios from 'axios'
 import VueGridLayout from 'vue-grid-layout';
-import MapInfo from "@/components/MapComponents/MapInfo";
+import GPSInfo from "@/components/InfoComponents/GPSInfo";
+import IMUInfo from "@/components/InfoComponents/IMUInfo";
 import Commands from "@/components/Commands";
 
 export default {
@@ -44,7 +46,8 @@ export default {
   components: {
       GridLayout: VueGridLayout.GridLayout,
       GridItem: VueGridLayout.GridItem,
-      MapInfo,
+      GPSInfo,
+      IMUInfo,
       Commands
   },
   mounted() {

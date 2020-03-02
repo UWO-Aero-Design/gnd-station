@@ -64,11 +64,10 @@
 
   import {LMap, LTileLayer, LMarker, LIcon, LPopup, LRectangle, LCircle, LControlLayers, LPolyline} from 'vue2-leaflet';
   import {latLngBounds, latLng} from "leaflet";
-  import MapInfo from "@/components/MapComponents/MapInfo";
+  import GPSInfo from "@/components/InfoComponents/GPSInfo";
   import { RadialMenu, RadialMenuItem } from 'vue-radial-menu';
   import 'leaflet-easybutton';
   var movingMarker = require('../../assets/js/MovingMarker.js');
-
 
   export default {
     name: "MapLeaflet",
@@ -78,7 +77,7 @@
       LMarker,
       LIcon,
       LPopup,
-      MapInfo,
+      GPSInfo,
       RadialMenu,
       RadialMenuItem,
       LRectangle,

@@ -30,11 +30,18 @@ export default {
           icon: 'fas fa-dice-d6',
           child: [
             {
-              title: 'Data',
-              icon: 'fas fa-hdd',
+              title: 'IMU',
+              icon: 'fas fa-sync',
               componentSize: '2BlockH',
               componentType: 'Grid',
-              componentName: 'Data'
+              componentName: 'IMU Info'
+            },
+            {
+              title: 'GPS',
+              icon: 'fas fa-crosshairs',
+              componentSize: '2BlockH',
+              componentType: 'Grid',
+              componentName: 'GPS Info'
             },
             {
               title: 'Communication',
@@ -42,14 +49,14 @@ export default {
               componentSize: '1Block',
               componentType: 'Grid',
               componentName: 'Communication'
-            },
-            {
-              title: 'Map Data',
-              icon: 'fas fa-crosshairs',
-              componentSize: '2BlockH',
-              componentType: 'Grid',
-              componentName: 'MapInfo'
-            },
+            }
+          ],
+          componentType: 'None'
+        },
+        {
+          title: 'Communication',
+          icon: 'fas fa-satellite-dish',
+          child: [
             {
               title: 'Commands',
               icon: 'fas fa-gamepad',
@@ -58,7 +65,7 @@ export default {
               componentName: 'Command Console'
             }
           ],
-          componentType: 'None'
+          ComponentType: 'None'
         }
       ]
     }
