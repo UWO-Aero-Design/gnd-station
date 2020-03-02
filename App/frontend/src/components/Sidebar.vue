@@ -58,11 +58,11 @@ export default {
               componentName: 'Battery Info'
             },
             {
-              title: 'Communication',
+              title: 'Status',
               icon: 'fas fa-satellite',
-              componentSize: '1Block',
+              componentSize: '2BlockH',
               componentType: 'Grid',
-              componentName: 'Communication'
+              componentName: 'Status Info'
             }
           ],
           componentType: 'None'
