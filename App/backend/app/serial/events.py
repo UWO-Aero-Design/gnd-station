@@ -40,7 +40,8 @@ def post_serial_read(app,data = None):
     #     databaseObj = databasehelperclass.pointtable(1,point)
     #     databaseinsertion(databaseObj)
 
-    #     IMUData = data[1]
+    IMUData = data[1]
+    print(IMUData)
     #     databaseObj = databasehelperclass.imuvaluestable(float(IMUData.ax),float(IMUData.ay),float(IMUData.az),
     #         float(IMUData.yaw),float(IMUData.pitch),float(IMUData.roll),
     #         float(IMUData.mx),float(IMUData.my),float(IMUData.mz),
@@ -48,32 +49,37 @@ def post_serial_read(app,data = None):
     #         1,point)
     #     databaseinsertion(databaseObj)
 
-    #     GPSData = data[2]
+    GPSData = data[2]
+    print(GPSData)
     #     databaseObj = databasehelperclass.gpsvaluetable(float(GPSData.lat),float(GPSData.lon),float(GPSData.speed),
     #         float(GPSData.satellites),float(GPSData.altitude),float(GPSData.time),
     #         int(GPSData.date),1,point)
     #     databaseinsertion(databaseObj)
 
-    #     EnviroData = data[3]
+    EnviroData = data[3]
+    print(EnviroData)
     #     databaseObj = databasehelperclass.environmentalsensortable(float(EnviroData.pressure),
     #         float(EnviroData.humidity),
     #         float(EnviroData.temperature),
     #         1,point)
     #     databaseinsertion(databaseObj)
 
-    #     BatteryData = data[4]
+    BatteryData = data[4]
+    print(BatteryData)
     #     databaseObj = databasehelperclass.batterystatustable(float(BatteryData.voltage),
     #         float(BatteryData.current),
     #         1,point)
     #     databaseinsertion(databaseObj)
 
-    #     StatusData = data[6]
+    StatusData = data[6]
+    print(StatusData)
     #     databaseObj = databasehelperclass.systemstatustable(float(StatusData.rssi),
     #         float(StatusData.state),
     #         1,point)
     #     databaseinsertion(databaseObj)
 
-    #     ServoData = data[7]
+    ServoData = data[7]
+    print(ServoData)
     #     databaseObj = databasehelperclass.servodatatable(float(ServoData.servo0),
     #         float(ServoData.servo1),
     #         float(ServoData.servo2),
@@ -92,6 +98,12 @@ def post_serial_read(app,data = None):
     #         float(ServoData.servo15),
     #         1,point)
     #     databaseinsertion(databaseObj)
+
+    #if IMUData:
+    #    jsonData = {'Accel X':IMUData.AccelX,
+    #                'Accel Y':IMUData.AccelY}
+
+    print(IMUData[1])
 
     #Pass to frontend
     jsonData = {'lat':GPSData.lat + random.randint(-1000,1000),'lon':GPSData.lon + random.randint(-1000,1000),'altitude':GPSData.altitude + random.randint(-1000,1000),'speed':GPSData.speed + random.randint(-1000,1000),'time':GPSData.time + random.randint(-1000,1000),'satellites':GPSData.satellites + random.randint(-1000,1000),'date':GPSData.date + random.randint(-1000,1000)}

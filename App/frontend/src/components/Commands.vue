@@ -116,11 +116,13 @@
         var type = "Servo ";
         if (item < 8) {
           type = type.concat(label," (Servo ",item.toString(),") Open");
+          cmd.servo = item;
         }
         else {
-          type = type.concat(label," (Servo ",(item - 8).toString(),") Close");
+          type = type.concat(label," (Servo ",(item - 7).toString(),") Close");
+          cmd.servo = item + 1;
         }
-        cmd.servo = item;
+        //cmd.servo = item;
         cmd.destination = '1';
         this.sendCMD(cmd,type);
       },

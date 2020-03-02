@@ -27,7 +27,7 @@ def sendCMD():
     #Extra place at front for no command
     dropString = [0,0,0,0,0,0]
     pitchString = [0,0,0,0,0,0,0]
-    servoString = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    servoString = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
     #Negative index for reverse order
     dropString[-int(commands['drop'])] = 1
