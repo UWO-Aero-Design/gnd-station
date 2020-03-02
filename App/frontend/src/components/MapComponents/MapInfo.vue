@@ -31,7 +31,7 @@
       connect() {
       this.isConnected = true;
     },
-    dataChannel: function(data) {
+    GPSChannel: function(data) {
       this.GPSData = data;
     }
     }
