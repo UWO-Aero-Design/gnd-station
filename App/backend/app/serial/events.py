@@ -27,6 +27,15 @@ random.seed()
 
 point = 0
 
+#Scale values
+IMUSCALE = 100
+
+GPSLATLONSCALE = 10000000
+GPSALTSCALE = 10
+GPSSPEEDSCALE = 100
+
+ENVIROSCALE = 100
+
 # Event handler that can be passed to the serial task in order to handle a receive event
 def post_serial_read(app,data = None):
     print('Serial receive')
@@ -35,22 +44,22 @@ def post_serial_read(app,data = None):
     point += 1
 
     IMUData = data[1]
-    print(IMUData)
+    #print(IMUData)
 
     GPSData = data[2]
-    print(GPSData)
+    #print(GPSData)
 
     EnviroData = data[3]
-    print(EnviroData)
+    #print(EnviroData)
 
     BatteryData = data[4]
-    print(BatteryData)
+    #print(BatteryData)
 
     StatusData = data[6]
-    print(StatusData)
+    #print(StatusData)
 
     ServoData = data[7]
-    print(ServoData)
+    #print(ServoData)
 
     #Database insertions and websocket messages
     #All database access should be inside app context since this is running in a background thread
@@ -59,6 +68,19 @@ def post_serial_read(app,data = None):
         databaseinsertion(databaseObj)
 
         if IMUData is not None:
+            IMUData.ax = IMUData.ax / IMUSCALE
+            IMUData.ay = IMUData.ay / IMUSCALE
+            IMUData.az = IMUData.az / IMUSCALE
+            IMUData.gx = IMUData.gx / IMUSCALE
+            IMUData.gy = IMUData.gy / IMUSCALE
+            IMUData.gz = IMUData.gz / IMUSCALE
+            IMUData.mx = IMUData.mx / IMUSCALE
+            IMUData.my = IMUData.my / IMUSCALE
+            IMUData.mz = IMUData.mz / IMUSCALE
+            IMUData.yaw = IMUData.yaw / IMUSCALE
+            IMUData.pitch = IMUData.pitch / IMUSCALE
+            IMUData.roll = IMUData.roll / IMUSCALE
+
             jsonData = {'ax':IMUData.ax,
                         'ay':IMUData.ay,
                         'az':IMUData.az,
@@ -84,6 +106,11 @@ def post_serial_read(app,data = None):
 
 
         if GPSData is not None:
+            GPSData.lat = GPSData.lat / GPSLATLONSCALE
+            GPSData.lon = GPSData.lon / GPSLATLONSCALE
+            GPSData.altitude = GPSData.altitude / GPSALTSCALE
+            GPSData.speed = GPSData.speed / GPSSPEEDSCALE
+
             jsonData = {'lat':GPSData.lat,
                         'lon':GPSData.lon,
                         'altitude':GPSData.altitude,
@@ -101,6 +128,10 @@ def post_serial_read(app,data = None):
             databaseinsertion(databaseObj)
 
         if EnviroData is not None:
+            EnviroData.humidity = EnviroData.humidity / ENVIROSCALE
+            EnviroData.pressure = EnviroData.pressure / ENVIROSCALE
+            EnviroData.temperature = EnviroData.temperature / ENVIROSCALE
+
             jsonData = {'pressure':EnviroData.pressure,
                         'humidity':EnviroData.humidity,
                         'temperature':EnviroData.temperature}
