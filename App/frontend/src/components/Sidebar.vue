@@ -30,6 +30,15 @@ export default {
           icon: 'fas fa-dice-d6',
           child: [
             {
+              title: 'Pitot',
+              icon: 'fas fa-wind',
+              componentSize: 'Custom',
+              componentType: 'Grid',
+              componentName: 'Pitot Info',
+              w: 2,
+              h: 10
+            },
+            {
               title: 'IMU',
               icon: 'fas fa-sync',
               componentSize: 'Custom',

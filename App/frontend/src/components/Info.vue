@@ -30,6 +30,7 @@
         <BatteryInfo v-if="item.componentName === 'Battery Info'"></BatteryInfo>
         <StatusInfo v-if="item.componentName === 'Status Info'"></StatusInfo>
         <ServoInfo v-if="item.componentName === 'Servo Info'"></ServoInfo>
+        <PitotInfo v-if="item.componentName === 'Pitot Info'"></PitotInfo>
         <Commands v-if="item.componentName === 'Command Console'"></Commands>
         <br><br>
       </grid-item>
@@ -41,6 +42,7 @@
 <script>
 import axios from 'axios'
 import VueGridLayout from 'vue-grid-layout';
+import PitotInfo from "@/components/InfoComponents/PitotInfo"
 import GPSInfo from "@/components/InfoComponents/GPSInfo";
 import IMUInfo from "@/components/InfoComponents/IMUInfo";
 import EnviroInfo from "@/components/InfoComponents/EnviroInfo";
@@ -60,7 +62,8 @@ export default {
       BatteryInfo,
       StatusInfo,
       ServoInfo,
-      Commands
+      Commands,
+      PitotInfo
   },
   mounted() {
 
