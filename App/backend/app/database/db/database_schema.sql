@@ -66,8 +66,6 @@ CREATE TABLE IF NOT EXISTS EnvironmentalSensorData (
 	Pressure FLOAT NOT NULL,
 	Humidity FLOAT NOT NULL,
 	Temperature FLOAT NOT NULL,
-	BatteryVoltage FLOAT NOT NULL,
-	BatteryCurrent FLOAT NOT NULL,
     FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
 	PRIMARY KEY (FlightPathID, PointID),
@@ -77,13 +75,11 @@ CREATE TABLE IF NOT EXISTS EnvironmentalSensorData (
 CREATE TABLE IF NOT EXISTS BatteryStatus (
 	BatteryVoltage FLOAT NOT NULL,
 	BatteryCurrent FLOAT NOT NULL,
-	Rssi FLOAT NOT NULL,
     FlightPathID INTEGER NOT NULL,
 	PointID INTEGER NOT NULL,
 	PRIMARY KEY (FlightPathID, PointID),
 	FOREIGN KEY (FlightPathID) REFERENCES FlightPath(FlightPathID),
 	FOREIGN KEY (PointID) REFERENCES Point(PointID)
-    FOREIGN KEY (Rssi) REFERENCES SystemStatus(Rssi)
 );
 CREATE TABLE IF NOT EXISTS SystemStatus (
 	Rssi FLOAT NOT NULL,

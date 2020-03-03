@@ -9,7 +9,7 @@ if ans == yes:
     ans2 = input()
     if ans2 == yes:
         print("Clearing all tables...")
-        obj = planetable.query.delete()
+        planetable.query.delete()
         glidertable.query.delete()
         flightpathtable.query.delete()
         pointtable.query.delete()
@@ -19,6 +19,8 @@ if ans == yes:
         batterystatustable.query.delete()
         systemstatustable.query.delete()
         servodatatable.query.delete()
-        dbase.session.commit()
+        pitottubetable.query.delete()
+        commandstable.query.delete()
+        db.session.commit()
 else:
     print("You selected No, Bye!")

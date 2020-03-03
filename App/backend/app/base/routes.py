@@ -66,6 +66,7 @@ def activate_job():
     databasehelperclass.batterystatustable.query.delete()
     databasehelperclass.systemstatustable.query.delete()
     databasehelperclass.servodatatable.query.delete()
+    databasehelperclass.pitottubetable.query.delete()
     dbase.session.commit()
 
     databaseObj = databasehelperclass.planetable(planeid,planeversion)

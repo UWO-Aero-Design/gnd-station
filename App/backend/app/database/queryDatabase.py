@@ -11,7 +11,8 @@ class QueryDatabase:
         self.flightNumber = flightNumberRequested;
 
         self.app = Flask(__name__);
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\Aero\gnd-station\db\Aerodb.db';
+        #self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:\Aero\gnd-station\db\Aerodb.db';
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/Aerodb.db';
         self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False;
         self.queryDatabase = SQLAlchemy(self.app);
 

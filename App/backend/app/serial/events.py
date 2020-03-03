@@ -28,6 +28,8 @@ random.seed()
 point = 0
 
 #Scale values
+
+PITOTSCALE = 1000
 IMUSCALE = 100
 
 GPSLATLONSCALE = 10000000
@@ -42,6 +44,9 @@ def post_serial_read(app,data = None):
 
     global point
     point += 1
+
+    PitotData = data[0]
+    #print(PitotData)
 
     IMUData = data[1]
     #print(IMUData)
@@ -66,6 +71,16 @@ def post_serial_read(app,data = None):
     with app.app_context():
         databaseObj = databasehelperclass.pointtable(1,point)
         databaseinsertion(databaseObj)
+
+        if PitotData is not None:
+            PitotData.differential_pressure = PitotData.differential_pressure / PITOTSCALE
+            jsonData = {'differentialpressure':PitotData.differential_pressure}
+            # print(jsonData)
+            socketio.emit('PitotChannel',jsonData)
+            socketio.emit('connectStatus','Connected')
+            databaseObj = databasehelperclass.pitottubetable(float(PitotData.differential_pressure),
+                1,point)
+            databaseinsertion(databaseObj)
 
         if IMUData is not None:
             IMUData.ax = IMUData.ax / IMUSCALE
@@ -138,6 +153,8 @@ def post_serial_read(app,data = None):
             # print(jsonData)
             socketio.emit('EnviroChannel',jsonData)
             socketio.emit('connectStatus','Connected')
+
+            print(EnviroData)
 
             databaseObj = databasehelperclass.environmentalsensortable(float(EnviroData.pressure),
                 float(EnviroData.humidity),

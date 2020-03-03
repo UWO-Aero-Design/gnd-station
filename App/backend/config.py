@@ -3,7 +3,8 @@ import os
 
 class BaseConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///C:\Aero\gnd-station\db\Aerodb.db'
+    #SQLALCHEMY_DATABASE_URI = 'sqlite:///C:\Aero\gnd-station\db\Aerodb.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///database/db/Aerodb.db'
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'secretkey'
