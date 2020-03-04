@@ -17,6 +17,8 @@ from flask_sqlalchemy import SQLAlchemy
 from threading import Event, Thread
 
 from .data import serialDataPrepackage
+from .data import serialDataReceive
+from .data import State
 
 #Flask extensions
 socketio = SocketIO()
@@ -24,7 +26,10 @@ dbase = SQLAlchemy()
 
 #Data Object
 serialWriteEvent = Event()
+recordingEvent = Event()
 serialDataOut = serialDataPrepackage()
+serialDataIn = serialDataReceive()
+currentState = State()
 
 #def create_app(config_class=BaseConfig):
 def create_app(debug=False):

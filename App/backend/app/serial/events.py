@@ -10,6 +10,7 @@ from app.database import databasehelperclass,queryDatabase
 
 from .. import dbase
 from .. import serialDataOut
+from .. import serialDataIn
 
 from app.serial import builder
 from app.serial.builder import *
@@ -45,25 +46,34 @@ def post_serial_read(app,data = None):
     global point
     point += 1
 
+    global serialDataIn
+
     PitotData = data[0]
+    serialDataIn.PitotData = PitotData
     #print(PitotData)
 
     IMUData = data[1]
+    serialDataIn.IMUData = IMUData
     #print(IMUData)
 
     GPSData = data[2]
+    serialDataIn.GPSData = GPSData
     #print(GPSData)
 
     EnviroData = data[3]
+    serialDataIn.EnviroData = EnviroData
     #print(EnviroData)
 
     BatteryData = data[4]
+    serialDataIn.BatteryData = BatteryData
     #print(BatteryData)
 
     StatusData = data[6]
+    serialDataIn.StatusData = StatusData
     #print(StatusData)
 
     ServoData = data[7]
+    serialDataIn.ServoData = ServoData
     #print(ServoData)
 
     #Database insertions and websocket messages

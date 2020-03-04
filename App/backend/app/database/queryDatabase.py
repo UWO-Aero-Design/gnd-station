@@ -23,6 +23,10 @@ class QueryDatabase:
         query = 'SELECT * FROM FlightPath WHERE FlightPathID=' + str(self.flightNumber);
         return self.queryDatabase.session.execute(query).fetchall();
 
+    def getRecentFlightPath(self):
+        query = 'SELECT MAX(FlightPathID) from FlightPath'
+        return self.queryDatabase.session.execute(query).fetchall()
+
     # returns a list of tuples(rows) which hold informations about points recorded for a flight
     # rows are in the following format:
     # (PointID)

@@ -11,8 +11,10 @@ from flask import current_app as app
 
 from app import database
 from app.database import databasehelperclass
+from app.database import queryDatabase
 
 from .. import dbase
+from .. import currentState
 
 import requests
 
@@ -77,6 +79,12 @@ def activate_job():
 
     databaseObj = databasehelperclass.flightpathtable(flightid,pilotname,locationid,airplanetype,planeid,planeversion,gliderid,gliderversion)
     databaseinsertion(databaseObj)
+
+    flightQueryObj = queryDatabase.QueryDatabase(1)
+
+    currentState.flight = flightQueryObj.getRecentFlightPath()[0][0]
+
+    print(currentState.flight)
 
     #Start background serial thread
     thread = threading.Thread(target=serial.connection.serial_data, args=[current_app._get_current_object()])

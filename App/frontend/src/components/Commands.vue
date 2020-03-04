@@ -107,6 +107,17 @@
             console.log("No command");
             break;
         }
+        axios.post('http://localhost:5000/api/info/drop',{
+              body: cmd.drop
+          })
+          .then(function(response) {
+            this.dropInfo = response;
+          });
+          this.$notify({
+            group: 'commandNotifications',
+            title: 'Drop Altitude',
+            text: this.dropInfo
+          });
         cmd.destination = '1';
         this.sendCMD(cmd,type);
       },
