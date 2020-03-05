@@ -157,9 +157,12 @@ def post_serial_read(app,data = None):
             EnviroData.pressure = EnviroData.pressure / ENVIROSCALE
             EnviroData.temperature = EnviroData.temperature / ENVIROSCALE
 
-            jsonData = {'pressure':EnviroData.pressure,
-                        'humidity':EnviroData.humidity,
-                        'temperature':EnviroData.temperature}
+            # jsonData = {'pressure':EnviroData.pressure,
+            #             'humidity':EnviroData.humidity,
+            #             'temperature':EnviroData.temperature}
+            jsonData = {'altitude':EnviroData.pressure,
+                        'temperature':EnviroData.humidity,
+                        'humidity':EnviroData.temperature}
             # print(jsonData)
             socketio.emit('EnviroChannel',jsonData)
             socketio.emit('connectStatus','Connected')

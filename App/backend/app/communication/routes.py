@@ -11,6 +11,9 @@ from .. import serialWriteEvent
 
 from flask_cors import cross_origin
 from .. import serialDataOut
+from .. import currentState
+from .. import serialDataIn
+from .. import socketio
 
 @api.route('/sendcmd', methods=['POST'])
 def sendCMD():
@@ -70,6 +73,27 @@ def sendCMD():
     # serialDataOut.Battery = databaseObj.getBatteryStatusValuesForFlightPoint(point)
     # serialDataOut.System = databaseObj.getSystemStatusValuesForFlightPoint(point)
     # serialDataOut.Servo = databaseObj.getServoDataValuesForFlightPoint(point)
+
+    global serialDataIn
+
+    if serialDataIn.EnviroData is not None:
+        if dropString[-3]:
+            jsonData = {'payload':'water','altitude': serialDataIn.EnviroData.pressure}
+            #jsonData = {'payload':'water',
+             #           'altitude': 23}
+            #print(jsonData)
+            socketio.emit('PayloadChannel',jsonData)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+        elif dropString[-4]:
+            jsonData = {'payload':'habitat1','altitude': serialDataIn.EnviroData.pressure}
+            # print(jsonData)
+            socketio.emit('PayloadChannel',jsonData)
+
+        elif dropString[-5]:
+            jsonData = {'payload':'habitat2','altitude': serialDataIn.EnviroData.pressure}
+            # print(jsonData)
+            socketio.emit('PayloadChannel',jsonData)
+
 
     global serialWriteEvent
     serialWriteEvent.set()

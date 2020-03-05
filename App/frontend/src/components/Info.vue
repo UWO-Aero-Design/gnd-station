@@ -32,6 +32,7 @@
         <ServoInfo v-if="item.componentName === 'Servo Info'"></ServoInfo>
         <PitotInfo v-if="item.componentName === 'Pitot Info'"></PitotInfo>
         <Commands v-if="item.componentName === 'Command Console'"></Commands>
+        <Payload v-if="item.componentName === 'Payload Info'"></Payload>
         <br><br>
       </grid-item>
     </grid-layout>
@@ -50,6 +51,7 @@ import BatteryInfo from "@/components/InfoComponents/BatteryInfo";
 import StatusInfo from "@/components/InfoComponents/StatusInfo";
 import ServoInfo from "@/components/InfoComponents/ServoInfo";
 import Commands from "@/components/Commands";
+import Payload from "@/components/InfoComponents/Payload";
 
 export default {
   name: 'Info',
@@ -63,7 +65,8 @@ export default {
       StatusInfo,
       ServoInfo,
       Commands,
-      PitotInfo
+      PitotInfo,
+      Payload
   },
   mounted() {
 

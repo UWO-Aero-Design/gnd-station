@@ -6,12 +6,15 @@ from app.serial import events
 
 from app import database
 from app.database import databasehelperclass,queryDatabase
+from app.database import queryDatabase
 
 from .. import currentState
 from .. import recordingEvent
 
 from flask_cors import cross_origin
 from .. import serialDataIn
+from .. import currentState
+
 
 @api.route('/start', methods=['GET'])
 def startRecording():
@@ -36,3 +39,15 @@ def stopRecording():
     print(currentState.recording)
 
     return "Stopped", 202
+
+@api.route('/getflight', methods=['GET'])
+def returnFlight():
+    flightID = request.args.get('flightID')
+    print(flightID)
+    database = queryDatabase.QueryDatabase(flightID)
+
+    flight =  database.getGPSValuesForFlight()
+
+    print(flight)
+
+    return "OK", 202

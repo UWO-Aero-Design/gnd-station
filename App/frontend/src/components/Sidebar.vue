@@ -26,7 +26,7 @@ export default {
           componentName: 'Map'
         },
         {
-          title: 'Components',
+          title: 'Data',
           icon: 'fas fa-dice-d6',
           child: [
             {
@@ -35,8 +35,8 @@ export default {
               componentSize: 'Custom',
               componentType: 'Grid',
               componentName: 'Pitot Info',
-              w: 2,
-              h: 10
+              w: 5,
+              h: 2
             },
             {
               title: 'IMU',
@@ -44,7 +44,7 @@ export default {
               componentSize: 'Custom',
               componentType: 'Grid',
               componentName: 'IMU Info',
-              w: 2,
+              w: 5,
               h: 10
             },
             {
@@ -53,7 +53,7 @@ export default {
               componentSize: 'Custom',
               componentType: 'Grid',
               componentName: 'GPS Info',
-              w: 2,
+              w: 5,
               h: 6
             },
             {
@@ -62,7 +62,7 @@ export default {
               componentSize: 'Custom',
               componentType: 'Grid',
               componentName: 'Environment Info',
-              w: 2,
+              w: 5,
               h: 3.5
             },
             {
@@ -71,7 +71,7 @@ export default {
               componentSize: 'Custom',
               componentType: 'Grid',
               componentName: 'Battery Info',
-              w: 2,
+              w: 5,
               h: 2.5
             },
             {
@@ -80,7 +80,7 @@ export default {
               componentSize: 'Custom',
               componentType: 'Grid',
               componentName: 'Status Info',
-              w: 2,
+              w: 5,
               h: 2.5
             },
             {
@@ -89,8 +89,17 @@ export default {
               componentSize: 'Custom',
               componentType: 'Grid',
               componentName: 'Servo Info',
-              w: 2,
+              w: 5,
               h: 6.5
+            },
+            {
+              title: 'Payload',
+              icon: 'fas fa-tachometer-alt',
+              componentSize: 'Custom',
+              componentType: 'Grid',
+              componentName: 'Payload Info',
+              w: 5,
+              h: 8
             }
           ],
           componentType: 'None'
@@ -108,6 +117,12 @@ export default {
             }
           ],
           ComponentType: 'None'
+        },
+        {
+          title: 'Flights',
+          icon: 'fas fa-draw-polygon',
+          componentType: 'Page',
+          componentName: 'Map'
         }
       ]
     }

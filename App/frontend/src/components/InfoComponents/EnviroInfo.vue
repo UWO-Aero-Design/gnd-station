@@ -1,8 +1,8 @@
 <template>
   <div class="infoBox">
-    <h2>Pressure: {{ EnviroData.pressure }}</h2>
-    <h2>Humidity: {{ EnviroData.humidity }}</h2>
+    <h2>Altitude: {{ EnviroData.altitude }}</h2>
     <h2>Temperature: {{ EnviroData.temperature }}</h2>
+    <h2>Humidity: {{ EnviroData.humidity }}</h2>
   </div>
 </template>
 

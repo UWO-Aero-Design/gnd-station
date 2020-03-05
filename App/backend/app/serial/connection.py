@@ -145,7 +145,7 @@ def port_write(app, serial_port, event):
             serial_port.write(dataOut)
             print("Data Sent")
         
-        time.sleep(1)
+        #time.sleep(1)
 
         # if serial_port.in_waiting:
         #     data = serial_port.readline().decode('ascii').strip()
@@ -174,7 +174,7 @@ def serial_data(app):
             
         print('Teensy Connected! \nSerial Task Starting...')
         socketio.emit('connectStatus','Groundstation Connection Established')
-        time.sleep(2)
+        #time.sleep(2)
 
         # Start serial task
         serial_task(app,
