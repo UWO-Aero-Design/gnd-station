@@ -11,6 +11,7 @@
       <Info ref="Info"></Info>
     </div>
   </multipane>
+  
   </div>
 </template>
 
@@ -21,6 +22,7 @@
   import MapLeaflet from "@/components/MapComponents/MapLeaflet";
   import Map from "@/components/Map";
   import axios from 'axios';
+  import Playback from "@/components/Playback";
 
 export default {
   name: 'Base',
@@ -30,7 +32,8 @@ export default {
     MultipaneResizer,
     Info,
     MapLeaflet,
-    Map
+    Map,
+    Playback
   },
   mounted() {
     axios.get('http://localhost:5000/ping')
@@ -41,6 +44,7 @@ export default {
   data () {
     return {
       mapActive: true,
+      playbackActive: false,
       response: 'No response yet',
       isConnected: false,
       startUp: false
@@ -53,6 +57,9 @@ export default {
       }
       if (item.componentType === "Page") {
         this.mapActive = !this.mapActive;
+      }
+      if (item.componentType === "Playback") {
+        this.playbackActive = !this.playbackActive;
       }
     },
     redrawMapTiles() {

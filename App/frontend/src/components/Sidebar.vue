@@ -119,11 +119,19 @@ export default {
           ComponentType: 'None'
         },
         {
-          title: 'Flights',
+          title: 'Flight Data',
           icon: 'fas fa-draw-polygon',
-          componentType: 'Page',
-          componentName: 'Map'
-        }
+          child: [
+            {
+              title: 'Flight Playback',
+              icon: 'fas fa-route',
+              componentSize: '2BlockV',
+              componentType: 'Grid',
+              componentName: 'Flight Playback'
+            }
+          ],
+          ComponentType: 'None'
+        },
       ]
     }
   },

@@ -11,6 +11,7 @@ from app.database import databasehelperclass,queryDatabase
 from .. import dbase
 from .. import serialDataOut
 from .. import serialDataIn
+from .. import currentState
 
 from app.serial import builder
 from app.serial.builder import *
@@ -88,9 +89,11 @@ def post_serial_read(app,data = None):
             # print(jsonData)
             socketio.emit('PitotChannel',jsonData)
             socketio.emit('connectStatus','Connected')
-            databaseObj = databasehelperclass.pitottubetable(float(PitotData.differential_pressure),
-                1,point)
-            databaseinsertion(databaseObj)
+
+            if currentState.recording == True:
+                databaseObj = databasehelperclass.pitottubetable(float(PitotData.differential_pressure),
+                    1,point)
+                databaseinsertion(databaseObj)
 
         if IMUData is not None:
             IMUData.ax = IMUData.ax / IMUSCALE
@@ -122,12 +125,13 @@ def post_serial_read(app,data = None):
             socketio.emit('IMUChannel',jsonData)
             socketio.emit('connectStatus','Connected')
 
-            databaseObj = databasehelperclass.imuvaluestable(float(IMUData.ax),float(IMUData.ay),float(IMUData.az),
-                float(IMUData.yaw),float(IMUData.pitch),float(IMUData.roll),
-                float(IMUData.mx),float(IMUData.my),float(IMUData.mz),
-                float(IMUData.gx),float(IMUData.gy),float(IMUData.gz),
-                1,point)
-            databaseinsertion(databaseObj)
+            if currentState.recording == True:
+                databaseObj = databasehelperclass.imuvaluestable(float(IMUData.ax),float(IMUData.ay),float(IMUData.az),
+                    float(IMUData.yaw),float(IMUData.pitch),float(IMUData.roll),
+                    float(IMUData.mx),float(IMUData.my),float(IMUData.mz),
+                    float(IMUData.gx),float(IMUData.gy),float(IMUData.gz),
+                    1,point)
+                databaseinsertion(databaseObj)
 
 
         if GPSData is not None:
@@ -147,10 +151,11 @@ def post_serial_read(app,data = None):
             socketio.emit('GPSChannel',jsonData)
             socketio.emit('connectStatus','Connected')
 
-            databaseObj = databasehelperclass.gpsvaluetable(float(GPSData.lat),float(GPSData.lon),float(GPSData.speed),
-                float(GPSData.satellites),float(GPSData.altitude),float(GPSData.time),
-                int(GPSData.date),1,point)
-            databaseinsertion(databaseObj)
+            if currentState.recording == True:
+                databaseObj = databasehelperclass.gpsvaluetable(float(GPSData.lat) + point,float(GPSData.lon),float(GPSData.speed),
+                    float(GPSData.satellites),float(GPSData.altitude),float(GPSData.time),
+                    int(GPSData.date),1,point)
+                databaseinsertion(databaseObj)
 
         if EnviroData is not None:
             EnviroData.humidity = EnviroData.humidity / ENVIROSCALE
@@ -169,11 +174,12 @@ def post_serial_read(app,data = None):
 
             print(EnviroData)
 
-            databaseObj = databasehelperclass.environmentalsensortable(float(EnviroData.pressure),
-                float(EnviroData.humidity),
-                float(EnviroData.temperature),
-                1,point)
-            databaseinsertion(databaseObj)
+            if currentState.recording == True:
+                databaseObj = databasehelperclass.environmentalsensortable(float(EnviroData.pressure),
+                    float(EnviroData.humidity),
+                    float(EnviroData.temperature),
+                    1,point)
+                databaseinsertion(databaseObj)
 
         if BatteryData is not None:
             jsonData = {'voltage':BatteryData.voltage,
@@ -182,10 +188,11 @@ def post_serial_read(app,data = None):
             socketio.emit('BatteryChannel',jsonData)
             socketio.emit('connectStatus','Connected')
 
-            databaseObj = databasehelperclass.batterystatustable(float(BatteryData.voltage),
-                float(BatteryData.current),
-                1,point)
-            databaseinsertion(databaseObj)
+            if currentState.recording == True:
+                databaseObj = databasehelperclass.batterystatustable(float(BatteryData.voltage),
+                    float(BatteryData.current),
+                    1,point)
+                databaseinsertion(databaseObj)
 
         if StatusData is not None:
             jsonData = {'rrsi':StatusData.rssi,
@@ -194,10 +201,11 @@ def post_serial_read(app,data = None):
             socketio.emit('StatusChannel',jsonData)
             socketio.emit('connectStatus','Connected')
 
-            databaseObj = databasehelperclass.systemstatustable(float(StatusData.rssi),
-                float(StatusData.state),
-                1,point)
-            databaseinsertion(databaseObj)
+            if currentState.recording == True:
+                databaseObj = databasehelperclass.systemstatustable(float(StatusData.rssi),
+                    float(StatusData.state),
+                    1,point)
+                databaseinsertion(databaseObj)
 
         if ServoData is not None:
             jsonData = {'servo0':ServoData.servo0,
@@ -220,24 +228,25 @@ def post_serial_read(app,data = None):
             socketio.emit('ServoChannel',jsonData)
             socketio.emit('connectStatus','Connected')
 
-            databaseObj = databasehelperclass.servodatatable(float(ServoData.servo0),
-                float(ServoData.servo1),
-                float(ServoData.servo2),
-                float(ServoData.servo3),
-                float(ServoData.servo4),
-                float(ServoData.servo5),
-                float(ServoData.servo6),
-                float(ServoData.servo7),
-                float(ServoData.servo8),
-                float(ServoData.servo9),
-                float(ServoData.servo10),
-                float(ServoData.servo11),
-                float(ServoData.servo12),
-                float(ServoData.servo13),
-                float(ServoData.servo14),
-                float(ServoData.servo15),
-                1,point)
-            databaseinsertion(databaseObj)
+            if currentState.recording == True:
+                databaseObj = databasehelperclass.servodatatable(float(ServoData.servo0),
+                    float(ServoData.servo1),
+                    float(ServoData.servo2),
+                    float(ServoData.servo3),
+                    float(ServoData.servo4),
+                    float(ServoData.servo5),
+                    float(ServoData.servo6),
+                    float(ServoData.servo7),
+                    float(ServoData.servo8),
+                    float(ServoData.servo9),
+                    float(ServoData.servo10),
+                    float(ServoData.servo11),
+                    float(ServoData.servo12),
+                    float(ServoData.servo13),
+                    float(ServoData.servo14),
+                    float(ServoData.servo15),
+                    1,point)
+                databaseinsertion(databaseObj)
 
     #time.sleep(0.1)
     # The plan is here to take data that is parsed from the serial port and add it to the DB

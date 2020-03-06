@@ -79,6 +79,9 @@ def activate_job():
     databaseObj = databasehelperclass.flightpathtable(flightid,pilotname,locationid,airplanetype,planeid,planeversion,gliderid,gliderversion)
     databaseinsertion(databaseObj)
 
+    databaseObj = databasehelperclass.flightpathtable(2,'Jason','Florida','Plane','1','1','2','2')
+    databaseinsertion(databaseObj)
+
     flightQueryObj = queryDatabase.QueryDatabase(1)
 
     currentState.flight = flightQueryObj.getRecentFlightPath()[0][0]

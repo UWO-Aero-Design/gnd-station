@@ -1,11 +1,16 @@
 <template>
-  <div class="infoBox">
-    <h2>Voltage: {{ BatteryData.voltage }}</h2>
-    <h2>Current: {{ BatteryData.current }}</h2>
+  <div class="selectBox">
+    <select v-model="flightID">
+        <option disabled value="">Flight ID</option>
+        <option v-for="n in 10">{{ n }}</option>
+    </select>
+    <span>Selected: hi </span>
   </div>
 </template>
 
 <script>
+
+  import axios from 'axios';
 
   export default {
     name: "Playback",
@@ -14,8 +19,14 @@
     },
     props: {
     },
+    mounted() {
+        axios.get('http://localhost:5000/api/flight/flightpaths')
+        .then(response => (this.flightPaths = response));
+    },
     data () {
       return {
+          flightID: '',
+          flightPaths:''
       };
     },
     methods: {
@@ -24,11 +35,11 @@
 </script>
 
 <style scoped>
-  .infoBox {
+  .selectBox {
     color: white;
     position: relative;
     left: 20px;
-    top:20px;
+    top:40px;
   }
 
   h2 {

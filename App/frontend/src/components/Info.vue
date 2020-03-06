@@ -33,6 +33,7 @@
         <PitotInfo v-if="item.componentName === 'Pitot Info'"></PitotInfo>
         <Commands v-if="item.componentName === 'Command Console'"></Commands>
         <Payload v-if="item.componentName === 'Payload Info'"></Payload>
+        <Playback v-if="item.componentName === 'Flight Playback'"></Playback>
         <br><br>
       </grid-item>
     </grid-layout>
@@ -52,6 +53,7 @@ import StatusInfo from "@/components/InfoComponents/StatusInfo";
 import ServoInfo from "@/components/InfoComponents/ServoInfo";
 import Commands from "@/components/Commands";
 import Payload from "@/components/InfoComponents/Payload";
+import Playback from "@/components/Playback";
 
 export default {
   name: 'Info',
@@ -66,7 +68,8 @@ export default {
       ServoInfo,
       Commands,
       PitotInfo,
-      Payload
+      Payload,
+      Playback
   },
   mounted() {
 

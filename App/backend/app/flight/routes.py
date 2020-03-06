@@ -1,5 +1,8 @@
 from app.flight import api
+
 import time
+from collections import defaultdict
+
 from flask import render_template, jsonify, request, current_app, session
 from app import serial
 from app.serial import events
@@ -40,13 +43,30 @@ def stopRecording():
 
     return "Stopped", 202
 
-@api.route('/getflight', methods=['GET'])
-def returnFlight():
+@api.route('/flightpaths',methods=['GET'])
+def flightpaths():
+    query = queryDatabase.QueryDatabase(1)
+    flightPaths = query.getFlightPathInfo()
+
+    print(flightPaths)
+
+    jsonFlightPaths = defaultdict(list)
+
+    for element in flightPaths:
+        jsonFlightPaths[element[0]].append({'PilotName': element[1], 'LocationID': element[2], 
+        'AirplaneType': element[3], 'PlaneID': element[4],'PlaneVersion': element[5],'GliderID': element[6],'GliderVersion': element[7]})
+
+    print(jsonFlightPaths)
+
+    return dict(jsonFlightPaths),202
+
+@api.route('/flights', methods=['GET'])
+def flights():
     flightID = request.args.get('flightID')
     print(flightID)
-    database = queryDatabase.QueryDatabase(flightID)
+    query = queryDatabase.QueryDatabase(flightID)
 
-    flight =  database.getGPSValuesForFlight()
+    flight =  query.getGPSValuesForFlight()
 
     print(flight)
 

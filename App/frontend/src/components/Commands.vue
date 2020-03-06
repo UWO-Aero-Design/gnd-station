@@ -8,8 +8,8 @@
       <button class="dropbutton" style="top:280px" @click="sendDrop(5)"> <i class="fas fa-globe-americas"/> </button>>
     </div>
     <div class="pitchbox">
-      <button class="pitchbutton"  @click="sendPitch(1)"> <i class="fas fa-plane-departure"/> 1 </button>
-      <button class="pitchbutton" style="top:60px" @click="sendPitch(2)"> <i class="fas fa-plane-departure"/> 2 </button>
+      <button class="pitchbutton" style="background-color: blue" @click="sendPitch(1)"> <i class="fas fa-plane-departure"/> 1 </button>
+      <button class="pitchbutton" style="top:60px;background-color: red" @click="sendPitch(2)"> <i class="fas fa-plane-departure"/> 2 </button>
       <button class="pitchbutton" style="top:120px" @click="sendPitch(3)"> <i class="fas fa-wrench"/> </button>
       <button class="pitchbutton" style="top:180px" @click="sendPitch(4)"> <i class="fas fa-exchange-alt"/> </button>
       <button class="pitchbutton" style="top:240px" @click="sendPitch(5)"> <i class="fas fa-level-up-alt"/> 1 </button>
