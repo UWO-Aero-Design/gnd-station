@@ -44,8 +44,10 @@ ENVIROSCALE = 100
 def post_serial_read(app,data = None):
     print('Serial receive')
 
-    global point
-    point += 1
+    global currentState
+    print("Current Point: ",currentState.point)
+    print("'Current Flight: ",currentState.flight)
+    currentState.point = currentState.point + 1
 
     global serialDataIn
 
@@ -63,7 +65,7 @@ def post_serial_read(app,data = None):
 
     EnviroData = data[3]
     serialDataIn.EnviroData = EnviroData
-    #print(EnviroData)
+    print(EnviroData)
 
     BatteryData = data[4]
     serialDataIn.BatteryData = BatteryData
@@ -77,22 +79,26 @@ def post_serial_read(app,data = None):
     serialDataIn.ServoData = ServoData
     #print(ServoData)
 
+    print("Recording:",currentState.recording)
+
+
     #Database insertions and websocket messages
     #All database access should be inside app context since this is running in a background thread
     with app.app_context():
-        databaseObj = databasehelperclass.pointtable(1,point)
-        databaseinsertion(databaseObj)
+        if currentState.recording == True:
+            databaseObj = databasehelperclass.pointtable(currentState.flight,currentState.point)
+            databaseinsertion(databaseObj)
 
         if PitotData is not None:
             PitotData.differential_pressure = PitotData.differential_pressure / PITOTSCALE
             jsonData = {'differentialpressure':PitotData.differential_pressure}
-            # print(jsonData)
+            #print(jsonData)
             socketio.emit('PitotChannel',jsonData)
             socketio.emit('connectStatus','Connected')
 
             if currentState.recording == True:
                 databaseObj = databasehelperclass.pitottubetable(float(PitotData.differential_pressure),
-                    1,point)
+                    currentState.flight,currentState.point)
                 databaseinsertion(databaseObj)
 
         if IMUData is not None:
@@ -130,7 +136,7 @@ def post_serial_read(app,data = None):
                     float(IMUData.yaw),float(IMUData.pitch),float(IMUData.roll),
                     float(IMUData.mx),float(IMUData.my),float(IMUData.mz),
                     float(IMUData.gx),float(IMUData.gy),float(IMUData.gz),
-                    1,point)
+                    currentState.flight,currentState.point)
                 databaseinsertion(databaseObj)
 
 
@@ -154,14 +160,13 @@ def post_serial_read(app,data = None):
             if currentState.recording == True:
                 databaseObj = databasehelperclass.gpsvaluetable(float(GPSData.lat) + point,float(GPSData.lon),float(GPSData.speed),
                     float(GPSData.satellites),float(GPSData.altitude),float(GPSData.time),
-                    int(GPSData.date),1,point)
+                    int(GPSData.date),currentState.flight,currentState.point)
                 databaseinsertion(databaseObj)
 
         if EnviroData is not None:
             EnviroData.humidity = EnviroData.humidity / ENVIROSCALE
             EnviroData.pressure = EnviroData.pressure / ENVIROSCALE
             EnviroData.temperature = EnviroData.temperature / ENVIROSCALE
-
             # jsonData = {'pressure':EnviroData.pressure,
             #             'humidity':EnviroData.humidity,
             #             'temperature':EnviroData.temperature}
@@ -172,13 +177,11 @@ def post_serial_read(app,data = None):
             socketio.emit('EnviroChannel',jsonData)
             socketio.emit('connectStatus','Connected')
 
-            print(EnviroData)
-
             if currentState.recording == True:
                 databaseObj = databasehelperclass.environmentalsensortable(float(EnviroData.pressure),
                     float(EnviroData.humidity),
                     float(EnviroData.temperature),
-                    1,point)
+                    currentState.flight,currentState.point)
                 databaseinsertion(databaseObj)
 
         if BatteryData is not None:
@@ -191,7 +194,7 @@ def post_serial_read(app,data = None):
             if currentState.recording == True:
                 databaseObj = databasehelperclass.batterystatustable(float(BatteryData.voltage),
                     float(BatteryData.current),
-                    1,point)
+                    currentState.flight,currentState.point)
                 databaseinsertion(databaseObj)
 
         if StatusData is not None:
@@ -204,7 +207,7 @@ def post_serial_read(app,data = None):
             if currentState.recording == True:
                 databaseObj = databasehelperclass.systemstatustable(float(StatusData.rssi),
                     float(StatusData.state),
-                    1,point)
+                    currentState.flight,currentState.point)
                 databaseinsertion(databaseObj)
 
         if ServoData is not None:
@@ -245,7 +248,7 @@ def post_serial_read(app,data = None):
                     float(ServoData.servo13),
                     float(ServoData.servo14),
                     float(ServoData.servo15),
-                    1,point)
+                    currentState.flight,currentState.point)
                 databaseinsertion(databaseObj)
 
     #time.sleep(0.1)

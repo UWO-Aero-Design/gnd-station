@@ -21,7 +21,7 @@
                  :h="item.h"
                  :i="item.i"
                  :key="index"
-                 :isResizable="false">
+                 :isResizable="true">
         <i class="fa fa-times exit-symbol" aria-hidden="true" @click="removePane(index)"></i>
         <div style="position:absolute;left:10px;top:10px;">{{ item.componentName }}</div>
         <GPSInfo v-if="item.componentName === 'GPS Info'"></GPSInfo>

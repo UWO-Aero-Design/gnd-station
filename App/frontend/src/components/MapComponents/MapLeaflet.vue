@@ -5,6 +5,7 @@
         <button class="button" @click="activateScroll(item)">{{ item }}</button>
       </radial-menu-item>
     </radial-menu>
+    <button class="flightbutton" @click="getflight">Set Flight </button>
     <l-map
       style="height: 100%; width: 100%"
       :zoom="zoom"
@@ -40,10 +41,10 @@
       <l-popup ref="planePopUp">
         <MapInfo :data="gliderData"></MapInfo>
       </l-popup-->
-      <l-polyline
+      <!-- l-polyline
         :lat-lngs="[[27.94,-82.03],[27.99,-82.015]]"
         :color="'blue'" v-if="this.flightPlaying === true">
-      </l-polyline>
+      </l-polyline -->
       <l-rectangle
         :bounds="dropZone.bounds"
         :l-style="dropZone.style">
@@ -112,7 +113,7 @@
           iconAnchor: [16,16]
         }),
         planeData: {
-          latitude: 27.95,
+          latitude: 25,
           longitude: -82.02,
           altitude: 100
         },
@@ -146,7 +147,13 @@
         flightPlaying: "",
 
         //Popups
-        planePopup: ""
+        planePopup: "",
+
+        flightID: 3,
+        flightPathLatitude: '',
+        flightPathLongitude: '',
+        flightPathLatitude2: [27.99,28,28.01,28.02,28.03,28.04],
+        flightPathLongitude2: [-82.015,-82.016,-82.017,-82.018,-82.019,-82.020],
       };
     },
     mounted() {
@@ -167,9 +174,9 @@
         this.flightPlayButton.button.style.width = '32px';
         this.flightPlayButton.button.style.height = '32px';
 
-        this.planeMarker = L.Marker.movingMarker([[27.94,-82.03],[27.99,-82.015]],[this.flightPlaySpeed],{icon: this.planeIcon})
+        /*this.planeMarker = L.Marker.movingMarker([[27.94,-81],[27.99,-82.015]],[this.flightPlaySpeed],{icon: this.planeIcon})
           .bindPopup("<p>" + "Latitude: " + this.planeData.latitude + "</p> <p> Longitude: " + this.planeData.longitude + "</p> <p> Altitude: " + this.planeData.altitude + "</p>").addTo(this.$refs.Map.mapObject);
-        this.planeMarker.on('start',this.flightUpdate);
+        this.planeMarker.on('start',this.flightUpdate);*/
       });
     },
     methods: {
@@ -200,6 +207,7 @@
       },
       //Start marker movement
       playFlight() {
+        //this.getflight();
         this.planeMarker.start();
       },
       //Pause marker movement
@@ -218,7 +226,30 @@
         },500);
         //Stop updating once end event happens on marker
         this.planeMarker.on('end',()=> {clearInterval(this.flightPlayingID);this.flightPlaying = false});
-      }
+      },
+      getflight() {
+          var flightChosen = 3;//this.flightID.toString();
+          /*var request = 'http://localhost:5000/api/flight/flightlats?flightID=';
+          var getrequest = request.concat(flightChosen);
+          axios.get(getrequest)
+          .then(response => (this.flightPathLatitude = response.data));
+
+          var request = 'http://localhost:5000/api/flight/flightlons?flightID=';
+          var getrequest = request.concat(flightChosen);
+          axios.get(getrequest)
+          .then(response => (this.flightPathLongitude = response.data));*/
+
+          var path = [];
+
+          for (var i = 0; i < this.flightPathLongitude2.length; i++) {
+            var point = [this.flightPathLatitude2[i],this.flightPathLongitude2[i]];
+            path.push(point);
+          }
+          alert(path.length);
+          this.planeMarker = L.Marker.movingMarker(path,[this.flightPlaySpeed],{icon: this.planeIcon})
+          .bindPopup("<p>" + "Latitude: " + this.planeData.latitude + "</p> <p> Longitude: " + this.planeData.longitude + "</p> <p> Altitude: " + this.planeData.altitude + "</p>").addTo(this.$refs.Map.mapObject);
+          this.planeMarker.on('start',this.flightUpdate);
+      },
     }
   }
 </script>
@@ -245,5 +276,12 @@
     width:100%;
     border: none;
     border-radius: 50%;
+  }
+
+  .flightbutton {
+    position: relative;
+    z-index: 800;
+    top: 100px;
+    left: 100px;
   }
 </style>
