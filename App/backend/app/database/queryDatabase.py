@@ -20,7 +20,7 @@ class QueryDatabase:
     # rows are in the following format:
     # (FlightPathID,PilotName,LocationID,AirplaneType,PlaneID,PlaneVersion,GliderID,GliderVersion)
     def getFlightPathInfo(self):
-        query = 'SELECT * FROM FlightPath'# WHERE FlightPathID=' + str(self.flightNumber);
+        query = 'SELECT * FROM FlightPath' #WHERE FlightPathID=' + str(self.flightNumber);
         return self.queryDatabase.session.execute(query).fetchall();
 
     def getRecentFlightPath(self):
@@ -132,3 +132,6 @@ class QueryDatabase:
         query += str(self.flightNumber) + ' AND' + ' PointID=' + str(pointNumberRequested);
         return self.queryDatabase.session.execute(query).fetchall();
 
+    def getDrops(self):
+        query = 'SELECT * FROM DropData'
+        return self.queryDatabase.session.execute(query).fetchall();

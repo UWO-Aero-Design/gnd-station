@@ -61,9 +61,12 @@ def post_serial_read(app,data = None):
 
     GPSData = data[2]
     serialDataIn.GPSData = GPSData
-    #print(GPSData)
+    GPSData.lat = 27.94 * 10000000
+    GPSData.lon = -81 * 10000000
+    print(GPSData)
 
     EnviroData = data[3]
+    EnviroData.pressure = EnviroData.pressure + random.randint(0,10)
     serialDataIn.EnviroData = EnviroData
     print(EnviroData)
 
@@ -79,7 +82,7 @@ def post_serial_read(app,data = None):
     serialDataIn.ServoData = ServoData
     #print(ServoData)
 
-    print("Recording:",currentState.recording)
+    #print("Recording:",currentState.recording)
 
 
     #Database insertions and websocket messages
@@ -95,6 +98,8 @@ def post_serial_read(app,data = None):
             #print(jsonData)
             socketio.emit('PitotChannel',jsonData)
             socketio.emit('connectStatus','Connected')
+
+            serialDataIn.PitotData = PitotData
 
             if currentState.recording == True:
                 databaseObj = databasehelperclass.pitottubetable(float(PitotData.differential_pressure),
@@ -131,6 +136,8 @@ def post_serial_read(app,data = None):
             socketio.emit('IMUChannel',jsonData)
             socketio.emit('connectStatus','Connected')
 
+            serialDataIn.IMUData = IMUData
+
             if currentState.recording == True:
                 databaseObj = databasehelperclass.imuvaluestable(float(IMUData.ax),float(IMUData.ay),float(IMUData.az),
                     float(IMUData.yaw),float(IMUData.pitch),float(IMUData.roll),
@@ -157,6 +164,8 @@ def post_serial_read(app,data = None):
             socketio.emit('GPSChannel',jsonData)
             socketio.emit('connectStatus','Connected')
 
+            serialDataIn.GPSData = GPSData
+
             if currentState.recording == True:
                 databaseObj = databasehelperclass.gpsvaluetable(float(GPSData.lat) + point,float(GPSData.lon),float(GPSData.speed),
                     float(GPSData.satellites),float(GPSData.altitude),float(GPSData.time),
@@ -165,7 +174,7 @@ def post_serial_read(app,data = None):
 
         if EnviroData is not None:
             EnviroData.humidity = EnviroData.humidity / ENVIROSCALE
-            EnviroData.pressure = EnviroData.pressure / ENVIROSCALE
+            EnviroData.pressure = EnviroData.pressure / ENVIROSCALE - 10
             EnviroData.temperature = EnviroData.temperature / ENVIROSCALE
             # jsonData = {'pressure':EnviroData.pressure,
             #             'humidity':EnviroData.humidity,
@@ -176,6 +185,8 @@ def post_serial_read(app,data = None):
             # print(jsonData)
             socketio.emit('EnviroChannel',jsonData)
             socketio.emit('connectStatus','Connected')
+
+            serialDataIn.EnviroData = EnviroData
 
             if currentState.recording == True:
                 databaseObj = databasehelperclass.environmentalsensortable(float(EnviroData.pressure),
@@ -256,7 +267,7 @@ def post_serial_read(app,data = None):
 
 # Event handler that is called before a write. should return a message to send over serial or None
 def pre_serial_write(app,data = None):
-    print('Serial write data gather')
+    #print('Serial write data gather')
     global serialDataOut
 
     builder = MessageBuilder()
@@ -293,8 +304,8 @@ def pre_serial_write(app,data = None):
     # builder.add(e)
 
     write_val = builder.build(0,serialDataOut.destination)
-    print(write_val)
-    print(len(write_val))
+    #print(write_val)
+    #print(len(write_val))
 
     #TODO: Preprocessing stuff
     

@@ -137,7 +137,23 @@ class environmentalsensortable(dbase.Model):
     #         'FlightPathID':self.FlightPathID,
     #         'PointID':self.Point
     #     }
-        
+class dropdatatable(dbase.Model):
+    __tablename__ = 'DropData'
+    DropType = dbase.Column('DropType',dbase.Integer)
+    FlightPathID = dbase.Column('FlightPathID',dbase.Integer, primary_key = True)
+    PointID = dbase.Column('PointID',dbase.Integer, primary_key = True)
+    Altitude = dbase.Column('Altitude',dbase.Float)
+    Latitude = dbase.Column('Latitude',dbase.Float)
+    Longitude = dbase.Column('Longitude',dbase.Float)
+
+    def __init__(self,DropType,flightpathid,pointid,altitude,latitude,longitude):
+        self.DropType = DropType
+        self.FlightPathID = flightpathid 
+        self.PointID = pointid
+        self.Altitude = altitude
+        self.Latitude = latitude
+        self.Longitude = longitude
+
 class batterystatustable(dbase.Model):
     __tablename__ = 'BatteryStatus'
     BatteryVoltage = dbase.Column('BatteryVoltage',dbase.Float)

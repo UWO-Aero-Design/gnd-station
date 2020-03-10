@@ -117,9 +117,9 @@ def port_read(app,serial_port, event=None):
             if error:
                 print('Received message with errors')
             else:
-                print('Received message with no errors')
+                #print('Received message with no errors')
                 if event:
-                    print("Passing Event")
+                    #print("Passing Event")
                     # Can pass result into event
                     event(app,result)
         except:
@@ -136,12 +136,13 @@ def port_write(app, serial_port, event):
     global serialWriteEvent
 
     if serialWriteEvent.isSet():
-        print("Sending Data")
+        #print("Sending Data")
         dataOut = event(app)
 
         if not serial_port.out_waiting > 0:
             print(serial_port.is_open)
             #serial_port.flush()
+            print(dataOut)
             serial_port.write(dataOut)
             print("Data Sent")
         

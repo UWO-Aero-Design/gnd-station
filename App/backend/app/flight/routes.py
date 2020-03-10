@@ -42,6 +42,8 @@ def stopRecording():
     global currentState
     global recordingEvent
     currentState.recording = False
+    currentState.payloaddropped = False
+    currentState.gliderdropped = False
 
     print(currentState.recording)
 
@@ -114,6 +116,51 @@ def flightlons():
     print(longitudes)
 
     return json.dumps(longitudes), 202
+
+@api.route('/drops', methods=['GET'])
+def drops():
+    flightID = request.args.get('flightID')
+    print(flightID)
+    query = queryDatabase.QueryDatabase(flightID)
+
+    drops =  query.getDrops()
+
+    print(drops)
+
+    gliderDrop = 0
+    waterDrop = 0
+    habitatDrop = 0
+
+    gliderpoint = 0
+    waterpoint = 0
+    habitatpoint = 0
+    
+    for i,point in enumerate(drops):
+        if point[0] == 1:
+            gliderDrop = point[3]
+            gliderpoint = point[2]
+        if point[0] == 2:
+            waterDrop = point[3]
+            waterpoint = point[2]
+            habitatDrop = point[3]
+            habitatpoint = point[2]
+
+
+    print(gliderpoint)
+    print(waterpoint)
+    print(habitatpoint)
+
+    response_object = {
+        'glider': gliderDrop,
+        'gliderpoint': gliderpoint,
+        'water': waterDrop,
+        'waterpoint':waterpoint,
+        'habitat': habitatDrop,
+        'habitatpoint':habitatpoint
+    }
+
+    return jsonify(response_object), 202
+
 
 def databaseinsertion(obj):
     #databasehelperclass.db.session.add(obj)

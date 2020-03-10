@@ -29,6 +29,8 @@ class State:
         self.point = 0
         self.flight = 0
         self.recording = False
+        self.gliderdropped = False
+        self.payloaddropped = False
         self.payload1 = 0
         self.payload2 = 0
         self.payload3 = 0

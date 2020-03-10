@@ -7,6 +7,8 @@ from app.serial import events
 from app import database
 from app.database import databasehelperclass,queryDatabase
 
+from .. import dbase
+
 from .. import serialWriteEvent
 
 from flask_cors import cross_origin
@@ -20,7 +22,7 @@ def sendCMD():
     if not request.json:
         return 'Command wrong format'
 
-    print("Command Received")
+    #print("Command Received")
 
     commands = request.json['body']
 
@@ -48,14 +50,14 @@ def sendCMD():
     servo = int(servo[1:],base=2)
 
     print("Bitfield")
-    print(dropString)
-    print(pitchString)
-    print(servoString)
+    #print(dropString)
+    #print(pitchString)
+    #print(servoString)
 
-    print("Integer Conversion")
-    print(drop)
-    print(pitch)
-    print(servo)
+    #print("Integer Conversion")
+    #print(drop)
+    #print(pitch)
+    #print(servo)
 
     global serialDataOut
 
@@ -64,7 +66,7 @@ def sendCMD():
     serialDataOut.cmdPitch = pitch
     serialDataOut.destination = int(commands['destination'])
 
-    print("Going to",commands['destination'])
+    #print("Going to",commands['destination'])
 
     # databaseObj = queryDatabase.QueryDatabase(flightID)
     # serialDataOut.IMU = databaseObj.getIMUValuesForFlightPoint(point)
@@ -76,25 +78,40 @@ def sendCMD():
 
     global serialDataIn
 
-    if serialDataIn.EnviroData is not None:
-        if dropString[-3]:
-            jsonData = {'payload':'water','altitude': serialDataIn.EnviroData.pressure}
+    if serialDataIn.EnviroData is not None and serialDataIn.GPSData is not None:
+        if dropString[-3] and currentState.gliderdropped is False:
+            currentState.gliderdropped = True
+            jsonData = {'payload':'glider','altitude': serialDataIn.EnviroData.pressure}
             #jsonData = {'payload':'water',
              #           'altitude': 23}
             #print(jsonData)
             socketio.emit('PayloadChannel',jsonData)
+            databaseObj = databasehelperclass.dropdatatable(1,currentState.flight,currentState.point,serialDataIn.EnviroData.pressure,serialDataIn.GPSData.lat,serialDataIn.GPSData.lon)
+            databaseinsertion(databaseObj)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-        elif dropString[-4]:
-            jsonData = {'payload':'habitat1','altitude': serialDataIn.EnviroData.pressure}
+        elif dropString[-4] and currentState.payloaddropped is False:
+            currentState.payloaddropped = True
+            jsonData = {'payload':'water','altitude': serialDataIn.EnviroData.pressure}
             # print(jsonData)
             socketio.emit('PayloadChannel',jsonData)
-
-        elif dropString[-5]:
-            jsonData = {'payload':'habitat2','altitude': serialDataIn.EnviroData.pressure}
-            # print(jsonData)
+            databaseObj = databasehelperclass.dropdatatable(2,currentState.flight,currentState.point,serialDataIn.EnviroData.pressure,serialDataIn.GPSData.lat,serialDataIn.GPSData.lon)
+            databaseinsertion(databaseObj)
+            jsonData = {'payload':'habitat','altitude': serialDataIn.EnviroData.pressure}
+            print(jsonData)
             socketio.emit('PayloadChannel',jsonData)
+            # databaseObj = databasehelperclass.dropdatatable(3,currentState.flight,currentState.point,serialDataIn.EnviroData.pressure,serialDataIn.GPSData.lat,serialDataIn.GPSData.lon)
+            # databaseinsertion(databaseObj)
 
 
+        # elif dropString[-5] and currentState.payloaddropped is False:
+        #     currentState.payloaddropped = True
+        #     jsonData = {'payload':'habitat','altitude': serialDataIn.EnviroData.pressure}
+        #     # print(jsonData)
+        #     socketio.emit('PayloadChannel',jsonData)
+        #     databaseObj = databasehelperclass.dropdatatable(3,currentState.flight,currentState.point,serialDataIn.EnviroData.pressure,serialDataIn.GPSData.lat,serialDataIn.GPSData.lon)
+        #     databaseinsertion(databaseObj)
+
+    
     global serialWriteEvent
     serialWriteEvent.set()
     print("Data request set")
@@ -108,3 +125,10 @@ def sendCMD():
     }
 
     return jsonify(response_object), 202
+
+def databaseinsertion(obj):
+    #databasehelperclass.db.session.add(obj)
+    #databasehelperclass.db.session.commit()
+
+    dbase.session.add(obj)
+    dbase.session.commit()

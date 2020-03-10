@@ -57,30 +57,32 @@ def activate_job():
     airplanetype = "Plane"
     
     #Clear previous data
-    # databasehelperclass.planetable.query.delete()
-    # databasehelperclass.glidertable.query.delete()
-    # databasehelperclass.flightpathtable.query.delete()
-    # databasehelperclass.pointtable.query.delete()
-    # databasehelperclass.gpsvaluetable.query.delete()
-    # databasehelperclass.imuvaluestable.query.delete()
-    # databasehelperclass.environmentalsensortable.query.delete()
-    # databasehelperclass.batterystatustable.query.delete()
-    # databasehelperclass.systemstatustable.query.delete()
-    # databasehelperclass.servodatatable.query.delete()
-    # databasehelperclass.pitottubetable.query.delete()
-    # dbase.session.commit()
+    databasehelperclass.planetable.query.delete()
+    databasehelperclass.glidertable.query.delete()
+    databasehelperclass.flightpathtable.query.delete()
+    databasehelperclass.pointtable.query.delete()
+    databasehelperclass.gpsvaluetable.query.delete()
+    databasehelperclass.imuvaluestable.query.delete()
+    databasehelperclass.environmentalsensortable.query.delete()
+    databasehelperclass.batterystatustable.query.delete()
+    databasehelperclass.systemstatustable.query.delete()
+    databasehelperclass.servodatatable.query.delete()
+    databasehelperclass.pitottubetable.query.delete()
+    dbase.session.commit()
 
-    # databaseObj = databasehelperclass.planetable(planeid,planeversion)
-    # databaseinsertion(databaseObj)
+    databaseObj = databasehelperclass.planetable(planeid,planeversion)
+    databaseinsertion(databaseObj)
 
-    # databaseObj = databasehelperclass.glidertable(gliderid,gliderversion)
-    # databaseinsertion(databaseObj)
+    databaseObj = databasehelperclass.glidertable(gliderid,gliderversion)
+    databaseinsertion(databaseObj)
 
-    # databaseObj = databasehelperclass.flightpathtable(flightid,pilotname,locationid,airplanetype,planeid,planeversion,gliderid,gliderversion)
-    # databaseinsertion(databaseObj)
+    databaseObj = databasehelperclass.flightpathtable(flightid,pilotname,locationid,airplanetype,planeid,planeversion,gliderid,gliderversion)
+    databaseinsertion(databaseObj)
 
-    # databaseObj = databasehelperclass.flightpathtable(2,'Jason','Florida','Plane','1','1','2','2')
-    # databaseinsertion(databaseObj)
+    databaseObj = databasehelperclass.flightpathtable(2,'Jason','Florida','Plane','1','1','2','2')
+    databaseinsertion(databaseObj)
+
+ 
 
     flightQueryObj = queryDatabase.QueryDatabase(1)
 

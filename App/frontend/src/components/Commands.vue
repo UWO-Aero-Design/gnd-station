@@ -1,19 +1,19 @@
 <template>
   <div class="infoBox">
     <div class="dropbox">
-      <button class="dropbutton" @click="sendDrop(1)"> <i class="fa fa-door-open"/> </button>
-      <button class="dropbutton" style="top:100px" @click="sendDrop(2)"> <i class="fa fa-door-closed"/> </button>
-      <button class="dropbutton" style="top:160px" @click="sendDrop(3)"> <i class="fa fa-paper-plane"/> </button>
-      <button class="dropbutton" style="top:220px" @click="sendDrop(4)"> <i class="fa fa-tint"/> </button>
-      <button class="dropbutton" style="top:280px" @click="sendDrop(5)"> <i class="fas fa-globe-americas"/> </button>>
+      <button class="dropbutton" @click="sendDrop(1)"> Open Doors <i class="fa fa-door-open"/> </button>
+      <button class="dropbutton" style="top:120px" @click="sendDrop(2)"> Close Doors<i class="fa fa-door-closed"/> </button>
+      <button class="dropbutton" style="top:200px" @click="sendDrop(3)"> Gliders <i class="fa fa-paper-plane"/> </button>
+      <button class="dropbutton" style="top:260px" @click="sendDrop(4)"> Payload <i class="fa fa-tint"/> </button>
+      <!-- button class="dropbutton" style="top:280px" @click="sendDrop(5)"> <i class="fas fa-globe-americas"/> </button>-->
     </div>
     <div class="pitchbox">
-      <button class="pitchbutton" style="background-color: blue" @click="sendPitch(1)"> <i class="fas fa-plane-departure"/> 1 </button>
-      <button class="pitchbutton" style="top:60px;background-color: red" @click="sendPitch(2)"> <i class="fas fa-plane-departure"/> 2 </button>
-      <button class="pitchbutton" style="top:120px" @click="sendPitch(3)"> <i class="fas fa-wrench"/> </button>
-      <button class="pitchbutton" style="top:180px" @click="sendPitch(4)"> <i class="fas fa-exchange-alt"/> </button>
-      <button class="pitchbutton" style="top:240px" @click="sendPitch(5)"> <i class="fas fa-level-up-alt"/> 1 </button>
-      <button class="pitchbutton" style="top:300px" @click="sendPitch(6)"> <i class="fas fa-level-up-alt"/> 2 </button>
+      <button class="pitchbutton" style="background-color: blue" @click="sendPitch(1)"> Pitch Up<i class="fas fa-plane-departure"/> 1 </button>
+      <button class="pitchbutton" style="top:80px;background-color: red" @click="sendPitch(2)"> Pitch Up<i class="fas fa-plane-departure"/> 2 </button>
+      <button class="pitchbutton" style="top:160px" @click="sendPitch(3)"> Test<i class="fas fa-wrench"/> </button>
+      <button class="pitchbutton" style="top:220px" @click="sendPitch(4)"> Mode<i class="fas fa-exchange-alt"/> </button>
+      <button class="pitchbutton" style="top:280px" @click="sendPitch(5)"> Engage<i class="fas fa-level-up-alt"/> 1 </button>
+      <button class="pitchbutton" style="top:350px" @click="sendPitch(6)"> Engagae<i class="fas fa-level-up-alt"/> 2 </button>
       <h3 style="position: absolute;top:-50px; left:20px"> Pitch </h3>
     </div>
     <div class="servoboxon">
@@ -249,7 +249,7 @@
 
   .pitchbox {
     position: absolute;
-    top: 400px;
+    top: 360px;
   }
 
   .servoboxon {

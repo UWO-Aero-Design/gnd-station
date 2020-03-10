@@ -1,10 +1,7 @@
 <template>
   <div class="infoBox">
-    <h2> Water: {{ this.water }} </h2>
-    <h2> Habitat 1: {{ this.habitat1 }} </h2>
-    <h2> Habitat 2: {{ this.habitat2 }} </h2>
-    </div>
-      
+    <!-- h3> Altitude: {{ this.altitude }} </h3 -->
+    <h2> Altitude: {{ this.altitude }} <br> Gliders: {{ this.glider }} <br> Water: {{ this.water }} <br> Habitats: {{ this.habitat }}</h2>
   </div>
 </template>
 
@@ -20,9 +17,10 @@
     data () {
       return {
         isConnected: false,
-        water: 0,
-        habitat1: 0,
-        habitat2: 0
+        glider: 'Unreleased',
+        water: 'Unreleased',
+        habitat: 'Unreleased',
+        altitude: 0
       };
     },
     methods: {
@@ -32,15 +30,19 @@
       this.isConnected = true;
     },
     PayloadChannel: function(data) {
-      if (data.payload == 'water') {
-        this.water = data.altitude;
+      if (data.payload == 'glider') {
+        this.glider = data.altitude;
       }
-      else if (data.payload == 'habitat1') {
-        this.habitat1 = data.altitude;
+      else if (data.payload == 'water') {
+        this.water = data.altitude;
+        this.habitat = data.altitude;
       }
       else {
-        this.habitat2 = data.altitude;
+        this.habitat = data.altitude;
       }
+    },
+    EnviroChannel: function(data) {
+      this.altitude = data.altitude;
     }
     }
   }
@@ -51,11 +53,12 @@
     color: white;
     position: relative;
     left: 20px;
-    top:20px;
+    top:5px;
   }
 
   h2 {
-    font-size: 0.5in;
+    font-size: 0.7in;
+    padding: 0px;
   }
 
 
