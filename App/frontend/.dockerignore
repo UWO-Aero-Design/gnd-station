@@ -1,4 +1,0 @@
-#To speed up build process
-node_modules
-.git
-.gitignore
