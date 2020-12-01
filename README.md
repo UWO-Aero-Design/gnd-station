@@ -28,3 +28,6 @@ nodemon api/server.js
 ```
 
 The server will be live on [http://locahost:5000](http://locahost:5000). Try editing a file and watch Nodemon automatically restart the server.
+
+### Documentation
+The API documentation is available at the `/docs` endpoint.
