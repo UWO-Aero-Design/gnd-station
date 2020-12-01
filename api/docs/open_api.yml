@@ -1,0 +1,241 @@
+openapi: 3.0.1
+info:
+  title: Western Aero Design - Ground Station
+  description: Ground Station Software for the 2020/2021 Western Aero Design Team
+  contact:
+    email: western.aerodesign@gmail.com
+  license:
+    name: MIT
+    url: https://choosealicense.com/licenses/mit/
+  version: 0.1.0
+  x-logo:
+    url: 'http://localhost:5000/logo.png'
+    altText: Western Aero Design Logo
+
+tags:
+- name: Onboard
+  description: Adjust configurations onboard the aircraft
+- name: "Record"
+  description: "Stop, start, and retreive recordings"
+- name: "Ground"
+  description: "Adjust configurations on the backend"
+- name: "Commands"
+  description: "Send commands to the aircraft or gliders"
+  
+paths:
+  /onboardconfig/servo:
+    post:
+      tags:
+      - Onboard
+      summary: Update servo conifgs
+      operationId: updateServo
+      requestBody:
+       description: Servos to be updated
+       content:
+          application/json:
+            schema:
+              properties:
+                servos:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Servo'
+      responses:
+        200:
+          description: Accepted
+        400:
+          description: Invalid formatting
+  /record:
+    get:
+      tags:
+      - Record
+      summary: Get a list of recordings
+      description: returns a list of recordings
+      responses:
+        200:
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                properties:
+                  current_status:
+                    type: string
+                    enum: ["Start", "Stop"]
+                  total_recordings:
+                    type: integer
+                    format: int32
+                  offset: 
+                    type: integer
+                    format: int32
+                  recordings:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Recording"
+    post:
+      tags:
+      - Record
+      summary: Start/Stop recording
+      description: Starts or stops a recording
+      requestBody:
+       description: Servos to be updated
+       content:
+          application/json:
+            schema:
+              properties:
+                action:
+                  type: string
+                  enum: ["Start", "Stop"]
+      responses:
+        201:
+          description: Started/stopped recording
+        204:
+          description: Recording is already in this state
+        404:
+          description: Invalid action
+  /record/{record_id}:
+    get:
+      tags:
+      - Record
+      summary: Get a specific recording
+      description: returns a single recording
+      parameters:
+      - name: record_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recording'
+        404:
+          description: Invalid record ID
+    delete:
+      tags:
+      - Record
+      summary: Delete a specific recording
+      description: deletes single recording
+      parameters:
+      - name: record_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+        404:
+          description: Invalid record ID
+  /ground/com:
+    get:
+      tags:
+      - Ground
+      summary: Get connected USB devices
+      responses:
+        200:
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/COM"
+    post:
+      tags:
+      - Ground
+      summary: Select a USB device
+      requestBody:
+       description: USB device to select
+       content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/COM'
+      responses:
+        200:
+          description: Accepted
+        400:
+          description: Invalid COM device
+  /command:
+    post:
+      tags:
+      - Commands
+      summary: Send a command
+      requestBody:
+        description: Command to send
+        content:
+          application/json:
+            schema:
+              properties:
+                command:
+                  type: string
+                  enum: ["OPEN_DOORS", "CLOSE_DOORS", "DROP_PAYLOAD", "DROP_GLIDERS"]
+      responses:
+        200: 
+          description: Accepted
+        400:
+          decsription: No command specified
+        406:
+          description: Invalid Command
+              
+        
+          
+components:
+  schemas:
+    Servo:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: integer
+          format: int32
+        open:
+          type: "integer"
+          format: "int32"
+        close:
+          type: "integer"
+          format: "int32"
+        bind:
+          type: "string"
+          enum: [ DOOR, PAYLOAD0, PAYLOAD1, PAYLOAD2, GLIDER0, GLIDER1, NONE ]
+    Recording:
+      required:
+      - id
+      - date
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+    COM:
+      required:
+      - locationId
+      - vendorId
+      - productId
+      - deviceName
+      - manufacturer
+      - serialNumber
+      - deviceAddress
+      type: object
+      properties:
+        locationId:
+          type: integer
+          format: int64
+        vendorId:
+          type: integer
+          format: int64
+        productId:
+          type: integer
+          format: int64
+        deviceName:
+          type: string
+        manufacturer:
+          type: string
+        serialNumber:
+          type: string
+        deviceAddress:
+          type: integer
+          format: int64
