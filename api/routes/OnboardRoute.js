@@ -2,6 +2,10 @@ const router = require('express').Router();
 
 router.post('/servo', (req, res) => { 
     const servos = req.body.servos;
+    console.log(servos)
+    if(!servos) {
+        return res.status(400).send();
+    }
     console.log('Servos to be updated:')
     servos.forEach(servo => {
         if(!servo.name) {
