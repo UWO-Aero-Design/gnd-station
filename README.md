@@ -12,6 +12,7 @@ The ground station runs vanilla HTML, CSS, and JS served from a Node.js backend.
 ```sh
 git clone https://github.com/UWO-Aero-Design/gnd-station.git
 cd gnd-station
+npm install
 node api/server.js
 ```
 
@@ -24,6 +25,7 @@ The server will be live on [http://locahost:5000](http://locahost:5000).
 ```sh
 git clone https://github.com/UWO-Aero-Design/gnd-station.git
 cd gnd-station
+npm install
 nodemon api/server.js
 ```
 
