@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Servo Config</title>
+</head>
+<body>
+    <p>Enter a servo number and the values you'd like to update</p>
+    <form action="" id="servo">
+        <label for="servonum">Servo Number (0-15)</label><br>
+        <input type="number" max="15" min="0" id="servonum" name="servonum" required><br>
+
+        <label for="bind">Bind To</label><br>
+        <select name="bind" id="bind">
+            <option default value="NA">Don't Update</option>
+            <option value="DOOR">Door</option>
+            <option value="PAYLOAD0">Payload0</option>
+            <option value="PAYLOAD1">Payload1</option>
+            <option value="PAYLOAD2">Payload2</option>
+            <option value="GLIDER0">Glider0</option>
+            <option value="GLIDER1">Glider1</option>
+            <option value="NONE">None</option>
+        </select><br>
+
+        <label for="open">Open Position (0-100)</label><br>
+        <input type="number" max="100" min="0" id="open" name="open"><br>
+
+        <label for="close">Close Position (0-100)</label><br>
+        <input type="number" max="100" min="0" id="close" name="close"><br>
+
+        <input type="submit" value="Send">
+    </form>
+    <p id="output"></p>
+
+    <script defer>
+        const form = document.getElementById('servo');
+        form.onsubmit = (event) => {
+            // parse the data from the form (see: https://developer.mozilla.org/en-US/docs/Web/API/FormData)
+            let data = new FormData(event.target)
+
+            // check to see if a servo number was given and if any
+            if(!data.get('servonum')) {
+                document.getElementById('output').innerHTML = 'Please enter a servo number.'
+            }
+            else if(data.get('bind') === 'NA' && !data.get('open') && !data.get('close')) {
+                document.getElementById('output').innerHTML = 'Please select values to update'
+            }
+            else {
+                // validated user input, now we need to create an object formatted the way the docs say
+                // name is a required field (and we already validated it) so add it no matter what
+                // BUT check if any of the other fields were filled out and only add them if necessary
+                var servo = {}
+                servo.name = data.get('servonum')
+                if(data.get('bind') !== 'NA') servo.bind = data.get('bind');
+                if(data.get('open')) servo.open = data.get('open')
+                if(data.get('close')) servo.open = data.get('close')
+
+                // send the request without refreshing the page (ajax)
+                // I encapsulated this in a function to keep it clean but did not follow good programming practices
+                // specifically, the send_ajax() function should not update the document and instead should just return some
+                // values on the success/failure of the request
+                // also, you can see I used an array of a single servo. This is because you can update multiple servos
+                // in one request
+                send_servo('onboardconfig/servo', { servos: [servo] })
+               
+            }
+
+            // stop the browswer from doing any default form stuff since we already handled everything
+            event.preventDefault();
+        }
+
+        const send_servo = (url, data) => {
+            var xmlhttp = new XMLHttpRequest(); // create our object
+
+            // this was modified from w3schools but it's a function that is automatically called when the state of this
+            // object is changed (all possible reasons: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState)
+            xmlhttp.onreadystatechange = function(event) {
+                // we only care about when the request is complete
+                if (this.readyState == XMLHttpRequest.DONE) {
+                    // this is the stuff I was talking about before
+                    // ideally this function should be much more generalized and not update anything on the webpage
+
+                    // the status codes for the given endpoint (/onboardconfig/servo) are given in the documentation
+                    if(this.status == 200) { // 200 means it's successful
+                        document.getElementById('output').innerHTML = `Servo ${data.servos[0].name} was updated.`
+                    }
+                    else if(this.status == 400) { // 400 means the formatting wasn't correct
+                        document.getElementById('output').innerHTML = 'Your request was not properly formatted'
+                    }
+                    else { // something went wrong!
+                        document.getElementById('output').innerHTML = 'There was an error with your request. This may be a server issue.'
+                        console.log("Error")
+                    }
+                }
+            };
+
+            // all we did above is say "hey run this function when the state changes" but didn't actually send/receive anything
+            // now let's actually send it:
+            xmlhttp.open('POST', url, true); // the method (GET, POST, etc) and url (onboardconfig/servo)
+
+            // we also need to set a header to tell the server "hey everything that is coming is actually JSON!"
+            xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+            // we can't just send a raw object so we use stringify() to turn it into a string
+            xmlhttp.send(JSON.stringify(data));
+        }
+    </script>
+</body>
+</html>

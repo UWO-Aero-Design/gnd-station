@@ -20,6 +20,7 @@ app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views')
 
 // routes
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views/sample.html')))
 app.use('/docs', require('./routes/DocRoute'))
 app.use('/onboardconfig', require('./routes/OnboardRoute'))
 app.use('/record', require('./routes/RecordRoute'))
