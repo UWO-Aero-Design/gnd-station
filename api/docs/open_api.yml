@@ -9,7 +9,7 @@ info:
     url: https://choosealicense.com/licenses/mit/
   version: 0.1.0
   x-logo:
-    url: 'http://localhost:5000/logo.png'
+    url: 'http://localhost:5000/images/logo.png'
     altText: Western Aero Design Logo
 
 tags:
