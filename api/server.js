@@ -5,6 +5,8 @@ const morgan = require('morgan');
 const WebSocket = require('ws');
 
 // app configuration
+require('dotenv').config({path: path.join(__dirname, '..', '.env')})
+require('./config/database').connect();
 const node_port = 5000;
 const node_env = process.env.NODE_ENV || 'development';
 const app = express();
