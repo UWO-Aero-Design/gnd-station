@@ -1,30 +1,62 @@
 const router = require('express').Router();
 
-const usb_detect = require('usb-detection');
-usb_detect.startMonitoring();
+const SerialPort = require('serialport') 
 
 var current_port = null;
 
-
-router.get('/com', (req, res) => { 
-    usb_detect.find((err, devices) => {
-        if(err) {
-            return res.status(500).json(err)
-        }
-        else {
-            return res.status(200).json(devices)
-        }
-    });
+router.get('/com', async (req, res) => {
+    let get_all = req.query.all;
+    SerialPort.list()
+        .then(devices => {
+            if(get_all != undefined) {
+                return res.status(200).json(devices)
+            }
+            else {
+                let filtered_devices = [];
+                devices.forEach(device => {
+                    if(device.manufacturer !== undefined) {
+                        filtered_devices.push(device)
+                    }
+                })
+                return res.status(200).json(filtered_devices)
+            }
+        })
+        .catch(error => {
+            return res.status(500).json(error)
+        })
 });
 
-router.post('/com', (req, res) => { 
+router.post('/com', async (req, res) => { 
     const com = req.body;
-    if(!com.locationId || !com.vendorId || !com.productId || !com.deviceName || !com.manufacturer || !com.serialNumber || !com.deviceAddress) {
-        return res.status(400).send("Invalid COM device")
+    if(!com.path) {
+        return res.status(400).send('Invalid COM device')
     }
     else {
-        current_port = com;
+        if(current_port != null) {
+            await current_port.close();
+        }
+        current_port = new SerialPort(com.path, (error) => {
+            if(error) {
+                console.log(error)
+                return res.status(500).json(error);
+            }
+            else {
+                return res.status(200).send();
+            }
+        });
     }
+});
+
+router.post('/com/test', (req, res) => { 
+    current_port.write('Hello World', error => {
+        if (error) {
+            console.log(error)
+            return res.status(500).json(error);
+        }
+        else {
+            return res.status(200).send();
+        }
+    })
 });
 
 
