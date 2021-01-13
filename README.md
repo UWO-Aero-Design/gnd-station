@@ -28,6 +28,8 @@ docker-compose up -d
 ```
 Use `docker-compose down` to bring down the database. You can also use a local mongodb instance or even a cloud provider - just add the relevant credentials to the .env file. Note: using the docker-compose method will create an untracked `db` folder in the main directory. In order to reset the database, bring the container down with `docker-compose down`, delete the `db` folder and then restart the database with `docker-compose up`.
 
+You can connect to the database with a visual GUI such as [Compass](https://www.mongodb.com/products/compass). The link is provided in the nodejs console upon successful connection and is of the form `mongodb://<username>:<password>@<hostname>:<port>`. You can also use [Postman](https://www.postman.com/) to simulate HTTP requests to the backend.
+
 ### Development
 
 [Nodemon](https://www.npmjs.com/package/nodemon) is a filewatch wrapper that makes developing Node applications easier. It will restart the server everytime a file is edited. This is included as a part of the dev dependencies in `api/package.json`.
