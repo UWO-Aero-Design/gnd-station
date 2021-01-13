@@ -1,24 +1,22 @@
-const { Client } = require('pg')
+const mongoose = require('mongoose');
 
-const db = new Client({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASS,
-    port: process.env.DB_PORT,
-})
+const options = {
+  connectTimeoutMS: 10000,
+};
 
-const connect = () => {
-    db.connect().then(() => {
-        console.log(`Connected to database on port ${process.env.DB_PORT}`)
-      })
-      .catch(error => {
-        console.log('Unable to connect to database')
-        console.log(error)
-      })
-}
+
+const connect = uri => {
+  // settings for depreciated features
+  mongoose.set('useNewUrlParser', true);
+  mongoose.set('useFindAndModify', false);
+  mongoose.set('useCreateIndex', true);
+  mongoose.set('useUnifiedTopology', true);
+  mongoose.connect(`${process.env.DB_HOST}:${process.env.DB_PORT}`, options)
+    .then(() => { console.log('Connected to database') })
+    .catch((err) => { console.log('\x1b[33mUnable to connect to database. Continuing without logging.\x1b[0m') })
+};
 
 module.exports = {
-    db,
-    connect
-}
+  connect,
+  mongoose
+};

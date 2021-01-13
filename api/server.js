@@ -6,7 +6,7 @@ const WebSocket = require('ws');
 
 // app configuration
 require('dotenv').config({path: path.join(__dirname, '..', '.env')})
-require('./config/database').connect();
+require('./config/database.js').connect()
 const node_port = 5000;
 const node_env = process.env.NODE_ENV || 'development';
 const app = express();
