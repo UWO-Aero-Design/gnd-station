@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const Recording = require('../models/RecordingModel')
 
 var recording_status = "stop";
 
@@ -14,7 +15,7 @@ router.get('/', (req, res) => {
     })
 });
 
-router.post('/', (req, res) => { 
+router.post('/', async (req, res) => { 
     if(!req.body.action) {
         return res.status(400).send('No action specified')
     }
@@ -27,15 +28,25 @@ router.post('/', (req, res) => {
     }
     else {
         recording_status = action;
-        return res.status(200).send(`Recording updated to status: ${recording_status}`)
+        const recording = await new Recording().save();
+        console.log(recording)
+        return res.status(200).send(`Recording updated to status: ${recording_status} (${recording._id})`)
     }
 });
 
-router.get('/:record_id', (req, res) => { 
+router.get('/:record_id', async (req, res) => { 
+    const recording = await Recording.findById(req.params.record_id)
+    return res.status(200).json(recording)
+});
+
+router.post('/:record_id', async (req, res) => { 
+    const recording = await Recording.findById(req.params.record_id)
+    recording.add_timestep(req.body)
     return res.status(200).json({ id: req.params.record_id, date: "1583236800" })
 });
 
-router.delete('/:record_id', (req, res) => { 
+router.delete('/:record_id', async (req, res) => { 
+    const recording = await Recording.findByIdAndDelete(req.params.record_id)
     return res.status(200).send()
 });
 
