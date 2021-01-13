@@ -7,7 +7,8 @@ const port = process.env.DB_PORT;
 const name = process.env.DB_NAME
 
 const options = {
-  connectTimeoutMS: 10000,
+  connectTimeoutMS: 3000,
+  dbName: name
 };
 
 
