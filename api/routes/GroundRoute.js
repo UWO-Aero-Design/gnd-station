@@ -1,12 +1,11 @@
 const router = require('express').Router();
 
 const SerialPort = require('serialport') 
-
-var current_port = null;
+const usb = require('../config/usb')
 
 router.get('/com', async (req, res) => {
     let get_all = req.query.all;
-    SerialPort.list()
+    usb.list()
         .then(devices => {
             if(get_all != undefined) {
                 return res.status(200).json(devices)
@@ -32,31 +31,25 @@ router.post('/com', async (req, res) => {
         return res.status(400).send('Invalid COM device')
     }
     else {
-        if(current_port != null) {
-            await current_port.close();
-        }
-        current_port = new SerialPort(com.path, (error) => {
-            if(error) {
+        usb.select(com.path)
+            .then(() => {
+                return res.status(200).send();
+            })
+            .catch(error => {
                 console.log(error)
                 return res.status(500).json(error);
-            }
-            else {
-                return res.status(200).send();
-            }
-        });
+            })
     }
 });
 
 router.post('/com/test', (req, res) => { 
-    current_port.write('Hello World', error => {
-        if (error) {
-            console.log(error)
-            return res.status(500).json(error);
-        }
-        else {
+    usb.write('hello')
+        .then(() => {
             return res.status(200).send();
-        }
-    })
+        })
+        .catch(error => {
+            return res.status(500).json(error);
+        })
 });
 
 
