@@ -161,16 +161,19 @@ paths:
     post:
       tags:
       - Commands
-      summary: Send a command
+      summary: Send command(s)
+      description: Usually you'll only send one command but there is support for multiple.
       requestBody:
-        description: Command to send
+        description: Command(s) to send
         content:
           application/json:
             schema:
               properties:
-                command:
-                  type: string
-                  enum: ["OPEN_DOORS", "CLOSE_DOORS", "DROP_PAYLOAD", "DROP_GLIDERS"]
+                commands:
+                  type: array
+                  items:
+                    type: string
+                    enum: ["OPEN_DOORS", "CLOSE_DOORS", "DROP_PAYLOAD", "DROP_GLIDERS"]
       responses:
         200: 
           description: Accepted
