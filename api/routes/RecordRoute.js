@@ -1,17 +1,11 @@
 const router = require('express').Router();
 const Recording = require('../models/RecordingModel')
 
-var recording_status = "stop";
-
-router.get('/', (req, res) => { 
+router.get('/', async (req, res) => { 
+    const recordings = await Recording.find({}, '-commands -telemetry');
     res.status(200).json({
-        current_status: recording_status,
-        total_recordings: 2,
-        offset: 0,
-        recordings: [
-            { id: "5fc6a6bb6aa11d5c0e885c7e", date: "1583236800" },
-            { id: "5fc6a6c9b4ab447eb5fb3c73", date: "1583292120" },
-        ]
+        recordings,
+        length: recordings.length
     })
 });
 
@@ -23,20 +17,48 @@ router.post('/', async (req, res) => {
     if(action !== 'start' && action !== 'stop') {
         return res.status(400).send('Invalid action')
     }
-    else if(action === recording_status) {
-        return res.status(200).send(`Recording alreay in status: ${recording_status}`)
+    else if(action === 'stop') {
+        if(Recording.is_recording()) {
+            const _id = Recording.get_current_recording();
+            Recording.clear_recording();
+            console.log('Stopped recording')
+            return res.status(200).send(`Stopped recordings (${_id})`)
+        }
+        else {
+            return res.status(200).send(`Recording already stopped`)
+        }
     }
     else {
-        recording_status = action;
-        const recording = await new Recording().save();
-        console.log(recording)
-        return res.status(200).send(`Recording updated to status: ${recording_status} (${recording._id})`)
+        if(Recording.is_recording()) {
+            return res.status(200).send(`Recording alreay in progress (${Recording.get_current_recording()})`)
+        }
+        else {
+            const recording = await new Recording().save();
+            Recording.set_recording(recording._id)
+            console.log('Started recording')
+            return res.status(200).send(`Started recording (${Recording.get_current_recording()})`)
+        }
     }
 });
 
 router.get('/:record_id', async (req, res) => { 
     const recording = await Recording.findById(req.params.record_id)
     return res.status(200).json(recording)
+});
+
+router.get('/:record_id/recent', async (req, res) => { 
+    const recording = await Recording.findById(req.params.record_id)
+    if(recording === null) {
+        return res.status(404).send();
+    }
+    let recent_result = {}
+    if(recording.telemetry.length > 0) {
+        recent_result.telemetry = recording.telemetry[recording.telemetry.length-1]
+    }
+    if(recording.commands.length > 0) {
+        recent_result.command = recording.commands[recording.commands.length-1]
+    }
+    return res.status(200).json(recent_result)
 });
 
 router.post('/:record_id', async (req, res) => { 
@@ -46,7 +68,21 @@ router.post('/:record_id', async (req, res) => {
 });
 
 router.delete('/:record_id', async (req, res) => { 
-    const recording = await Recording.findByIdAndDelete(req.params.record_id)
+    const _id = req.params.record_id;
+    if(Recording.get_current_recording() == _id) {
+        Recording.clear_recording();
+        console.log('Stopped recording')
+    }
+    const recording = await Recording.findByIdAndDelete(_id)
+    return res.status(200).send()
+});
+
+router.delete('/', async (req, res) => { 
+    if(Recording.is_recording()) {
+        Recording.clear_recording();
+        console.log('Stopped recording')
+    }
+    const recording = await Recording.deleteMany({})
     return res.status(200).send()
 });
 

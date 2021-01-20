@@ -1,4 +1,6 @@
 const router = require('express').Router();
+
+const Recording = require('../models/RecordingModel')
 const { Message } = require('../message/message_pb')
 const usb = require('../config/usb')
 
@@ -9,12 +11,15 @@ router.post('/', (req, res) => {
     if(!commands) {
         return res.status(400).send('No command specified')
     }
+    // build the message and include meta data
     let message = new Message()
     message.setSender(Message.Location.GROUND_STATION)
     message.setRecipient(Message.Location.PLANE)
     message.setPacketNumber(packet_number++);
     message.setTime(Math.floor(new Date().getTime() / 1000));
     message.setStatus(Message.Status.READY);
+
+    // check if each command exists and add it
     commands.forEach(command => {
         command = command.toUpperCase();
         if(command === 'OPEN_DOORS') {
@@ -33,12 +38,32 @@ router.post('/', (req, res) => {
             return res.status(406).send('Invalid command')
         }
     })
-    const serialized_message = message.serializeBinary()
-    let hex_string = '';
-    for(var i = 0; i < serialized_message.length; i++) {
-        hex_string = hex_string + serialized_message[i].toString(16) + " "
+
+    // add to database (if necessary)
+    if(Recording.is_recording()) {
+        Recording.findById(Recording.get_current_recording())
+            .then(recording => {
+                recording.commands.push(message.toObject());
+                recording.save()
+                    .then(() => {
+                        console.log('Saved command')
+                    })
+                    .catch(error => {
+                        console.log('Unable to save command');
+                        console.log(error);
+                    });
+            })
+            .catch(error => {
+                console.log('Unable to find recording');
+                console.log(error);
+            })
     }
+
+    // serialize
+    const serialized_message = message.serializeBinary()
     console.log(`Serialized message to ${serialized_message.length} bytes`)
+
+    // send
     usb.write(serialized_message)
         .then(() => {
             return res.status(200).send('Packet sent')
