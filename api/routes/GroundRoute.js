@@ -33,6 +33,7 @@ router.post('/com', async (req, res) => {
     else {
         usb.select(com.path)
             .then(() => {
+                console.log(`Connected to ${com.path}`)
                 return res.status(200).send();
             })
             .catch(error => {
