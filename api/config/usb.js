@@ -1,6 +1,8 @@
 const SerialPort = require('serialport') 
+const Readline = require('@serialport/parser-readline')
 
 var current_port = null;
+var parser = null;
 
 const write = (data) => {
     return new Promise((resolve, reject) => {
@@ -27,13 +29,14 @@ const select = async (path) => {
         await current_port.close();
     }
     current_port = new SerialPort(path);
+    parser = current_port.pipe(new Readline())
     return current_port;
 }
 
 module.exports = {
     current_port,
+    parser,
     write,
-    read,
     list,
     select
 }
