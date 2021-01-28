@@ -1,10 +1,14 @@
 const SerialPort = require('serialport') 
 const Readline = require('@serialport/parser-readline')
 
+const events = require('events');
+
 const { Message } = require('../message/message_pb')
 
 var current_port = null;
 var parser = null;
+
+const device = new events.EventEmitter();
 
 const write = (data) => {
     return new Promise((resolve, reject) => {
@@ -13,6 +17,7 @@ const write = (data) => {
             reject(new Error('Current port has not yet been selected'));
         }
         else {
+            device.emit('sent', data);
             resolve(current_port.write(data));
         }
     })
@@ -28,23 +33,12 @@ const select = async (path) => {
     }
     current_port = new SerialPort(path);
     parser = current_port.pipe(new Readline())
-    current_port.on('data', write_message)
+    parser.on('data', (data) => {
+        data = data.subarray(0, message.length-1)
+        const decoded = Message.deserializeBinary(message);
+        device.emit('data', decoded)
+    })
     return current_port;
-}
-
-const write_message = (message) => {
-    message = message.subarray(0, message.length-1)
-    const decoded = Message.deserializeBinary(message);
-    console.log(`Message received from ${get_location_name(decoded.getSender())} (${decoded.getPacketNumber()})`)
-}
-
-const get_location_name = (loc) => {
-    if (loc === Message.Location.PLANE) return "PLANE";
-    else if (loc === Message.Location.GROUND_STATION) return "GROUND";
-    else if (loc === Message.Location.GLIDER0) return "GLIDER0";
-    else if (loc === Message.Location.GLIDER0) return "GLIDER1";
-    else if (loc === Message.Location.ANY) return "ANY";
-    else return "UNKNOWN";
 }
 
 const auto_connect = async () => {
