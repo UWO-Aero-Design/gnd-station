@@ -12,3 +12,14 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
       MONGO_INITDB_DATABASE: ${DB_NAME}
+
+  tiles:
+    image: overv/openstreetmap-tile-server
+    volumes:
+    - ./map/tiles:/var/lib/postgresql/12/main
+    ports:
+      - "5001:80"
+
+volumes:
+  openstreetmap-data:
+    external: true
