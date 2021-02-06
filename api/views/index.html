@@ -2,8 +2,42 @@
 <html>
 <head>
 <title>Ground Station</title>
-<link href="css/style.css" rel="stylesheet" type="text/css" />
-<script></script>
+<link href="../public/css/style.css" rel="stylesheet" type="text/css" />
+<script defer>
+    const form = document.getElementById("red-button");
+    form.onclick = (event) => {
+        console.log("request sending...");
+        var servo = {};
+
+        let button = event.target;
+        if (button.tagName = 'BUTTON'){
+            servo.command = button.id;
+            send_servo('/command', servo);
+        }
+
+        event.preventDefault();
+    }
+    const send_servo = (url, data) => {
+        var xmlhttp = new XMLHttpRequest(); 
+        xmlhttp.onreadystatechange = function(event) {
+        if (this.readyState == XMLHttpRequest.DONE) {
+            if(this.status == 200) {
+                console.log('ok');
+                console.log(xmlhttp.response);
+            }
+            else if(this.status == 406) console.log('invalid command');
+            else console.log('error');
+        }
+        }
+        
+        console.log(data);
+        xmlhttp.open('POST', url, true);
+        xmlhttp.responseType = 'text';
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        console.log(JSON.stringify(data));
+        xmlhttp.send(JSON.stringify(data));
+    }
+</script>
 <meta charset="utf-8">
 </head>
 <body>
@@ -15,7 +49,7 @@
             item2
     </div>
     <div class ="grid-item item-3">
-        <img src = "images/aero_logo.png" width = "100%" height ="50%">
+        <img src = "../public/images/aero_logo.png" width = "100%" height ="50%">
 
         <table class ="time">
             <tr>
@@ -32,17 +66,17 @@
             </tr>
 
         </table>
-    <button class = "button green" id ="start">START</button>
+    <input type = "submit" class = "button green" id ="start" value = "START">
     </div>
     <div class = "grid-item item-4">
         item4
         <p><strong>Altitude:</strong> <span id = "altitude">99</span> ft</p>
         <!-- <br> -->
         <control>
-        <button class = "button red">OPEN DOORS</button>
-        <button class = "button red">DROP PAYLOAD</button>
-        <button class = "button red">DROP GLIDERS</button>
-        <button class = "button red">CLOSE DOORS</button>
+        <button class = "button red" id = "open-doors">OPEN DOORS</button>
+        <button class = "button red" id = "drop-payload">DROP PAYLOAD</button>
+        <button class = "button red" id = "drop-gliders">DROP GLIDERS</button>
+        <button class = "button red" id = "close-doors">CLOSE DOORS</button>
     </control>
     </div>
     <div class = "grid-item item-5">
