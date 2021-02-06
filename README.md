@@ -1,6 +1,6 @@
 # Western Aero Design - Ground Station
 
-[![NPM](https://img.shields.io/npm/v/npm)](https://www.npmjs.com/)[https://img.shields.io/badge/MongoDB-3.6-blue](https://www.mongodb.com/)
+[![NPM](https://img.shields.io/npm/v/npm)](https://www.npmjs.com/)[![MongoDB](ttps://img.shields.io/badge/MongoDB-3.6-blue)](https://www.mongodb.com/)
 
 Ground station web application for Western University Aero Design Mega-Team
 
@@ -15,10 +15,11 @@ The ground station runs vanilla HTML, CSS, and JS served from a Node.js backend.
 git clone https://github.com/UWO-Aero-Design/gnd-station.git
 cd gnd-station
 npm install
+npm run patch
 node api/server.js
 ```
 
-The server will be live on [http://locahost:5000](http://locahost:5000).
+The server will be live on [http://locahost:5000](http://locahost:5000). Note: because of [an issue](https://github.com/protocolbuffers/protobuf/issues/3571#issuecomment-566437265) with Google's Protocol Buffers, a quick patch via `npm run patch` is needed to turn certain assertions to allow for nest messages.
 
 #### Database
 The easiest method to get a database running is through the provided docker container (you will need [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) installed). Ensure you are in the top level folder when executing the following commands.
@@ -38,6 +39,7 @@ You can connect to the database with a visual GUI such as [Compass](https://www.
 git clone https://github.com/UWO-Aero-Design/gnd-station.git
 cd gnd-station
 npm install
+npm run patch
 nodemon api/server.js
 ```
 
