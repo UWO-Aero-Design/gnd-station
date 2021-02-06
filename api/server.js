@@ -2,7 +2,6 @@ const path = require('path');
 
 const express = require('express');
 const morgan = require('morgan');
-const WebSocket = require('ws');
 
 // app configuration
 require('dotenv').config({path: path.join(__dirname, '..', '.env')})
@@ -10,6 +9,7 @@ require('./config/database.js').connect()
 const node_port = 5000;
 const node_env = process.env.NODE_ENV || 'development';
 const app = express();
+require('./config/ws')
 
 // middlewares
 app.use(express.static(path.join(__dirname, 'public')));
@@ -32,13 +32,3 @@ app.use('/command', require('./routes/CommandRoute'))
 const server = app.listen(node_port, () => {
   console.log(`Server started on port ${node_port} in mode ${node_env}`);
 });
-
-const wss = new WebSocket.Server({ server: server });
-
-wss.on('connection', (ws) => {
-    ws.on('message', (message) => {
-        message = JSON.parse(message);
-        message.type = message.type.toUpperCase()
-        console.log('Received message')
-    })
-})

@@ -3,7 +3,7 @@
 <head>
 <title>Ground Station</title>
 <link href="css/style.css" rel="stylesheet" type="text/css" />
-<script></script>
+<script src="js/main.js"></script>
 <meta charset="utf-8">
 </head>
 <body>
@@ -19,7 +19,7 @@
 
         <table class ="time">
             <tr>
-                <h5>CLT: <span id = "CLT">00:00:00</span> EST</h5>
+                <h5>CLT: <span id = "CLT">00:00:00</span></h5>
             </tr>
             <tr>
                 <h5>VOT: <span id = "VOT">00:00:00:00</span></h5>
@@ -46,7 +46,8 @@
     </control>
     </div>
     <div class = "grid-item item-5">
-        item5
+        <h4>Current Height</h4>
+        <h2><span id = "current-height">0</span> ft</h2>
         <h4>GLIDER DROP HEIGHT</h4>
         <h2><span id = "glider-drop-height">100</span> ft</h2>
         <h4>PAYLOAD DROP HEIGHT</h4>
@@ -58,17 +59,17 @@
         <button class = "button blue" id = "active">Idle</button>
         <table>
             <tr>
-                <td>Prop Batt: </td>
-                <td id = prop-battery>1</td>
+                <td>Vatt: </td>
+                <td id = system-battery>0</td>
                 <td>V</td>
-                <td>TLM State:  </td>
+                <td>State:  </td>
                 <td id = tlm-state>TEXT</td>
             </tr>
             <tr>
-                <td>Sys Batt</td>
-                <td id = system-battery>1</td>
-                <td>V</td>
-                <td>TLM Rate: </td>
+                <td>Packet</td>
+                <td id = packet-number>0</td>
+                <td></td>
+                <td>Rate: </td>
                 <td><span id = "tlm-rate">1</span>   Hz</td>
             </tr>
             <tr>

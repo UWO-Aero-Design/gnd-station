@@ -1,5 +1,5 @@
 const SerialPort = require('serialport') 
-const Readline = require('@serialport/parser-readline')
+const InterByteTimeout = require('@serialport/parser-inter-byte-timeout')
 
 const events = require('events');
 
@@ -32,10 +32,19 @@ const select = async (path) => {
         await current_port.close();
     }
     current_port = new SerialPort(path);
-    parser = current_port.pipe(new Readline())
+    parser = current_port.pipe(new InterByteTimeout({ interval: 100} ))
     parser.on('data', (data) => {
-        data = data.subarray(0, message.length-1)
-        const decoded = Message.deserializeBinary(message);
+        data = Buffer.from(data)
+        const decoded = Message.deserializeBinary(data);
+        let printable = '';
+        printable += `Message from ${get_location_name(decoded.getSender())}: Len: ${data.length}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `;
+        if(decoded.hasEnviro()) {
+            const temp = decoded.getEnviro().getTemperature().toFixed(2)
+            const alt = decoded.getEnviro().getAltitude().toFixed(2)
+            const pressure = decoded.getEnviro().getPressure().toFixed(2)
+            printable += `Temp: ${temp}, Alt: ${alt}, Pressure: ${pressure}`
+        }
+        console.log(printable)
         device.emit('data', decoded)
     })
     return current_port;
@@ -68,5 +77,15 @@ module.exports = {
     parser,
     write,
     list,
-    select
+    select,
+    device
+}
+
+const get_location_name = (loc) => {
+    if (loc === Message.Location.PLANE) return "PLANE";
+    else if (loc === Message.Location.GROUND_STATION) return "GROUND";
+    else if (loc === Message.Location.GLIDER0) return "GLIDER0";
+    else if (loc === Message.Location.GLIDER0) return "GLIDER1";
+    else if (loc === Message.Location.ANY) return "ANY";
+    else return "UNKNOWN";
 }
