@@ -1,6 +1,6 @@
 # Western Aero Design - Ground Station
 
-[![NPM](https://img.shields.io/npm/v/npm)](https://www.npmjs.com/)[![MongoDB](ttps://img.shields.io/badge/MongoDB-3.6-blue)](https://www.mongodb.com/)
+[![NPM](https://img.shields.io/npm/v/npm)](https://www.npmjs.com/)[![MongoDB](https://img.shields.io/badge/MongoDB-3.6-blue)](https://www.mongodb.com/)
 
 Ground station web application for Western University Aero Design Mega-Team
 
