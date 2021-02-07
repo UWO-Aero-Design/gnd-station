@@ -1,11 +1,15 @@
-
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    word-wrap: break-word;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 1.8vmin;
+  --main-red: #d63031;
+  --main-green: #27ae60;
+  --main-blue: #0984e3;
+  --main-orange: #f0932b;
+  --hover-red: #c42122;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.8vmin;
   }
 table {
   width: 100%;
@@ -27,17 +31,22 @@ td, th {
 }
   
 .green {
-  background-color: #27ae60;
+  background-color: var(--main-green);
 }
 .blue {
-  background-color: #0984e3;
+  background-color: var(--main-blue);
 }
 .red {
-  background-color: #d63031;
+  background-color: var(--main-red);
+}
+
+.red-hover:hover {
+  background-color: var(--hover-red);
+  transition: 300ms;
 }
 
 .orange {
-  background-color: #f0932b;
+  background-color: var(--main-orange);
 }
 
 .grid-container {
