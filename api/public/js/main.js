@@ -12,7 +12,7 @@ let last_packet = 0;
 let last_times = [];
 let packet_number = 0;
 let rssi = 0;
-let enviro = {}, imu = {};
+let enviro = {}, imu = {}, gps = {};
 
 let VOT = new Date();
 VOT.setHours(0)
@@ -46,6 +46,35 @@ const m_to_ft = (m) => {
     return m*3.281;
 }
 
+// from https://en.wikipedia.org/wiki/Dilution_of_precision_(navigation)
+const get_hdop_text = (hdop) => {
+    if(hdop === 1) return 'Ideal'
+    else if(hdop === 2) return 'Excellent'
+    else if(hdop <= 5) return 'Good'
+    else if(hdop <= 10) return 'Moderate'
+    else if(hdop <= 20) return 'Fair'
+    else if(hdop > 20) return 'Poor'
+}
+
+const DMS_to_DD = (lon, lat, lat_direction = 'N', lon_direction = 'W') => {
+    // based off of the output given here: https://learn.adafruit.com/adafruit-ultimate-gps/direct-computer-wiring
+    let lon_degrees = parseInt(lon.toString().substring(0,2)), lon_minutes = parseFloat(lon.toString().substring(2))
+    let lat_degrees = parseInt(lat.toString().substring(0,2)), lat_minutes = parseFloat(lat.toString().substring(2))
+
+    console.log(lon_degrees)
+
+    let lon_dd = lon_degrees + lon_minutes/60;
+    let lat_dd = lat_degrees + lat_minutes/60;
+    
+    if (lat_direction.toUpperCase() == 'S') lat_dd = lat_dd * -1;
+    if (lon_direction.toUpperCase() == 'W') lon_dd = lon_dd * -1;
+
+    console.log(lon_dd)
+    console.log(lat_dd)
+
+    return { lon_dd, lat_dd };
+}
+
 const connect = () => {
     socket = new WebSocket('ws://localhost:5001');
     socket.onopen = (event) => {
@@ -69,6 +98,8 @@ const connect = () => {
         rssi = data.rssi;
         if(data.enviro) enviro = data.enviro;
         if(data.imu) imu = data.imu;
+        if(data.gps) gps = data.gps;
+        else gps = undefined;
         last_packet = performance.now();
         last_times.push(last_packet);
         if(!tlm_status) {
@@ -128,7 +159,6 @@ const update = () => {
         else if(packet_number > 1e3) formatted_packet_number = (packet_number/1e3).toFixed(2).toString() + 'k'
         else formatted_packet_number = packet_number
 
-        // document.getElementById('VOT').innerHTML = time_to_string(new Date(VOT.getTime() + performance.now() - last_packet))
         document.getElementById('MIT').innerHTML = time_to_string(MIT)
         document.getElementById('tlm-rate').innerHTML = update_rate.toFixed(1).toString()
         document.getElementById('packet-number').innerHTML = formatted_packet_number;
@@ -147,6 +177,15 @@ const update = () => {
         document.getElementById('imu-gz').innerHTML = imu.gz ? imu.gz.toFixed(2) : 0;
         document.getElementById('tlm-rssi').innerHTML = rssi;
         document.getElementById('tlm-connected').innerHTML = 'Yes'
+        if(gps) {
+            let { lon_dd, lat_dd } = DMS_to_DD(gps.lon, gps.lat)
+            document.getElementById('gps-fix').innerHTML = gps.fix ? 'Yes' : 'No';
+            document.getElementById('gps-lat').innerHTML = gps.lat ? lon_dd.toFixed(5) : 0;
+            document.getElementById('gps-lon').innerHTML = gps.lon ? lat_dd.toFixed(5) : 0;
+            document.getElementById('gps-sats').innerHTML = gps.satellites ? gps.satellites : 0;
+            document.getElementById('gps-alt').innerHTML = gps.altitude ? gps.altitude.toFixed(2) : 0;
+            document.getElementById('gps-hdop').innerHTML = gps.hdop ? get_hdop_text(gps.hdop) : '--';
+        }
         tlm_new_msg = false;
     }
 }
