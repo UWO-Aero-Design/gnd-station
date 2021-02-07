@@ -19,9 +19,10 @@ app.use(morgan('dev'));
 
 // ejs registration
 app.set('view engine', 'ejs');
-app.set('views', __dirname + '/views') 
+app.set('views', path.join(__dirname, '/views')) 
 
 // routes
+app.get('/favicon.ico', express.static(path.join('public', 'images', 'favicon.png')));
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views/index.html')))
 app.use('/docs', require('./routes/DocRoute'))
 app.use('/onboardconfig', require('./routes/OnboardRoute'))
