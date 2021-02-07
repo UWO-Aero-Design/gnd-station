@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@serialport/parser-readline": "^9.0.1",
+    "@serialport/parser-inter-byte-timeout": "^9.0.1",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",

@@ -1,13 +1,13 @@
+const events = require('events');
+
 const SerialPort = require('serialport') 
 const InterByteTimeout = require('@serialport/parser-inter-byte-timeout')
 
-const events = require('events');
-
 const { Message } = require('../message/message_pb')
 
+const DEBUG = false;
 var current_port = null;
 var parser = null;
-
 const device = new events.EventEmitter();
 
 const write = (data) => {
@@ -33,19 +33,22 @@ const select = async (path) => {
     }
     current_port = new SerialPort(path);
     parser = current_port.pipe(new InterByteTimeout({ interval: 100} ))
-    parser.on('data', (data) => {
-        data = Buffer.from(data)
-        const decoded = Message.deserializeBinary(data);
-        let printable = '';
-        printable += `Message from ${get_location_name(decoded.getSender())}: Len: ${data.length}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `;
-        if(decoded.hasEnviro()) {
-            const temp = decoded.getEnviro().getTemperature().toFixed(2)
-            const alt = decoded.getEnviro().getAltitude().toFixed(2)
-            const pressure = decoded.getEnviro().getPressure().toFixed(2)
-            printable += `Temp: ${temp}, Alt: ${alt}, Pressure: ${pressure}`
+    parser.on('data', (buf) => {
+        buf = Buffer.from(buf)
+        let data = buf.slice(0, buf.length-2)
+        let rssi = buf.slice(buf.length-2).readInt16BE();
+        try {
+            const decoded = Message.deserializeBinary(data);
+            decoded.setRssi(rssi)
+            if(DEBUG) {
+                console.log(`Message from ${get_location_name(decoded.getSender())}: Len: ${data.length}, RSSI: ${decoded.getRssi()}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `)
+            }
+            device.emit('data', decoded)
         }
-        console.log(printable)
-        device.emit('data', decoded)
+        catch(error) {
+            console.log(error);
+            console.log('Error reading from usb')
+        }
     })
     return current_port;
 }

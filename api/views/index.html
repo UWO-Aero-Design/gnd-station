@@ -3,16 +3,16 @@
 <head>
 <title>Ground Station</title>
 <link href="css/style.css" rel="stylesheet" type="text/css" />
-<script src="js/main.js"></script>
+<script src="js/main.js" defer></script>
 <meta charset="utf-8">
 </head>
 <body>
 <div class = "grid-container">
-    <div class ="grid-item item-1">   
-        item1    
+    <div class ="grid-item item-1">
+        Map      
     </div>
     <div class = "grid-item item-2">
-            item2
+        Camera
     </div>
     <div class ="grid-item item-3">
         <img src = "images/aero_logo.png" width = "100%" height ="50%">
@@ -35,63 +35,132 @@
     <button class = "button green" id ="start">START</button>
     </div>
     <div class = "grid-item item-4">
-        item4
-        <p><strong>Altitude:</strong> <span id = "altitude">99</span> ft</p>
-        <!-- <br> -->
-        <control>
-        <button class = "button red">OPEN DOORS</button>
-        <button class = "button red">DROP PAYLOAD</button>
-        <button class = "button red">DROP GLIDERS</button>
-        <button class = "button red">CLOSE DOORS</button>
+        <button class = "button red" id = "open_doors" onclick = "handle_command(this)">OPEN DOORS</button>
+        <button class = "button red" id = "drop_payload" onclick = "handle_command(this)">DROP PAYLOAD</button>
+        <button class = "button red" id = "drop_gliders" onclick = "handle_command(this)">DROP GLIDERS</button>
+        <button class = "button red" id = "close_doors" onclick = "handle_command(this)">CLOSE DOORS</button>
     </control>
     </div>
     <div class = "grid-item item-5">
-        <h4>Current Height</h4>
-        <h2><span id = "current-height">0</span> ft</h2>
-        <h4>GLIDER DROP HEIGHT</h4>
-        <h2><span id = "glider-drop-height">100</span> ft</h2>
-        <h4>PAYLOAD DROP HEIGHT</h4>
-        <h2><span id = "payload-drop-height">100</span> ft</h2>
+        <div class="height">
+            <h4>Current Height</h4>
+            <h2><span id = "current-height">0</span> ft</h2>
+        </div>
+        <div class="height">
+            <h4>GLIDER DROP HEIGHT</h4>
+            <h2 class="inch"><span id = "glider-drop-height" class="inch">--</span> ft</h2>
+        </div>
+        <div class="height">
+            <h4>PAYLOAD DROP HEIGHT</h4>
+            <h2 class="inch"><span id = "payload-drop-height" class="inch">--</span> ft</h2>
+        </div>
+        <div class="height">
+            <h4>Ground Level</h4>
+            <input type="number" name="ground-level" id="ground-level-offset"> ft
+        </div>
     </div>
 
     <div class = "grid-item item-6">
-        item6
-        <button class = "button blue" id = "active">Idle</button>
+        <div class = "blue status" id = "system-status"></div>
         <table>
             <tr>
-                <td>Vatt: </td>
-                <td id = system-battery>0</td>
-                <td>V</td>
-                <td>State:  </td>
-                <td id = tlm-state>TEXT</td>
+                <td>Voltage: </td>
+                <td id = system-voltage>0</td>
+                <td class="unit">V</td>
+                <td>Current:  </td>
+                <td id = system-current>0</td>
+                <td class="unit">mA</td>
+                <td>Connect:  </td>
+                <td id = tlm-connected>No</td>
+                <td class="unit"></td>
             </tr>
             <tr>
-                <td>Packet</td>
+                <td>Packet:</td>
                 <td id = packet-number>0</td>
-                <td></td>
+                <td class="unit"></td>
                 <td>Rate: </td>
-                <td><span id = "tlm-rate">1</span>   Hz</td>
+                <td><span id = "tlm-rate">0</span></td>
+                <td class="unit">Hz</td>
+                <td>RSSI:  </td>
+                <td id = tlm-rssi>0</td>
+                <td class="unit">dBm</td>
             </tr>
             <tr>
-                <td>Temp: </td>
-                <td id ="temperature">1</td>
-                <td>&#8451;</td>
-                <td>Yaw: </td>
-                <td><span id = "yaw">1</span>&#176;</td> 
+                <td>Fix: </td>
+                <td id ="gps-fix">No</td>
+                <td class="unit"></td>
+                <td>Lon: </td>
+                <td><span id = "gps-lon">0</span></td> 
+                <td class="unit">&#176;</td>
+                <td>Lat: </td>
+                <td><span id = "gps-lat">0</span></td> 
+                <td class="unit">&#176;</td>
             </tr>
             <tr>
-                <td>Signal</td>
-                <td id = "signal">1</td> 
-                <td>dBm</td>
+                <td>Sats:</td>
+                <td id = "gps-sats">0</td> 
+                <td class="unit"></td>
+                <td>GPS Alt:</td>
+                <td id = "gps-alt">0</td> 
+                <td class="unit">m</td>
+                <td>HDOP:</td>
+                <td id = "gps-hdop">0</td> 
+                <td class="unit"></td>
+            </tr>
+            <tr>
+                <td>Temp:</td>
+                <td id = "enviro-temp">0</td> 
+                <td class="unit">&#8451;</td>
+                <td>Alt:</td>
+                <td id = "enviro-alt">0</td> 
+                <td class="unit">m</td>
+                <td>Pressure:</td>
+                <td id = "enviro-pressure">0</td> 
+                <td class="unit"></td>
+            </tr>
+            <tr>
+                <td>ax:</td>
+                <td id = "imu-ax">0</td> 
+                <td class="unit"></td>
+                <td>ay:</td>
+                <td id = "imu-ay">0</td> 
+                <td class="unit"></td>
+                <td>az:</td>
+                <td id = "imu-az">0</td> 
+                <td class="unit"></td>
+            </tr>
+            <tr>
+                <td>gx:</td>
+                <td id = "imu-gx">0</td> 
+                <td class="unit"></td>
+                <td>gy:</td>
+                <td id = "imu-gy">0</td> 
+                <td class="unit"></td>
+                <td>gz:</td>
+                <td id = "imu-gz">0</td> 
+                <td class="unit"></td>
+            </tr>
+            <tr>
+                <td>mx:</td>
+                <td id = "imu-mx">0</td> 
+                <td class="unit"></td>
+                <td>my:</td>
+                <td id = "imu-my">0</td> 
+                <td class="unit"></td>
+                <td>mz:</td>
+                <td id = "imu-mz">0</td> 
+                <td class="unit"></td>
+            </tr>
+            <tr>
+                <td>Yaw:</td>
+                <td id = "imu-yaw">0</td> 
+                <td class="unit"></td>
                 <td>Pitch:</td>
-                <td><span id = "pitch">1</span>&#176;</td>
-            </tr>
-            <tr>
-                <td>GPS Sats: </td>
-                <td id = gps-sats>1</td>
-                <td>    </td>
+                <td id = "imu-pitch">0</td> 
+                <td class="unit"></td>
                 <td>Roll:</td>
-                <td><span id = "Roll">1</span>&#176;</td>
+                <td id = "imu-roll">0</td> 
+                <td class="unit"></td>
             </tr>
         </table> 
         
@@ -104,7 +173,6 @@
 
     </div>
     <div class = "grid-item item-7">
-        item7
         <table style="border: 0.3vmin solid black; border-radius: 1vmin; padding: 0.6vmax;">
             <thead>
                 <tr>
