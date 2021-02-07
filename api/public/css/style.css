@@ -81,16 +81,11 @@ td, th {
   margin-bottom: 10px;
 }
 
-.height {
-  height: 25%;
-  width: 100%;
-}
-
 .height h4 {
   margin-bottom: 2px;
 }
 
-.height input {
+#ground-level-offset {
   text-align: center;
 }
 
@@ -143,5 +138,5 @@ h5 {
 }
 
 .inch {
-  font-size: 30px;
+  font-size: 1.8em;
 }

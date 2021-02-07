@@ -39,25 +39,17 @@
         <button class = "button red" id = "drop_payload" onclick = "handle_command(this)">DROP PAYLOAD</button>
         <button class = "button red" id = "drop_gliders" onclick = "handle_command(this)">DROP GLIDERS</button>
         <button class = "button red" id = "close_doors" onclick = "handle_command(this)">CLOSE DOORS</button>
+            <h4>Ground Level Offset</h4>
+            <input type="number" name="ground-level" id="ground-level-offset"> ft
     </control>
     </div>
     <div class = "grid-item item-5">
-        <div class="height">
-            <h4>Current Height</h4>
-            <h2><span id = "current-height">0</span> ft</h2>
-        </div>
-        <div class="height">
-            <h4>GLIDER DROP HEIGHT</h4>
-            <h2 class="inch"><span id = "glider-drop-height" class="inch">--</span> ft</h2>
-        </div>
-        <div class="height">
-            <h4>PAYLOAD DROP HEIGHT</h4>
-            <h2 class="inch"><span id = "payload-drop-height" class="inch">--</span> ft</h2>
-        </div>
-        <div class="height">
-            <h4>Ground Level</h4>
-            <input type="number" name="ground-level" id="ground-level-offset"> ft
-        </div>
+        <h4>Current Height</h4>
+        <h2 class="inch"><span id = "current-height" class="inch">0</span> ft</h2>
+        <h4>GLIDER DROP HEIGHT</h4>
+        <h2 class="inch"><span id = "glider-drop-height" class="inch">--</span> ft</h2>
+        <h4>PAYLOAD DROP HEIGHT</h4>
+        <h2 class="inch"><span id = "payload-drop-height" class="inch">--</span> ft</h2>
     </div>
 
     <div class = "grid-item item-6">

@@ -28,6 +28,7 @@ MIT.setMilliseconds(0)
 
 const watchdog_task = () => {
     set_system_status('server')
+    document.getElementById('tlm-connected').innerHTML = 'Yes'
     tlm_status = false;
 }
 
@@ -145,6 +146,7 @@ const update = () => {
         document.getElementById('imu-gy').innerHTML = imu.gy ? imu.gy.toFixed(2) : 0;
         document.getElementById('imu-gz').innerHTML = imu.gz ? imu.gz.toFixed(2) : 0;
         document.getElementById('tlm-rssi').innerHTML = rssi;
+        document.getElementById('tlm-connected').innerHTML = 'Yes'
         tlm_new_msg = false;
     }
 }
