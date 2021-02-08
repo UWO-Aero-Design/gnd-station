@@ -1,10 +1,14 @@
+const events = require('events');
+
 const SerialPort = require('serialport') 
-const Readline = require('@serialport/parser-readline')
+const InterByteTimeout = require('@serialport/parser-inter-byte-timeout')
 
 const { Message } = require('../message/message_pb')
 
+const DEBUG = false;
 var current_port = null;
 var parser = null;
+const device = new events.EventEmitter();
 
 const write = (data) => {
     return new Promise((resolve, reject) => {
@@ -13,6 +17,7 @@ const write = (data) => {
             reject(new Error('Current port has not yet been selected'));
         }
         else {
+            device.emit('sent', data);
             resolve(current_port.write(data));
         }
     })
@@ -27,24 +32,25 @@ const select = async (path) => {
         await current_port.close();
     }
     current_port = new SerialPort(path);
-    parser = current_port.pipe(new Readline())
-    current_port.on('data', write_message)
+    parser = current_port.pipe(new InterByteTimeout({ interval: 100} ))
+    parser.on('data', (buf) => {
+        buf = Buffer.from(buf)
+        let data = buf.slice(0, buf.length-2)
+        let rssi = buf.slice(buf.length-2).readInt16BE();
+        try {
+            const decoded = Message.deserializeBinary(data);
+            decoded.setRssi(rssi)
+            if(DEBUG) {
+                console.log(`Message from ${get_location_name(decoded.getSender())}: Len: ${data.length}, RSSI: ${decoded.getRssi()}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `)
+            }
+            device.emit('data', decoded)
+        }
+        catch(error) {
+            console.log(error);
+            console.log('Error reading from usb')
+        }
+    })
     return current_port;
-}
-
-const write_message = (message) => {
-    message = message.subarray(0, message.length-1)
-    const decoded = Message.deserializeBinary(message);
-    console.log(`Message received from ${get_location_name(decoded.getSender())} (${decoded.getPacketNumber()})`)
-}
-
-const get_location_name = (loc) => {
-    if (loc === Message.Location.PLANE) return "PLANE";
-    else if (loc === Message.Location.GROUND_STATION) return "GROUND";
-    else if (loc === Message.Location.GLIDER0) return "GLIDER0";
-    else if (loc === Message.Location.GLIDER0) return "GLIDER1";
-    else if (loc === Message.Location.ANY) return "ANY";
-    else return "UNKNOWN";
 }
 
 const auto_connect = async () => {
@@ -74,5 +80,15 @@ module.exports = {
     parser,
     write,
     list,
-    select
+    select,
+    device
+}
+
+const get_location_name = (loc) => {
+    if (loc === Message.Location.PLANE) return "PLANE";
+    else if (loc === Message.Location.GROUND_STATION) return "GROUND";
+    else if (loc === Message.Location.GLIDER0) return "GLIDER0";
+    else if (loc === Message.Location.GLIDER0) return "GLIDER1";
+    else if (loc === Message.Location.ANY) return "ANY";
+    else return "UNKNOWN";
 }

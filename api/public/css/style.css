@@ -1,35 +1,76 @@
-
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    word-wrap: break-word;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 1.8vmin;
+  --main-red: #d63031;
+  --main-green: #27ae60;
+  --main-blue: #0984e3;
+  --main-orange: #f0932b;
+  --hover-red: #c42122;
+  --hover-green: #188f4a;
+  --hover-orange: #d17e21;
+  --hover-time: 400ms;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.8vmin;
   }
 table {
   width: 100%;
-  
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-left: 1px solid black;
+  margin: 5px auto;
+}
+
+td, th {
+  width: 10%;
+  overflow: hidden;
+  padding: 2px;
+}
+
+.unit {
+  width: 23px;
+  border-right: 1px solid black;
 }
   
 .green {
-  background-color: green;
+  background-color: var(--main-green);
+  transition: var(--hover-time);
 }
+
+.green-hover:hover {
+  background-color: var(--hover-green);
+  transition: var(--hover-time);
+}
+
 .blue {
-  background-color: #44a2f0;
+  background-color: var(--main-blue);
 }
 .red {
-  background-color: red;
+  background-color: var(--main-red);
+  transition: var(--hover-time);
 }
+
+.red-hover:hover {
+  background-color: var(--hover-red);
+  transition: var(--hover-time);
+}
+
 .orange {
-  background-color: orange;
+  background-color: var(--main-orange);
+  transition: var(--hover-time);
+}
+
+.orange-hover:hover {
+  background-color: var(--hover-orange);
+  transition: var(--hover-time);
 }
 
 .grid-container {
     height: 100vh;
     background-color: black;
     display: grid;
-    grid-template-columns: 42vw 18vw repeat(2, 1fr);
+    grid-template-columns: 35vw 16vw 35vw 1fr;
     grid-template-rows: 6.25vh;
     grid-gap: 1.2vmin; 
     padding: 1.5vmin;
@@ -43,7 +84,8 @@ table {
     text-align: center;
     
   }
-  .button {
+
+.button {
     text-decoration: none;
     border: 0.2vmin solid black;
     border-radius: 0.7vmax;
@@ -53,6 +95,26 @@ table {
     padding: 0.8vmin;
     margin: 0.6vmin;
 }
+
+.status {
+  border: 0.2vmin solid black;
+  border-radius: 0.7vmax;
+  width: 70%;
+  font-size: 2vmin;
+  font-weight: bolder;
+  padding: 0.8vmin;
+  margin: auto;
+  margin-bottom: 10px;
+}
+
+.height h4 {
+  margin-bottom: 2px;
+}
+
+#ground-level-offset {
+  text-align: center;
+}
+
 h5 {
   color: #ffffff;
 }
@@ -98,9 +160,9 @@ h5 {
 
 #com-port {
   background-color: white;
-
+  margin-top: 3px;
 }
 
-#map {
-  height: 100%;
+.inch {
+  font-size: 1.8em;
 }

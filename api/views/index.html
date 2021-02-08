@@ -3,25 +3,25 @@
 <head>
 <title>Ground Station</title>
 <link href="css/style.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+<link rel="icon" href="images/favicon.ico">
+<script src="js/chart.js"></script>
 <script src="js/main.js" defer></script>
 <meta charset="utf-8">
 </head>
 <body>
 <div class = "grid-container">
-    <div class ="grid-item item-1">   
-        <div id="map"></div>    
+    <div class ="grid-item item-1">
+        Map      
     </div>
     <div class = "grid-item item-2">
-            item2
+        Camera
     </div>
     <div class ="grid-item item-3">
         <img src = "images/aero_logo.png" width = "100%" height ="50%">
 
         <table class ="time">
             <tr>
-                <h5>CLT: <span id = "CLT">00:00:00</span> EST</h5>
+                <h5>CLT: <span id = "CLT">00:00:00</span></h5>
             </tr>
             <tr>
                 <h5>VOT: <span id = "VOT">00:00:00:00</span></h5>
@@ -34,65 +34,127 @@
             </tr>
 
         </table>
-    <button class = "button green" id ="start">START</button>
+    <button class = "button green green-hover" id ="start">START</button>
     </div>
     <div class = "grid-item item-4">
-        item4
-        <p><strong>Altitude:</strong> <span id = "altitude">99</span> ft</p>
-        <!-- <br> -->
-        <control>
-        <button class = "button red">OPEN DOORS</button>
-        <button class = "button red">DROP PAYLOAD</button>
-        <button class = "button red">DROP GLIDERS</button>
-        <button class = "button red">CLOSE DOORS</button>
+        <button class = "button red red-hover" id = "open_doors" onclick = "handle_command(this)">OPEN DOORS</button>
+        <button class = "button red red-hover" id = "drop_payload" onclick = "handle_command(this)">DROP PAYLOAD</button>
+        <button class = "button red red-hover" id = "drop_gliders" onclick = "handle_command(this)">DROP GLIDERS</button>
+        <button class = "button red red-hover" id = "close_doors" onclick = "handle_command(this)">CLOSE DOORS</button>
+            <h4>Ground Level Offset</h4>
+            <input type="number" name="ground-level" id="ground-level-offset"> ft
     </control>
     </div>
     <div class = "grid-item item-5">
-        item5
+        <h4>Current Height</h4>
+        <h2 class="inch"><span id = "current-height" class="inch">0</span> ft</h2>
         <h4>GLIDER DROP HEIGHT</h4>
-        <h2><span id = "glider-drop-height">100</span> ft</h2>
+        <h2 class="inch"><span id = "glider-drop-height" class="inch">--</span> ft</h2>
         <h4>PAYLOAD DROP HEIGHT</h4>
-        <h2><span id = "payload-drop-height">100</span> ft</h2>
+        <h2 class="inch"><span id = "payload-drop-height" class="inch">--</span> ft</h2>
     </div>
 
     <div class = "grid-item item-6">
-        item6
-        <button class = "button blue" id = "active">Idle</button>
+        <div class = "blue status" id = "system-status"></div>
         <table>
             <tr>
-                <td>Prop Batt: </td>
-                <td id = prop-battery>1</td>
-                <td>V</td>
-                <td>TLM State:  </td>
-                <td id = tlm-state>TEXT</td>
+                <td>Voltage: </td>
+                <td id = system-voltage>0</td>
+                <td class="unit">V</td>
+                <td>Current:  </td>
+                <td id = system-current>0</td>
+                <td class="unit">mA</td>
+                <td>Connect:  </td>
+                <td id = tlm-connected>No</td>
+                <td class="unit"></td>
             </tr>
             <tr>
-                <td>Sys Batt</td>
-                <td id = system-battery>1</td>
-                <td>V</td>
-                <td>TLM Rate: </td>
-                <td><span id = "tlm-rate">1</span>   Hz</td>
+                <td>Packet:</td>
+                <td id = packet-number>0</td>
+                <td class="unit"></td>
+                <td>Rate: </td>
+                <td><span id = "tlm-rate">0</span></td>
+                <td class="unit">Hz</td>
+                <td>RSSI:  </td>
+                <td id = tlm-rssi>0</td>
+                <td class="unit">dBm</td>
             </tr>
             <tr>
-                <td>Temp: </td>
-                <td id ="temperature">1</td>
-                <td>&#8451;</td>
-                <td>Yaw: </td>
-                <td><span id = "yaw">1</span>&#176;</td> 
+                <td>Fix: </td>
+                <td id ="gps-fix">No</td>
+                <td class="unit"></td>
+                <td>Lon: </td>
+                <td><span id = "gps-lon">0</span></td> 
+                <td class="unit">&#176;</td>
+                <td>Lat: </td>
+                <td><span id = "gps-lat">0</span></td> 
+                <td class="unit">&#176;</td>
             </tr>
             <tr>
-                <td>Signal</td>
-                <td id = "signal">1</td> 
-                <td>dBm</td>
+                <td>Sats:</td>
+                <td id = "gps-sats">0</td> 
+                <td class="unit"></td>
+                <td>GPS Alt:</td>
+                <td id = "gps-alt">0</td> 
+                <td class="unit">m</td>
+                <td>HDOP:</td>
+                <td id = "gps-hdop">0</td> 
+                <td class="unit"></td>
+            </tr>
+            <tr>
+                <td>Temp:</td>
+                <td id = "enviro-temp">0</td> 
+                <td class="unit">&#8451;</td>
+                <td>Alt:</td>
+                <td id = "enviro-alt">0</td> 
+                <td class="unit">m</td>
+                <td>Pressure:</td>
+                <td id = "enviro-pressure">0</td> 
+                <td class="unit"></td>
+            </tr>
+            <tr>
+                <td>ax:</td>
+                <td id = "imu-ax">0</td> 
+                <td class="unit"></td>
+                <td>ay:</td>
+                <td id = "imu-ay">0</td> 
+                <td class="unit"></td>
+                <td>az:</td>
+                <td id = "imu-az">0</td> 
+                <td class="unit"></td>
+            </tr>
+            <tr>
+                <td>gx:</td>
+                <td id = "imu-gx">0</td> 
+                <td class="unit"></td>
+                <td>gy:</td>
+                <td id = "imu-gy">0</td> 
+                <td class="unit"></td>
+                <td>gz:</td>
+                <td id = "imu-gz">0</td> 
+                <td class="unit"></td>
+            </tr>
+            <tr>
+                <td>mx:</td>
+                <td id = "imu-mx">0</td> 
+                <td class="unit"></td>
+                <td>my:</td>
+                <td id = "imu-my">0</td> 
+                <td class="unit"></td>
+                <td>mz:</td>
+                <td id = "imu-mz">0</td> 
+                <td class="unit"></td>
+            </tr>
+            <tr>
+                <td>Yaw:</td>
+                <td id = "imu-yaw">0</td> 
+                <td class="unit"></td>
                 <td>Pitch:</td>
-                <td><span id = "pitch">1</span>&#176;</td>
-            </tr>
-            <tr>
-                <td>GPS Sats: </td>
-                <td id = gps-sats>1</td>
-                <td>    </td>
+                <td id = "imu-pitch">0</td> 
+                <td class="unit"></td>
                 <td>Roll:</td>
-                <td><span id = "Roll">1</span>&#176;</td>
+                <td id = "imu-roll">0</td> 
+                <td class="unit"></td>
             </tr>
         </table> 
         
@@ -105,8 +167,10 @@
 
     </div>
     <div class = "grid-item item-7">
-        item7
-        <table style="border: 0.3vmin solid black; border-radius: 1vmin; padding: 0.6vmax;">
+        <canvas id="accel-chart" width="100%" height="25%"></canvas>
+        <canvas id="gyro-chart" width="100%" height="25%"></canvas>
+        <canvas id="mag-chart" width="100%" height="25%"></canvas>
+        <!-- <table style="border: 0.3vmin solid black; border-radius: 1vmin; padding: 0.6vmax;">
             <thead>
                 <tr>
                     <th>SERVO</th>
@@ -214,25 +278,26 @@
                 </tr>
             </tbody>
         </table>
-        <button class = "button green">Bind</button>
+        <button class = "button green">Bind</button> -->
     </div>
     <div class = "grid-item item-8">
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
-        <button class = "button orange">SERVO X</button>
+        <button class = "button orange orange-hover">SERVO 0</button>
+        <button class = "button orange orange-hover">SERVO 1</button>
+        <button class = "button orange orange-hover">SERVO 2</button>
+        <button class = "button orange orange-hover">SERVO 3</button>
+        <button class = "button orange orange-hover">SERVO 4</button>
+        <button class = "button orange orange-hover">SERVO 5</button>
+        <button class = "button orange orange-hover">SERVO 6</button>
+        <button class = "button orange orange-hover">SERVO 7</button>
+        <button class = "button orange orange-hover">SERVO 8</button>
+        <button class = "button orange orange-hover">SERVO 9</button>
+        <button class = "button orange orange-hover">SERVO 10</button>
+        <button class = "button orange orange-hover">SERVO 11</button>
+        <button class = "button orange orange-hover">SERVO 12</button>
+        <button class = "button orange orange-hover">SERVO 13</button>
+        <button class = "button orange orange-hover">SERVO 14</button>
+        <button class = "button orange orange-hover">SERVO 15</button>
+        <button class = "button green green-hover" onClick="window.open('/options');">Options</button>
     </div>
 </div>
 </body>
