@@ -1,7 +1,8 @@
 let socket;
 
 const UPDATE_RATE = 10;
-const TLM_TIMEOUT = 500;
+const TLM_TIMEOUT = 1000;
+const MAX_GRAPH_DATA = 50;
 
 let connected_to_server = false;
 let update_task, tlm_watchdog, tlm_status = false, tlm_new_msg = false;
@@ -13,6 +14,9 @@ let last_times = [];
 let packet_number = 0;
 let rssi = 0;
 let enviro = {}, imu = {}, gps = {};
+
+// for chartjs
+let imu_history = { ax: [], ay: [], az: [], mx: [], my: [], mz: [], gx: [], gy: [], gz: [], labels: [] };
 
 let VOT = new Date();
 VOT.setHours(0)
@@ -61,16 +65,11 @@ const DMS_to_DD = (lon, lat, lat_direction = 'N', lon_direction = 'W') => {
     let lon_degrees = parseInt(lon.toString().substring(0,2)), lon_minutes = parseFloat(lon.toString().substring(2))
     let lat_degrees = parseInt(lat.toString().substring(0,2)), lat_minutes = parseFloat(lat.toString().substring(2))
 
-    console.log(lon_degrees)
-
     let lon_dd = lon_degrees + lon_minutes/60;
     let lat_dd = lat_degrees + lat_minutes/60;
     
     if (lat_direction.toUpperCase() == 'S') lat_dd = lat_dd * -1;
     if (lon_direction.toUpperCase() == 'W') lon_dd = lon_dd * -1;
-
-    console.log(lon_dd)
-    console.log(lat_dd)
 
     return { lon_dd, lat_dd };
 }
@@ -133,6 +132,61 @@ const convert_ms_to_timestamp = (milliseconds) => {
     return time
 }
 
+const accel_chart_elem = document.getElementById('accel-chart').getContext('2d');
+const gyro_chart_elem = document.getElementById('gyro-chart').getContext('2d');
+const mag_chart_elem = document.getElementById('mag-chart').getContext('2d');
+const x_color = 'rgba(168, 50, 50, 0.6)', y_color = 'rgba(6, 143, 35, 0.6)', z_color = 'rgba(52, 58, 235, 0.6)';
+const chart_options = {
+    elements: {
+        point: {
+            radius: 0
+        }
+    },
+    scales: {
+        xAxes: [{
+            ticks: {
+                display: false
+            }
+        }]
+    }
+}
+let accel_chart = new Chart(accel_chart_elem, {
+    type: 'line',
+    data: {
+        labels: imu_history.labels,
+        datasets: [
+                { fill: false, data: imu_history.ax, label: 'ax', borderColor: x_color },
+                { fill: false, data: imu_history.ay, label: 'ay', borderColor: y_color },
+                { fill: false, data: imu_history.az, label: 'az', borderColor: z_color }
+        ]
+    },
+    options: chart_options
+})
+let gyro_chart = new Chart(gyro_chart_elem, {
+    type: 'line',
+    data: {
+        labels: imu_history.labels,
+        datasets: [
+            { fill: false, data: imu_history.gx, label: 'gx', borderColor: x_color },
+            { fill: false, data: imu_history.gy, label: 'gy',borderColor: y_color },
+            { fill: false, data: imu_history.gz, label: 'gz', borderColor: z_color }
+        ]
+    },
+    options: chart_options
+})
+let mag_chart = new Chart(mag_chart_elem, {
+    type: 'line',
+    data: {
+        labels: imu_history.labels,
+        datasets: [
+                { fill: false, data: imu_history.mx, label: 'mx', borderColor: x_color },
+                { fill: false, data: imu_history.my, label: 'my', borderColor: y_color },
+                { fill: false, data: imu_history.mz, label: 'mz', borderColor: z_color }
+        ]
+    },
+    options: chart_options
+})
+
 const update_local_times = () => {
     document.getElementById('GCT').innerHTML = time_to_string(convert_ms_to_timestamp(performance.now()))
     document.getElementById('CLT').innerHTML = time_to_string(new Date())
@@ -185,6 +239,33 @@ const update = () => {
             document.getElementById('gps-sats').innerHTML = gps.satellites ? gps.satellites : 0;
             document.getElementById('gps-alt').innerHTML = gps.altitude ? gps.altitude.toFixed(2) : 0;
             document.getElementById('gps-hdop').innerHTML = gps.hdop ? get_hdop_text(gps.hdop) : '--';
+        }
+        if(imu) {
+            imu_history.ax.push(imu.ax);
+            imu_history.ay.push(imu.ay);
+            imu_history.az.push(imu.az);
+            imu_history.mx.push(imu.mx);
+            imu_history.my.push(imu.my);
+            imu_history.mz.push(imu.mz);
+            imu_history.gx.push(imu.gx);
+            imu_history.gy.push(imu.gy);
+            imu_history.gz.push(imu.gz);
+            imu_history.labels.push(time_to_string(VOT))
+            if(imu_history.labels.length > MAX_GRAPH_DATA) {
+                imu_history.ax.shift();
+                imu_history.ay.shift();
+                imu_history.az.shift();
+                imu_history.mx.shift();
+                imu_history.my.shift();
+                imu_history.mz.shift();
+                imu_history.gx.shift();
+                imu_history.gy.shift();
+                imu_history.gz.shift();
+                imu_history.labels.shift();
+            }
+            accel_chart.update();
+            mag_chart.update();
+            gyro_chart.update();
         }
         tlm_new_msg = false;
     }
