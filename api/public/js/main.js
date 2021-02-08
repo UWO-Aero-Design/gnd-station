@@ -14,6 +14,7 @@ let last_times = [];
 let packet_number = 0;
 let rssi = 0;
 let enviro = {}, imu = {}, gps = {};
+let first_gps_flag = true;
 
 // for chartjs
 let imu_history = { ax: [], ay: [], az: [], mx: [], my: [], mz: [], gx: [], gy: [], gz: [], labels: [] };
@@ -193,6 +194,32 @@ const update_local_times = () => {
     if(tlm_status) document.getElementById('VOT').innerHTML = time_to_string(new Date(VOT.getTime() + performance.now() - last_packet))
 }
 
+let map, plane_icon, marker;
+
+const render_map = (lat, lon, zoom=17) => {
+    console.log('Rendering map')
+    map = L.map('map').setView([lat, lon], zoom);
+
+    plane_icon = L.icon({
+        iconUrl: 'images/plane.png',
+        shadowUrl: 'images/plane-shadow.png',
+
+        iconSize:     [48, 48], // size of the icon
+        shadowSize:   [48, 48], // size of the shadow
+        iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+        shadowAnchor: [-4, -9],  // the same for the shadow
+        popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+    });
+
+    L.tileLayer(`http://localhost:5002/tile/{z}/{x}/{y}.png`, {
+        maxZoom: 18,
+        tileSize: 512,
+        zoomOffset: -1,
+    }).addTo(map);
+
+    marker = L.marker([lat, lon], { icon: plane_icon }).addTo(map);
+}
+
 setInterval(update_local_times, UPDATE_RATE)
 
 const update = () => {
@@ -239,6 +266,14 @@ const update = () => {
             document.getElementById('gps-sats').innerHTML = gps.satellites ? gps.satellites : 0;
             document.getElementById('gps-alt').innerHTML = gps.altitude ? gps.altitude.toFixed(2) : 0;
             document.getElementById('gps-hdop').innerHTML = gps.hdop ? get_hdop_text(gps.hdop) : '--';
+
+            if(first_gps_flag) {
+                first_gps_flag = false;
+                render_map(lat_dd, lon_dd);
+            }
+            else {
+                marker.setLatLng([lat_dd, lon_dd]).update();
+            }
         }
         if(imu) {
             imu_history.ax.push(imu.ax);

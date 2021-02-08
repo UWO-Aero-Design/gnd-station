@@ -31,6 +31,17 @@ Use `docker-compose down` to bring down the database. You can also use a local m
 
 You can connect to the database with a visual GUI such as [Compass](https://www.mongodb.com/products/compass). The link is provided in the nodejs console upon successful connection and is of the form `mongodb://<username>:<password>@<hostname>:<port>`. You can also use [Postman](https://www.postman.com/) to simulate HTTP requests to the backend.
 
+#### Map Tiles
+Map tiles are provided by OpenStreetMap running in a Docker container. The rendered files are fairly large so you can use [BBBike](https://extract.bbbike.org/) to download smaller PBFs. You must first import the files into a docker volume and then render them for use by OSM. Note: you must use the absolute file location in the following commands (use `pwd` command to get your current directory).
+
+```
+docker volume create osm-data osm-rendered
+docker run -v /absolute/path/to/london.pbf:/data.osm.pbf -v osm-data:/var/lib/postgresql/12/main overv/openstreetmap-tile-server import
+docker-compose up
+```
+
+The imported files are stored in a docker volume called osm-data and the rendered files in a docker volume called osm-rendered. These will not be deleted when running `docker-compose down` so delete them when you're done using `docker volume rm osm-data osm-rendered`.
+
 ### Development
 
 [Nodemon](https://www.npmjs.com/package/nodemon) is a filewatch wrapper that makes developing Node applications easier. It will restart the server everytime a file is edited. This is included as a part of the dev dependencies in `api/package.json`.

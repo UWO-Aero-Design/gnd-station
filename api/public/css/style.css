@@ -166,3 +166,7 @@ h5 {
 .inch {
   font-size: 1.8em;
 }
+
+#map {
+  height: 100%;
+}

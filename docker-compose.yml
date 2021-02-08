@@ -16,10 +16,14 @@ services:
   tiles:
     image: overv/openstreetmap-tile-server
     volumes:
-    - ./map/tiles:/var/lib/postgresql/12/main
+    - osm-data:/var/lib/postgresql/12/main
+    - osm-rendered:/var/lib/mod_tile
     ports:
-      - "5001:80"
+      - "5002:80"
+    command: "run"
 
 volumes:
-  openstreetmap-data:
+  osm-data:
+    external: true
+  osm-rendered:
     external: true
