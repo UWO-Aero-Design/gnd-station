@@ -7,7 +7,7 @@ const port = process.env.DB_PORT;
 const name = process.env.DB_NAME
 
 const options = {
-  connectTimeoutMS: 3000,
+  serverSelectionTimeoutMS: 3000,
   dbName: name
 };
 
@@ -19,11 +19,11 @@ const connect = () => {
   mongoose.set('useCreateIndex', true);
   mongoose.set('useUnifiedTopology', true);
 
-  console.log(`mongodb://${user}:${pass}@${host}:${port}`)
+  console.log(`Connecting to database at mongodb://${user}:${pass}@${host}:${port}`)
 
   mongoose.connect(`mongodb://${user}:${pass}@${host}:${port}`, options)
     .then(() => { console.log(`Connected to database at mongodb://${user}:<password>@${host}:${port}/${name}`) })
-    .catch((err) => { console.log('\x1b[33mUnable to connect to database. Continuing without logging.\x1b[0m'); console.log(err) })
+    .catch((err) => { console.log('\x1b[33mUnable to connect to database. Continuing without logging.\x1b[0m'); })
 };
 
 module.exports = {
