@@ -19,6 +19,7 @@
     "morgan": "^1.10.0",
     "replace-in-file": "^6.2.0",
     "serialport": "^9.0.4",
+    "usb-detection": "^4.10.0",
     "ws": "^7.4.0"
   },
   "devDependencies": {

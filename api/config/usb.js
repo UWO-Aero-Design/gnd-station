@@ -2,6 +2,7 @@ const events = require('events');
 
 const SerialPort = require('serialport') 
 const InterByteTimeout = require('@serialport/parser-inter-byte-timeout')
+const usb_detect = require('usb-detection');
 
 const { Message } = require('../message/message_pb')
 
@@ -50,6 +51,10 @@ const select = async (path) => {
             console.log('Error reading from usb')
         }
     })
+    current_port.on('close', (message) => {
+        console.log(`Disconnected from ${current_port.path}`)
+        current_port = null;
+    })
     return current_port;
 }
 
@@ -65,15 +70,21 @@ const auto_connect = async () => {
         if(filtered_devices.length > 1) {
             console.log(`Attempted to auto-connect but could not because ${filtered_devices.length} devices are connected`)
         }
-        else {
+        else if (filtered_devices.length === 1) {
             select(filtered_devices[0].path)
             console.log(`Auto-connected to ${current_port.path}`)
         }
-        setTimeout(auto_connect, 3000)
     }
 }
 
 auto_connect();
+
+usb_detect.startMonitoring();
+
+usb_detect.on('change', device => {
+    // leave a sec for the Teensy to boot and then connect
+    setTimeout(auto_connect,1000);
+});
 
 module.exports = {
     current_port,
