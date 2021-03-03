@@ -4,7 +4,7 @@ const UPDATE_RATE = 10;
 const TLM_TIMEOUT = 1000;
 const MAX_GRAPH_DATA = 50;
 
-let connected_to_server = false;
+let connected_to_server = false, recording = false;
 let update_task, tlm_watchdog, tlm_status = false, tlm_new_msg = false;
 
 let ground_level_offset = 0, glider_drop_height = 0, payload_drop_height = 0;
@@ -30,6 +30,7 @@ MIT.setHours(0)
 MIT.setMinutes(0)
 MIT.setSeconds(0)
 MIT.setMilliseconds(0)
+let mission_start_time = null;
 
 const watchdog_task = () => {
     set_system_status('server')
@@ -75,12 +76,44 @@ const DMS_to_DD = (lon, lat, lat_direction = 'N', lon_direction = 'W') => {
     return { lon_dd, lat_dd };
 }
 
+const ajax = (method, url, body) => {
+    return new Promise((resolve, reject) => {
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == XMLHttpRequest.DONE) {
+                resolve(this)
+            }
+        };
+        xmlhttp.open(method, url, true);
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        if(method.toLowerCase() === 'get') xmlhttp.send();
+        else xmlhttp.send(JSON.stringify(body));
+    });
+}
+
+const update_recording_status = (status) => {
+    const label = document.getElementById('record')
+    if(status === true) {
+        label.innerHTML = 'Stop';
+        label.className = 'button red red-hover'
+    }
+    else if(status === false) {
+        label.innerHTML = 'Start';
+        label.className = 'button green green-hover'
+    }
+}
+
 const connect = () => {
     socket = new WebSocket('ws://localhost:5001');
-    socket.onopen = (event) => {
+    socket.onopen = async (event) => {
         connected_to_server = true;
         update_task = setInterval(update, UPDATE_RATE)
         set_system_status('server')
+        ajax('GET', '/record/status').then(ajax => {
+            let response = JSON.parse(ajax.response)
+            update_recording_status(response.status)
+            recording = response.status;
+        })
     }
     
     socket.onclose = (event) => {
@@ -191,6 +224,7 @@ let mag_chart = new Chart(mag_chart_elem, {
 const update_local_times = () => {
     document.getElementById('GCT').innerHTML = time_to_string(convert_ms_to_timestamp(performance.now()))
     document.getElementById('CLT').innerHTML = time_to_string(new Date())
+    if(mission_start_time) document.getElementById('MIT').innerHTML = time_to_string(convert_ms_to_timestamp(performance.now() - mission_start_time))
     if(tlm_status) document.getElementById('VOT').innerHTML = time_to_string(new Date(VOT.getTime() + performance.now() - last_packet))
 }
 
@@ -240,7 +274,6 @@ const update = () => {
         else if(packet_number > 1e3) formatted_packet_number = (packet_number/1e3).toFixed(2).toString() + 'k'
         else formatted_packet_number = packet_number
 
-        document.getElementById('MIT').innerHTML = time_to_string(MIT)
         document.getElementById('tlm-rate').innerHTML = update_rate.toFixed(1).toString()
         document.getElementById('packet-number').innerHTML = formatted_packet_number;
         document.getElementById('current-height').innerHTML = enviro.altitude ? (m_to_ft(enviro.altitude)-ground_level_offset).toFixed(2) : 0;
@@ -334,6 +367,48 @@ const handle_command = (event) => {
         glider_drop_height = enviro.altitude;
         document.getElementById('glider-drop-height').innerHTML = (m_to_ft(glider_drop_height)-ground_level_offset).toFixed(2);
     }
+}
+
+const handle_recording = async (event) => {
+    let xmlhttp = new XMLHttpRequest();
+    let action = ''
+    let recording;
+    await ajax('GET', '/record/status').then(ajax => {
+        const response = JSON.parse(ajax.response)
+        const status = response.status;
+        recording = status;
+        if(status === true) {
+            action = 'stop'
+            recording = false;
+        }
+        else if(status === false) {
+            action = 'start'
+            recording = true
+        }
+    })
+    console.log(action)
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == XMLHttpRequest.DONE) {
+            if(this.status == 200) {
+                update_recording_status(recording)
+                if(recording) {
+                    mission_start_time = performance.now();
+                }
+                else {
+                    mission_start_time = null;
+                }
+            }
+            else if(this.status == 204) {
+                console.log('Recording already in this state');
+            }
+            else {
+                console.log('Error');
+            }
+        }
+    };
+    xmlhttp.open('POST', '/record', true);
+    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.send(JSON.stringify({ action }));
 }
 
 const set_system_status = (status) => {

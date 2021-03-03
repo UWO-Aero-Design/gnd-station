@@ -9,6 +9,11 @@ router.get('/', async (req, res) => {
     })
 });
 
+router.get('/status', async (req, res) => { 
+    const status = await Recording.is_recording();
+    res.status(200).json({ status })
+});
+
 router.post('/', async (req, res) => { 
     if(!req.body.action) {
         return res.status(400).send('No action specified')
