@@ -1,7 +1,7 @@
 let socket;
 
 const UPDATE_RATE = 10;
-const TLM_TIMEOUT = 5000;
+const TLM_TIMEOUT = 3000;
 const MAX_GRAPH_DATA = 50;
 
 let connected_to_server = false, recording = false;
