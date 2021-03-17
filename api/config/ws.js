@@ -14,6 +14,10 @@ wss.on('connection', (ws) => {
 
     device.on('data', (data) => {
         data = data.toObject();
+        data.gps = {
+            lon: 81.2795223,
+            lat: 43.0095971
+        }
         ws.send(JSON.stringify(data))
     })
 

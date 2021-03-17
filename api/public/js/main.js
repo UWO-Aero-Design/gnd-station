@@ -230,8 +230,22 @@ const update_local_times = () => {
 
 let map, plane_icon, marker;
 
-const render_map = (lat, lon, zoom=17) => {
-    console.log('Rendering map')
+
+const render_map = async (lat, lon, zoom=17, offline=true) => {
+    
+    let online = false, key;
+    let request = await ajax('GET', '/ground/mapkey');
+    if(request.status != 404) {
+        key = JSON.parse(request.response).key
+        online = navigator.onLine
+    }
+
+    let url;
+    if(online) url = `https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${key}`
+    else url = 'http://localhost:5002/tile/{z}/{x}/{y}.png'
+
+    console.log(`Rendering map (${online ? 'online' : 'offline'})`)
+
     map = L.map('map').setView([lat, lon], zoom);
 
     plane_icon = L.icon({
@@ -245,11 +259,22 @@ const render_map = (lat, lon, zoom=17) => {
         popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
     });
 
-    L.tileLayer(`http://localhost:5002/tile/{z}/{x}/{y}.png`, {
+    if(online) {
+        L.tileLayer(url, {
+            maxZoom: 18,
+            id: 'mapbox/satellite-streets-v9',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: key
+        }).addTo(map);
+    }
+    else {
+        L.tileLayer(url, {
         maxZoom: 18,
         tileSize: 512,
         zoomOffset: -1,
-    }).addTo(map);
+        }).addTo(map);
+    }
 
     marker = L.marker([lat, lon], { icon: plane_icon }).addTo(map);
 }

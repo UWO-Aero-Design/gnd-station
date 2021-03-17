@@ -2,6 +2,7 @@ const path = require('path');
 
 const express = require('express');
 const morgan = require('morgan');
+const dotenv = require('dotenv').config({ path: '../.env' })
 
 // app configuration
 require('dotenv').config({path: path.join(__dirname, '..', '.env')})

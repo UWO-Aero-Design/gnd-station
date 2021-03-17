@@ -53,6 +53,16 @@ router.post('/com/test', (req, res) => {
         })
 });
 
+router.get('/mapkey', (req, res) => {
+    const key = process.env.MAPBOX_API_KEY;
+    if(key) {
+        return res.status(200).json({ key }); 
+    }
+    else {
+        return res.status(404).send();
+    }
+})
+
 
 
 module.exports = router;
