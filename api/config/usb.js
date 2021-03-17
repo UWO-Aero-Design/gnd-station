@@ -45,9 +45,18 @@ const select = async (path) => {
                 console.log(`Message from ${get_location_name(decoded.getSender())}: Len: ${data.length}, RSSI: ${decoded.getRssi()}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `)
             }
             device.emit('data', decoded)
+            try {
+                const ack = generate_ack(Message.Location.PLANE);
+                const serialized_message = ack.serializeBinary();
+                write(serialized_message);
+            }
+            catch(error) {
+                console.log("Error sending ack")
+            }
+            
         }
         catch(error) {
-            console.log(error);
+            // console.log(error);
             console.log('Error reading from usb')
         }
     })
@@ -102,4 +111,14 @@ const get_location_name = (loc) => {
     else if (loc === Message.Location.GLIDER0) return "GLIDER1";
     else if (loc === Message.Location.ANY) return "ANY";
     else return "UNKNOWN";
+}
+
+const generate_ack = (to) => {
+    let message = new Message()
+    message.setSender(Message.Location.GROUND_STATION)
+    message.setRecipient(to)
+    message.setPacketNumber(0);
+    message.setTime(Math.floor(new Date().getTime() / 1000));
+    message.setStatus(Message.Status.READY);
+    return message;
 }
