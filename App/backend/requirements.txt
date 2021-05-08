@@ -13,4 +13,4 @@ PySerial
 rq==1.1.0
 Flask-SocketIO==4.2.1
 python-socketio==4.3.1
-eventlet==0.25.1
+eventlet==0.31.0
