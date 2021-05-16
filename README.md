@@ -13,10 +13,10 @@ The ground station runs vanilla HTML, CSS, and JS served from a Node.js backend.
 
 ```sh
 git clone https://github.com/UWO-Aero-Design/gnd-station.git
-cd gnd-station
+cd gnd-station/api
 npm install
 npm run patch
-node api/server.js
+node server.js
 ```
 
 The server will be live on [http://locahost:5000](http://locahost:5000). Note: because of [an issue](https://github.com/protocolbuffers/protobuf/issues/3571#issuecomment-566437265) with Google's Protocol Buffers, a quick patch via `npm run patch` is needed to turn certain assertions to allow for nest messages.
@@ -25,14 +25,14 @@ The server will be live on [http://locahost:5000](http://locahost:5000). Note: b
 The easiest method to get a database running is through the provided docker container (you will need [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) installed). Ensure you are in the top level folder when executing the following commands.
 ```sh
 cp sample.env .env # copies environment variables
-docker-compose up -d
+docker-compose up -d db
 ```
 Use `docker-compose down` to bring down the database. You can also use a local mongodb instance or even a cloud provider - just add the relevant credentials to the .env file. Note: using the docker-compose method will create an untracked `db` folder in the main directory. In order to reset the database, bring the container down with `docker-compose down`, delete the `db` folder and then restart the database with `docker-compose up`.
 
 You can connect to the database with a visual GUI such as [Compass](https://www.mongodb.com/products/compass). The link is provided in the nodejs console upon successful connection and is of the form `mongodb://<username>:<password>@<hostname>:<port>`. You can also use [Postman](https://www.postman.com/) to simulate HTTP requests to the backend.
 
 #### Map Tiles
-Map tiles are provided by OpenStreetMap running in a Docker container. The rendered files are fairly large so you can use [BBBike](https://extract.bbbike.org/) to download smaller PBFs. You must first import the files into a docker volume and then render them for use by OSM. Note: you must use the absolute file location in the following commands (use `pwd` command to get your current directory).
+Map tiles are provided by OpenStreetMap running in a Docker container. The rendered files are fairly large so you can use [BBBike](https://extract.bbbike.org/) to download smaller PBFs. You must first import the files into a docker volume and then render them for use by OSM. Note: you must use the absolute file location in the following commands (use `pwd` command to get your current directory). Ensure you are in the top level folder when executing the following commands.
 
 ```
 docker volume create osm-data osm-rendered
@@ -48,10 +48,10 @@ The imported files are stored in a docker volume called osm-data and the rendere
 
 ```sh
 git clone https://github.com/UWO-Aero-Design/gnd-station.git
-cd gnd-station
+cd gnd-station/api
 npm install
 npm run patch
-nodemon api/server.js
+nodemon server.js
 ```
 
 The server will be live on [http://locahost:5000](http://locahost:5000). Try editing a file and watch Nodemon automatically restart the server. Note: you will still need the database running - follow the instructions under Database.
