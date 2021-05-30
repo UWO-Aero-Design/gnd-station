@@ -19,7 +19,7 @@ npm run patch
 node server.js
 ```
 
-The server will be live on [http://locahost:5000](http://locahost:5000). Note: because of [an issue](https://github.com/protocolbuffers/protobuf/issues/3571#issuecomment-566437265) with Google's Protocol Buffers, a quick patch via `npm run patch` is needed to turn certain assertions to allow for nest messages.
+The server will be live on [http://localhost:5000](http://localhost:5000). Note: because of [an issue](https://github.com/protocolbuffers/protobuf/issues/3571#issuecomment-566437265) with Google's Protocol Buffers, a quick patch via `npm run patch` is needed to turn certain assertions to allow for nest messages.
 
 #### Database
 The easiest method to get a database running is through the provided docker container (you will need [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) installed). Ensure you are in the top level folder when executing the following commands.
