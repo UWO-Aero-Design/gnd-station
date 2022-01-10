@@ -2,7 +2,11 @@ const WebSocket = require('ws');
 const { device } = require('./usb');
 const { Message } = require('../message/message_pb')
 
-const wss = new WebSocket.Server({ port: 5001 });
+const port = process.env.WS_PORT || 5008;
+
+const wss = new WebSocket.Server({ port });
+
+console.log(`Websocket started on port ${port}`)
 
 wss.on('connection', (ws) => {
     console.log('Connected to frontend')
