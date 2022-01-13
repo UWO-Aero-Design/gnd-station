@@ -5,14 +5,15 @@ const router = require('../routes/GroundRoute');
 // I need to mock ../config/usb (We dont want to test usb here)
 const usb = require('../config/usb')
 jest.mock('../config/usb');
-const SerialPort = require('serialport'); 
+// const SerialPort = require('serialport'); 
 
 const app = express();
 app.use('/', router);
 
-describe('Ground Routes', function () {
 
-    test('responds to /com with status 200', async () => {
+describe('Ground Routes Get', function () {
+
+    test('responds to /com with status 200 and filtered list', async () => {
         usb.list = () => {
             return Promise.resolve([
                 {
@@ -67,7 +68,7 @@ describe('Ground Routes', function () {
         expect(res.statusCode).toBe(200);
     });
 
-    test('responds to /com with status 500', async () => {
+    test('responds to /com with status 500 due to rejected promise', async () => {
         usb.list = () => {
             return Promise.reject([]);
         }
@@ -75,7 +76,7 @@ describe('Ground Routes', function () {
         expect(res.statusCode).toBe(500);
     });
 
-    test('responds to /com with status 500', async () => {
+    test('responds to /com with status 200 and returns empty list', async () => {
         usb.list = () => {
             return Promise.resolve([]);
         }
@@ -83,6 +84,44 @@ describe('Ground Routes', function () {
         expect(res.body).toEqual([]);
         expect(res.statusCode).toBe(200);   // Should this be 200
     });
+
+    test('responds to /mapkey with status 200', async () => {
+        process.env.MAPBOX_API_KEY = 'test';
+        const res = await request(app).get('/mapkey');
+        expect(res.body).toEqual({'key': 'test'});
+        expect(res.statusCode).toBe(200);
+    });
+
+    test('responds to /mapkey with status 404', async () => {
+        process.env.MAPBOX_API_KEY = '';
+        const res = await request(app).get('/mapkey');
+        expect(res.body).toEqual({});
+        expect(res.statusCode).toBe(404);
+    });
+
+    afterEach(() => {
+        delete process.env.MAPBOX_API_KEY;
+    });
 });
 
-// let get_all = req.query.all;         // What does this do
+let get_all = req.query.all;         // What does this do
+
+describe('Ground Routes Post', function () {
+    test('post to test responds with 200', async () => {
+        usb.write = () => {
+            return Promise.resolve('sent some data');
+        }
+        const res = await request(app).post('/com/test');
+        expect(res.statusCode).toBe(200);
+    });
+
+    test('post to test responds with 500', async () => {
+        usb.write = () => {
+            return Promise.reject(new Error('Current port has not yet been selected')); // I cant find this
+        }
+        const res = await request(app).post('/com/test');
+        console.log(res);
+        expect(res.error.toString()).toBe('Error: cannot POST /com/test (500)');    // Where is the above in res??
+        expect(res.statusCode).toBe(500);
+    });
+});
