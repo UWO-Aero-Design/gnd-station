@@ -10,7 +10,7 @@ jest.mock('../config/usb');
 const app = express();
 app.use('/', router);
 
-
+/*
 describe('Ground Routes Get', function () {
 
     test('responds to /com with status 200 and filtered list', async () => {
@@ -104,24 +104,51 @@ describe('Ground Routes Get', function () {
     });
 });
 
-let get_all = req.query.all;         // What does this do
+//let get_all = req.query.all;         // What does this do
+*/
 
 describe('Ground Routes Post', function () {
-    test('post to test responds with 200', async () => {
-        usb.write = () => {
-            return Promise.resolve('sent some data');
-        }
-        const res = await request(app).post('/com/test');
-        expect(res.statusCode).toBe(200);
-    });
+    
+    // test('post to test responds with 200', async () => {
+    //     usb.write = () => {
+    //         return Promise.resolve('sent some data');
+    //     }
+    //     const res = await request(app).post('/com/test');
+    //     expect(res.statusCode).toBe(200);
+    // });
 
-    test('post to test responds with 500', async () => {
-        usb.write = () => {
-            return Promise.reject(new Error('Current port has not yet been selected')); // I cant find this
+    // test('post to test responds with 500', async () => {
+    //     usb.write = () => {
+    //         return Promise.reject(new Error('Current port has not yet been selected')); // I cant find this
+    //     }
+    //     const res = await request(app).post('/com/test');
+    //     console.log(res);
+    //     expect(res.error.toString()).toBe('Error: cannot POST /com/test (500)');    // Where is the above in res??
+    //     expect(res.statusCode).toBe(500);
+    // });
+    
+
+    test('post to /com and get 200', async () => {
+        // const mypath = {
+        //     path: '/dev/ttyACM0',
+        // };
+        usb.select = async (mypath) => {
+            return Promise.resolve();
         }
-        const res = await request(app).post('/com/test');
-        console.log(res);
-        expect(res.error.toString()).toBe('Error: cannot POST /com/test (500)');    // Where is the above in res??
-        expect(res.statusCode).toBe(500);
+        const res = await request(app)
+            .post('/com')
+            .set('Accept', 'application/json')
+            .send({
+                path: '/dev/ttyACM1',
+                manufacturer: 'Arduino (www.arduino.cc)',
+                serialNumber: '752303138333518011C1',
+                pnpId: 'usb-Arduino__www.arduino.cc__0043_752303138333518011C1-if00',
+                locationId: 0,
+                productId: '0044',
+                vendorId: '2341'
+            })
+            .expect(200);
+            console.log(res);
+            console.log(res.statusCode);
     });
 });
