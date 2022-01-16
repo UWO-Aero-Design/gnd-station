@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@serialport/parser-inter-byte-timeout": "^9.0.1",
+    "body-parser": "^1.19.1",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
