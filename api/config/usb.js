@@ -2,7 +2,7 @@ const events = require('events');
 
 const SerialPort = require('serialport') 
 const InterByteTimeout = require('@serialport/parser-inter-byte-timeout')
-const usb_detect = require('usb-detection');
+// const usb_detect = require('usb-detection');
 
 const { Message } = require('../message/message_pb')
 
@@ -88,12 +88,12 @@ const auto_connect = async () => {
 
 auto_connect();
 
-usb_detect.startMonitoring();
+// usb_detect.startMonitoring();
 
-usb_detect.on('change', device => {
-    // leave a sec for the Teensy to boot and then connect
-    setTimeout(auto_connect,1000);
-});
+// usb_detect.on('change', device => {
+//     // leave a sec for the Teensy to boot and then connect
+//     setTimeout(auto_connect,1000);
+// });
 
 module.exports = {
     current_port,

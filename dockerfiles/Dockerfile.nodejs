@@ -1,0 +1,15 @@
+FROM node:16
+
+WORKDIR /home/node/app
+
+COPY api/package*.json ./
+
+# Install nodemon for hot reload
+RUN npm install -g nodemon
+
+RUN npm install
+
+EXPOSE 5000
+
+# run nodemon for hot reload
+CMD ["nodemon", "server.js"]

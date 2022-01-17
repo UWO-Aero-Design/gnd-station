@@ -1,9 +1,37 @@
 version: '3.1'
 
 services:
+  api:
+    build: 
+      context: ./
+      dockerfile: dockerfiles/Dockerfile.nodejs
+    env_file: .env
+    networks:
+      - aero-network
+    ports:
+      - "${API_PORT}:5000"
+      - "${WS_PORT}:5001"
+    volumes:
+      - ./api:/home/node/app
+      - /home/node/app/node_modules
+      
+  frontend:
+    build:
+      context: ./
+      dockerfile: dockerfiles/Dockerfile.react
+    env_file: .env
+    networks:
+      - aero-network
+    ports:
+    - "${FRONTEND_PORT}:3000"
+    volumes:
+      - ./frontend:/home/node/app
+      - /home/node/app/node_modules
   db:
     image: mongo:3.6
     restart: always
+    networks:
+      - aero-network
     volumes:
     - ./db:/data/db
     ports:
@@ -13,17 +41,21 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
       MONGO_INITDB_DATABASE: ${DB_NAME}
 
-  tiles:
-    image: overv/openstreetmap-tile-server
-    volumes:
-    - osm-data:/var/lib/postgresql/12/main
-    - osm-rendered:/var/lib/mod_tile
-    ports:
-      - "5002:80"
-    command: "run"
+#   tiles:
+#     image: overv/openstreetmap-tile-server
+#     volumes:
+#     - osm-data:/var/lib/postgresql/12/main
+#     - osm-rendered:/var/lib/mod_tile
+#     ports:
+#       - "5002:80"
+#     command: "run"
 
-volumes:
-  osm-data:
-    external: true
-  osm-rendered:
-    external: true
+# volumes:
+#   osm-data:
+#     external: true
+#   osm-rendered:
+#     external: true
+
+networks:
+    aero-network:
+        driver: bridge

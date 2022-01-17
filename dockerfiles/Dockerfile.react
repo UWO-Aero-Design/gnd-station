@@ -1,0 +1,11 @@
+FROM node:16
+
+WORKDIR /home/node/app
+
+# install app dependencies
+COPY frontend/package*.json ./
+
+RUN npm install
+
+# start app
+CMD ["npm", "start"]
