@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const usb_device = require('./usb').device
+// const usb_device = require('./usb').device
 const Record = require('../models/RecordingModel')
 
 const user = process.env.DB_USER;
@@ -29,19 +29,19 @@ const connect = () => {
     .catch((err) => { console.log('\x1b[33mUnable to connect to database. Continuing without logging.\x1b[0m'); })
 };
 
-usb_device.on('data', async (recevived_message) => {
-  if(Record.is_recording()) {
-    const recording = await Record.findById(Record.get_current_recording());
-    await recording.add_telemetry(recevived_message.toObject())
-  }
-})
+// usb_device.on('data', async (recevived_message) => {
+//   if(Record.is_recording()) {
+//     const recording = await Record.findById(Record.get_current_recording());
+//     await recording.add_telemetry(recevived_message.toObject())
+//   }
+// })
 
-usb_device.on('sent', async (sent_message) => {
-  if(Record.is_recording()) {
-    const recording = await Record.findById(Record.get_current_recording());
-    await recording.add_command(sent_message.toObject())
-  }
-})
+// usb_device.on('sent', async (sent_message) => {
+//   if(Record.is_recording()) {
+//     const recording = await Record.findById(Record.get_current_recording());
+//     await recording.add_command(sent_message.toObject())
+//   }
+// })
 
 module.exports = {
   connect,

@@ -1,8 +1,8 @@
 const WebSocket = require('ws');
-const { device } = require('./usb');
+// const { device } = require('./usb');
 const { Message } = require('../message/message_pb')
 
-const port = process.env.WS_PORT || 5008;
+const port = process.env.WS_PORT;
 
 const wss = new WebSocket.Server({ port });
 
@@ -16,13 +16,13 @@ wss.on('connection', (ws) => {
         console.log('Received message')
     })
 
-    device.on('data', (data) => {
-        data = data.toObject();
-        data.gps = {
-            lon: 81.2795223,
-            lat: 43.0095971
-        }
-        ws.send(JSON.stringify(data))
-    })
+    // device.on('data', (data) => {
+    //     data = data.toObject();
+    //     data.gps = {
+    //         lon: 81.2795223,
+    //         lat: 43.0095971
+    //     }
+    //     ws.send(JSON.stringify(data))
+    // })
 
 })

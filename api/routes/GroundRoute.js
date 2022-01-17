@@ -1,28 +1,28 @@
 const router = require('express').Router();
 
 const SerialPort = require('serialport') 
-const usb = require('../config/usb')
+// const usb = require('../config/usb')
 
 router.get('/com', async (req, res) => {
     let get_all = req.query.all;
-    usb.list()
-        .then(devices => {
-            if(get_all != undefined) {
-                return res.status(200).json(devices)
-            }
-            else {
-                let filtered_devices = [];
-                devices.forEach(device => {
-                    if(device.manufacturer !== undefined) {
-                        filtered_devices.push(device)
-                    }
-                })
-                return res.status(200).json(filtered_devices)
-            }
-        })
-        .catch(error => {
-            return res.status(500).json(error)
-        })
+    // usb.list()
+    //     .then(devices => {
+    //         if(get_all != undefined) {
+    //             return res.status(200).json(devices)
+    //         }
+    //         else {
+    //             let filtered_devices = [];
+    //             devices.forEach(device => {
+    //                 if(device.manufacturer !== undefined) {
+    //                     filtered_devices.push(device)
+    //                 }
+    //             })
+    //             return res.status(200).json(filtered_devices)
+    //         }
+    //     })
+    //     .catch(error => {
+    //         return res.status(500).json(error)
+    //     })
 });
 
 router.post('/com', async (req, res) => { 
@@ -44,13 +44,13 @@ router.post('/com', async (req, res) => {
 });
 
 router.post('/com/test', (req, res) => { 
-    usb.write('hello')
-        .then(() => {
-            return res.status(200).send();
-        })
-        .catch(error => {
-            return res.status(500).json(error);
-        })
+    // usb.write('hello')
+    //     .then(() => {
+    //         return res.status(200).send();
+    //     })
+    //     .catch(error => {
+    //         return res.status(500).json(error);
+    //     })
 });
 
 router.get('/mapkey', (req, res) => {

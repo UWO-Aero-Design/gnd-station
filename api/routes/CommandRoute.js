@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const Recording = require('../models/RecordingModel')
 const { Message } = require('../message/message_pb')
-const usb = require('../config/usb')
+// const usb = require('../config/usb')
 
 let packet_number = 0;
 
@@ -64,13 +64,13 @@ router.post('/', (req, res) => {
     console.log(`Serialized message to ${serialized_message.length} bytes`)
 
     // send
-    usb.write(serialized_message)
-        .then(() => {
-            return res.status(200).send('Packet sent')
-        })
-        .catch(error => {
-            return res.status(500).json(error);
-        })
+    // usb.write(serialized_message)
+    //     .then(() => {
+    //         return res.status(200).send('Packet sent')
+    //     })
+    //     .catch(error => {
+    //         return res.status(500).json(error);
+    //     })
 });
 
 

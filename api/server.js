@@ -2,12 +2,13 @@ const path = require('path');
 
 const express = require('express');
 const morgan = require('morgan');
-const dotenv = require('dotenv').config({ path: '../.env' })
+// const dotenv = require('dotenv').config({ path: '../.env' })
+const dotenv = require('dotenv').config()
 
 // app configuration
 require('dotenv').config({path: path.join(__dirname, '..', '.env')})
 require('./config/database.js').connect()
-const node_port = process.env.API_PORT || 5007;
+const node_port = process.env.API_PORT;
 const node_env = process.env.NODE_ENV || 'development';
 const app = express();
 require('./config/ws')
@@ -34,3 +35,4 @@ app.use('/command', require('./routes/CommandRoute'))
 const server = app.listen(node_port, () => {
   console.log(`Server started on port ${node_port} in mode ${node_env}`);
 });
+
