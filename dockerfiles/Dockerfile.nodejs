@@ -9,8 +9,6 @@ RUN npm install -g nodemon
 
 RUN npm install
 
-# COPY . .
-
 EXPOSE 5000
 
 # run nodemon for hot reload
