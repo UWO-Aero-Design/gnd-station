@@ -9,8 +9,9 @@ jest.mock('../config/usb');
 
 const app = express();
 app.use('/', router);
+app.use(express.json());
+app.use(express.urlencoded());
 
-/*
 describe('Ground Routes Get', function () {
 
     test('responds to /com with status 200 and filtered list', async () => {
@@ -104,34 +105,28 @@ describe('Ground Routes Get', function () {
     });
 });
 
-//let get_all = req.query.all;         // What does this do
-*/
-
 describe('Ground Routes Post', function () {
     
-    // test('post to test responds with 200', async () => {
-    //     usb.write = () => {
-    //         return Promise.resolve('sent some data');
-    //     }
-    //     const res = await request(app).post('/com/test');
-    //     expect(res.statusCode).toBe(200);
-    // });
+    test('post to test responds with 200', async () => {
+        usb.write = () => {
+            return Promise.resolve('sent some data');
+        }
+        const res = await request(app).post('/com/test');
+        expect(res.statusCode).toBe(200);
+    });
 
-    // test('post to test responds with 500', async () => {
-    //     usb.write = () => {
-    //         return Promise.reject(new Error('Current port has not yet been selected')); // I cant find this
-    //     }
-    //     const res = await request(app).post('/com/test');
-    //     console.log(res);
-    //     expect(res.error.toString()).toBe('Error: cannot POST /com/test (500)');    // Where is the above in res??
-    //     expect(res.statusCode).toBe(500);
-    // });
+    test('post to test responds with 500', async () => {
+        usb.write = () => {
+            return Promise.reject(new Error('Current port has not yet been selected')); // I cant find this
+        }
+        const res = await request(app).post('/com/test');
+        console.log(res);
+        expect(res.error.toString()).toBe('Error: cannot POST /com/test (500)');    // Where is the above in res??
+        expect(res.statusCode).toBe(500);
+    });
     
-
+    // For some reason post request bodies are being sent
     test('post to /com and get 200', async () => {
-        // const mypath = {
-        //     path: '/dev/ttyACM0',
-        // };
         usb.select = async (mypath) => {
             return Promise.resolve();
         }
