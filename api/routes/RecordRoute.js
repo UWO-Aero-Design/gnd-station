@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
     }
     else {
         if(Recording.is_recording()) {
-            return res.status(200).send(`Recording alreay in progress (${Recording.get_current_recording()})`)
+            return res.status(200).send(`Recording already in progress (${Recording.get_current_recording()})`)
         }
         else {
             const recording = await new Recording().save();
