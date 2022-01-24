@@ -116,15 +116,13 @@ describe('Ground Routes Post', function () {
 
     test('post to test responds with 500', async () => {
         usb.write = () => {
-            return Promise.reject(new Error('Current port has not yet been selected')); // I cant find this
+            return Promise.reject(new Error('Current port has not yet been selected'));
         }
         const res = await request(app).post('/com/test');
-        console.log(res);
-        expect(res.error.toString()).toBe('Error: cannot POST /com/test (500)');    // Where is the above in res??
+        expect(res.error.toString()).toBe('Error: cannot POST /com/test (500)');
         expect(res.statusCode).toBe(500);
     });
     
-    // For some reason post request bodies are being sent
     test('post to /com and get 200', async () => {
         usb.select = async (mypath) => {
             return Promise.resolve();
@@ -140,9 +138,7 @@ describe('Ground Routes Post', function () {
                 locationId: 0,
                 productId: '0044',
                 vendorId: '2341'
-            })
-            .expect(200);
-            console.log(res);
-            console.log(res.statusCode);
+            });
+        expect(res.statusCode).toBe(200);
     });
 });
