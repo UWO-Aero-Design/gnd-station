@@ -2,15 +2,14 @@ const request = require('supertest');
 const express = require('express');
 const router = require('../routes/GroundRoute');
 
+const app = express();
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use('/', router);
+
 // I need to mock ../config/usb (We dont want to test usb here)
 const usb = require('../config/usb')
 jest.mock('../config/usb');
-// const SerialPort = require('serialport'); 
-
-const app = express();
-app.use('/', router);
-app.use(express.json());
-app.use(express.urlencoded());
 
 describe('Ground Routes Get', function () {
 
