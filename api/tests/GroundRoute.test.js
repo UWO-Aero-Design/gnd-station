@@ -141,4 +141,55 @@ describe('Ground Routes Post', function () {
             });
         expect(res.statusCode).toBe(200);
     });
+
+    test('post to /com with empty path and get 400', async () => {
+        const res = await request(app)
+            .post('/com')
+            .set('Accept', 'application/json')
+            .send({
+                path: "",
+                manufacturer: 'Arduino (www.arduino.cc)',
+                serialNumber: '752303138333518011C1',
+                pnpId: 'usb-Arduino__www.arduino.cc__0043_752303138333518011C1-if00',
+                locationId: 0,
+                productId: '0044',
+                vendorId: '2341'
+            });
+        expect(res.statusCode).toBe(400);
+    });
+
+    test('post to /com with no path and get 400', async () => {
+        const res = await request(app)
+            .post('/com')
+            .set('Accept', 'application/json')
+            .send({
+                // Path is missing
+                manufacturer: 'Arduino (www.arduino.cc)',
+                serialNumber: '752303138333518011C1',
+                pnpId: 'usb-Arduino__www.arduino.cc__0043_752303138333518011C1-if00',
+                locationId: 0,
+                productId: '0044',
+                vendorId: '2341'
+            });
+        expect(res.statusCode).toBe(400);
+    });
+
+    test('post to /com and get 500', async () => {
+        usb.select = async (mypath) => {
+            return Promise.reject();
+        }
+        const res = await request(app)
+            .post('/com')
+            .set('Accept', 'application/json')
+            .send({
+                path: 'dev/ttyUSB0',
+                manufacturer: 'Arduino (www.arduino.cc)',
+                serialNumber: '752303138333518011C1',
+                pnpId: 'usb-Arduino__www.arduino.cc__0043_752303138333518011C1-if00',
+                locationId: 0,
+                productId: '0044',
+                vendorId: '2341'
+            });
+        expect(res.statusCode).toBe(500);
+    });
 });
