@@ -3,6 +3,7 @@ import { Container, Grid, Box, ListItem, List } from '@mui/material';
 import Header from './components/Header';
 import Servo from './components/Servo';
 import Status from './components/Status';
+import Altimeter from './components/Altimeter';
 
 function App() {
 
@@ -36,9 +37,7 @@ function App() {
               </Box>
             </ListItem>
             <ListItem>
-              <Box sx={{ display: 'flex', justifyContent: 'center', width: 260, height: 258, backgroundColor: '#777772', borderRadius: '16px'}}>
-                Example section
-              </Box>
+              <Altimeter />
             </ListItem>
             <ListItem>
               <Box sx={{ display: 'flex', justifyContent: 'center', width: 260, height: 148, backgroundColor: '#777772', borderRadius: '16px'}}>
