@@ -76,7 +76,8 @@ describe('Not really unit tests', function () {
         Recording.is_recording = () => {
             return false;
         }
-        // Dont this mocked function is working
+        // Dont think this mocked function is working
+        // Recording() is returning null, how to solve that? Mock DB?
         Recording.save = () => {
             return promises.resolve({_id: "1"});
         }
