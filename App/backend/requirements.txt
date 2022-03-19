@@ -1,0 +1,16 @@
+Flask==1.1.1
+redis
+Flask-SQLAlchemy==2.4
+Flask-Migrate==2.5.2
+SQLAlchemy==1.3.6
+alembic==1.0.11
+Flask-CORS==3.0.7
+celery[redis]==4.3.0
+marshmallow==3.0.1
+flask-marshmallow==0.10.1
+marshmallow-sqlalchemy==0.17.0
+PySerial
+rq==1.1.0
+Flask-SocketIO==4.2.1
+python-socketio==4.3.1
+eventlet==0.25.1

@@ -1,6 +1,7 @@
-import { Typography, Box, List, Grid, Button, ListItem } from '@mui/material';
+import { Typography, Box, List, Grid, ListItem } from '@mui/material';
 import Brightness1Icon from '@mui/icons-material/Brightness1';
-import * as React from 'react';
+import React from 'react';
+import Button from "./Button";
 
 // #00e676 #00c853
 
@@ -54,14 +55,12 @@ function Altimeter() {
                         </Typography>
                     </Grid>
                 </Grid>
-                <ListItem>
-                    <Button variant='contained' onClick={drop} sx={{ width: 200, height: 30, backgroundColor: background, '&:hover': { backgroundColor: hover } }}>
-                        Drop Pada
+                <ListItem sx={{m: 0}}>
+                    <Button BackgroundColor = {background} ButtonText = "Drop Pada">
                     </Button>
                 </ListItem>
                 <ListItem>
-                    <Button variant='contained' onClick={reset} sx={{ width: 200, height: 30 }}>
-                        Reset
+                    <Button ButtonText = "Reset">
                     </Button>
                 </ListItem>
             </List>
@@ -76,11 +75,7 @@ function ReadAltitude() {
 }
 
 function CanDrop(dropHeight) {
-    if (ReadAltitude() > dropHeight) {
-        return true;
-    } else {
-        return false;
-    }
+    return (ReadAltitude() > dropHeight)   
 }
 
 export default Altimeter;

@@ -11,7 +11,7 @@ function App() {
   // Otherwise, use values hard coded in the example
 
   return (
-    <Container maxWidth={'l'} sx={{ backgroundColor: '#000000' }}>
+    <Container maxWidth={'l'} sx={{backgroundColor: '#000000' }}>
       <Header />
       <Grid container spacing={0} sx={{ display: 'flex', justifyContent: 'center' }}>
         {/* This is a template for the ground station. Will need to be adapted as components are added */}

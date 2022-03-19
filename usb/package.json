@@ -1,0 +1,18 @@
+{
+  "name": "usb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "usb_tool.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@serialport/parser-inter-byte-timeout": "^10.3.0",
+    "dotenv": "^16.0.0",
+    "google-protobuf": "^3.20.0-rc.2",
+    "serialport": "^10.4.0",
+    "ws": "^8.5.0"
+  }
+}
