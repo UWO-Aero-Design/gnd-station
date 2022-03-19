@@ -1,8 +1,18 @@
 import { Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import * as React from 'react';
+import React from 'react';
+import Button from './Button';
 
 function Status() {
 
+    //Variables to hold each Port COM location
+
+    const statusState = 'connected';
+    const background = statusUpdate(statusState)? '#00e676':'#ff1744';
+    const statusText = statusUpdate(statusState)? 'Connected' : 'Ready to Connect';
+
+    function statusUpdate(status){
+        return (status === 'connected')
+    }
     //TODO: Replace the hard-coded select box values with a JSON file
 
     const [port, setPort] = React.useState('');
@@ -30,7 +40,12 @@ function Status() {
                     <MenuItem value={3}>Port 3</MenuItem>
                 </Select>
             </FormControl>
+            <Button BackgroundColor = {background} ButtonText = {statusText} 
+            Style = {{display:'inline-box',width: '30%', height: '15%',position:'absolute', marginTop:'20px'}}
+            />
         </Box>
+        
+        
     )
 }
 

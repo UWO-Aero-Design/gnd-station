@@ -1,5 +1,6 @@
 import { Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import * as React from 'react';
+import Button from './Button';
 
 function Servo() {
 
@@ -29,6 +30,14 @@ function Servo() {
                     <MenuItem value={2}>Servo 2</MenuItem>
                     <MenuItem value={3}>Servo 3</MenuItem>
                 </Select>
+                <Button  Style = {{height: '18%',width: '70%', position: 'absolute', marginTop: '50%',
+                                marginRight:'30%', display: 'inline-block'}} 
+                                ButtonText = {`Upload Settings (${servoNum})`}
+                                BackgroundColor ='#00FF00' />
+                                
+                <Button Style = {{height: '18%',width: '30%', position: 'absolute', marginTop: '50%',
+                                marginLeft:'90%', borderRadius:'7px', display: 'flex'}}
+                                 ButtonText = 'Reset'/>
             </FormControl>
         </Box>
     )
