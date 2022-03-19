@@ -6,19 +6,37 @@ import * as React from 'react';
 
 function Altimeter() {
 
-    const dropHeight = 420.69;
-    const background = CanDrop(dropHeight)? '#00e676':'#ff1744';
-    const hover = CanDrop(dropHeight)? '#00c853':'#b2102f';
+    const [dropped, setDropped] = React.useState(false);
+    const [dropHeight, setDropHeight] = React.useState(50);
+    const [altitude, setAltitude] = React.useState();
+    const background = CanDrop(dropHeight) ? '#ff1744' : '#00e676';
+    const hover = CanDrop(dropHeight) ?  '#b2102f' : '#00c853';
 
-    return(
-        <Box sx={{ display: 'flex', justifyContent: 'center', width: 260, height: 258, backgroundColor: '#777772', borderRadius: '16px'}}>
+    React.useEffect(() => {
+        setAltitude(ReadAltitude());
+    });
+
+    const drop = () => {
+        if (altitude <= dropHeight) {
+            setDropHeight(altitude);
+            setDropped(true);
+        }
+    }
+
+    const reset = () => {
+        setDropHeight(50);
+        setDropped(false);
+    }
+
+    return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: 260, height: 258, backgroundColor: '#777772', borderRadius: '16px' }}>
             <List>
                 <Typography align='center' lineHeight={0.5}>
                     <h3>
                         Altitude
                     </h3>
                     <h1>
-                        {ReadAltitude()} ft
+                        {altitude} ft
                     </h1>
                     <h3>
                         PADA Drop Height
@@ -31,18 +49,18 @@ function Altimeter() {
                     <Grid item sx={4}>
                         <Typography align='center' lineHeight={0}>
                             <h1>
-                                {dropHeight} ft
+                                {dropped ? dropHeight : '----'} ft
                             </h1>
                         </Typography>
                     </Grid>
                 </Grid>
                 <ListItem>
-                    <Button variant='contained' sx={{ width: 200, height: 30, backgroundColor: background, '&:hover': { backgroundColor: hover } }}>
+                    <Button variant='contained' onClick={drop} sx={{ width: 200, height: 30, backgroundColor: background, '&:hover': { backgroundColor: hover } }}>
                         Drop Pada
                     </Button>
                 </ListItem>
                 <ListItem>
-                    <Button variant='contained' sx={{ width: 200, height: 30 }}>
+                    <Button variant='contained' onClick={reset} sx={{ width: 200, height: 30 }}>
                         Reset
                     </Button>
                 </ListItem>
@@ -54,7 +72,7 @@ function Altimeter() {
 function ReadAltitude() {
     // This will be where the function occurs to read the altitude from the sensor
     // Can also be connected to a potential function for reading simulated altitude
-    return 12.69;
+    return 43;
 }
 
 function CanDrop(dropHeight) {
