@@ -3,6 +3,11 @@ const { InterByteTimeoutParser } = require('@serialport/parser-inter-byte-timeou
 const WebSocket = require('ws');
 require('dotenv').config({ path: '../.env' })
 
+const PRINT_INCOMING_MESSAGES = true;
+const PRINT_OUTBOUND_MESSAGE = true;
+const PRINT_USB_CONNECTION_MESSAGES = true;
+const PRINT_WS_CONNECTION_MESSAGES = true;
+const GENERATE_MESSAGE_ACKS = false;
 const PARSER_TIMEOUT = 300;
 
 const { Message } = require('./message/message_pb');
@@ -15,7 +20,9 @@ let device = null;
 let parser = null;
 
 ws.on('open', (ws) => {
-    console.log('Connected to backend')
+    if(PRINT_WS_CONNECTION_MESSAGES) {
+        console.log('Connected to backend')
+    }
 })
 
 // when a command is received from the backend
@@ -66,11 +73,15 @@ const select_device = async (device_to_connect) => {
     parser.on('data', handle_message);
     device.on('close', handle_close);
 
-    console.log(`Connected to ${device.path}`)
+    if(PRINT_USB_CONNECTION_MESSAGES) {
+        console.log(`Connected to ${device.path}`)
+    }
 }
 
 const handle_command = (command, args) => {
-    console.log(`Running command: ${command}`)
+    if(PRINT_OUTBOUND_MESSAGE) {
+        console.log(`Running command: ${command}`)
+    }
     const message = generate_command(Message.Location.PLANE, command)
     if(message == null) {
         console.log('Error generating command!');
@@ -88,21 +99,26 @@ const handle_message = (buffer) => {
         console.log('Error decoding: ' + error);
         return;
     }
-    console.log(`Message from ${get_location_name(decoded.getSender())}: Len: ${buffer.length}, RSSI: ${decoded.getRssi()}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `)
+    if(PRINT_INCOMING_MESSAGES) {
+        console.log(`Message from ${get_location_name(decoded.getSender())}: Len: ${buffer.length},
+                        RSSI: ${decoded.getRssi()}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `)
+    }
 
     let telemetry = decoded.toObject();
     ws.send(JSON.stringify(telemetry));
 
-    // send ack
-    // try {
-    //     const ack = generate_ack(Message.Location.PLANE);
-    //     const serialized_message = ack.serializeBinary();
-    //     write_to_device(device, serialized_message);
-    // }
-    // catch(error) {
-    //     console.log("Error sending ack")
-    //     console.log(error)
-    // }
+    if(GENERATE_MESSAGE_ACKS) {
+        // send ack
+        try {
+            const ack = generate_ack(Message.Location.PLANE);
+            const serialized_message = ack.serializeBinary();
+            write_to_device(device, serialized_message);
+        }
+        catch(error) {
+            console.log("Error sending ack")
+            console.log(error)
+        }
+    }
 }
 
 const handle_close = () => {
@@ -119,6 +135,9 @@ const write_to_device = async(dev, data) => {
 
     try {
         dev.write(data);
+        if(PRINT_OUTBOUND_MESSAGE) {
+            console.log('Message sent')
+        }
         return data;
     }
     catch(e) {
