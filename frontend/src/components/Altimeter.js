@@ -11,7 +11,7 @@ function Altimeter() {
     const [dropHeight, setDropHeight] = React.useState(50);
     const [altitude, setAltitude] = React.useState();
     const background = CanDrop(dropHeight) ? '#ff1744' : '#00e676';
-    const hover = CanDrop(dropHeight) ?  '#b2102f' : '#00c853';
+    // const hover = CanDrop(dropHeight) ?  '#b2102f' : '#00c853';
 
     React.useEffect(() => {
         setAltitude(ReadAltitude());
@@ -56,11 +56,11 @@ function Altimeter() {
                     </Grid>
                 </Grid>
                 <ListItem sx={{m: 0}}>
-                    <Button BackgroundColor = {background} ButtonText = "Drop Pada">
+                    <Button clickFn={drop} BackgroundColor = {background} ButtonText = "Drop Pada">
                     </Button>
                 </ListItem>
                 <ListItem>
-                    <Button ButtonText = "Reset">
+                    <Button clickFn={reset} ButtonText = "Reset">
                     </Button>
                 </ListItem>
             </List>
@@ -71,11 +71,11 @@ function Altimeter() {
 function ReadAltitude() {
     // This will be where the function occurs to read the altitude from the sensor
     // Can also be connected to a potential function for reading simulated altitude
-    return 43;
+    return 40;
 }
 
 function CanDrop(dropHeight) {
-    return (ReadAltitude() > dropHeight)   
+    return (ReadAltitude() >= dropHeight)   
 }
 
 export default Altimeter;
