@@ -36,3 +36,5 @@ const server = app.listen(node_port, () => {
   console.log(`Server started on port ${node_port} in mode ${node_env}`);
 });
 
+
+const data_interface = require('./data_interface/data_interface')

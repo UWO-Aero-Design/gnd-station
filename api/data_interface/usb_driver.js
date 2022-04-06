@@ -8,8 +8,13 @@ const init = () => {
 
 const event = new events.EventEmitter();
 
+const process_command = (command, args) => {
+    console.log(`Sending command ${command} with args ${args}`)
+}
+
 module.exports = {
     name,
     init,
-    event
+    event,
+    process_command
 }
