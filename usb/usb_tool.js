@@ -21,7 +21,7 @@ let parser = null;
 
 const on_ws_open = (ws) => {
     if(PRINT_WS_CONNECTION_MESSAGES) {
-        console.log('Connected to backend')
+        console.log(`Connected to backend through port ${port}`)
     }
 }
 
@@ -44,6 +44,11 @@ const on_ws_message = (message) => {
             case 'COMMAND':
                 handle_command(message.command, message.arguments);
                 break;
+
+            // invalid message.type (let the backend know it messed up)
+            default:
+                ws.send(JSON.stringify({error: "The command contains an invalid type"}));
+
         }
     }
 }
@@ -81,11 +86,18 @@ const select_device = async (device_to_connect) => {
     }
 }
 
+// From the backend for the plane
 const handle_command = (command, args) => {
     if(PRINT_OUTBOUND_MESSAGE) {
         console.log(`Running command: ${command}`)
     }
-    const message = generate_command(Message.Location.PLANE, command)
+
+    try {
+        var message = generate_command(Message.Location.PLANE, command)
+    } catch(error) {
+        console.log(error);
+    }
+
     if(message == null) {
         console.log('Error generating command!');
         return;
@@ -94,6 +106,7 @@ const handle_command = (command, args) => {
     write_to_device(device, serialized_message)
 }
 
+// Stuff from the plane to the gnd station
 const handle_message = (buffer) => {
     let decoded;
     try {
@@ -128,6 +141,16 @@ const handle_close = () => {
     device = null;
 }
 
+/*
+https://serialport.io/docs/api-stream#write
+Error may be related to the following:
+
+Some devices, like the Arduino, reset when you open a connection to them. In such cases, 
+immediately writing to the device will cause transmitted data to be lost as the devices 
+won't be ready to receive the data. This is often worked around by having the Arduino 
+send a "ready" byte that your Node program awaits before writing. You can also often get 
+away with waiting a set amount, around 400ms. See the ReadyParser for a solution to this.
+*/
 const write_to_device = async(dev, data) => {
     // TODO: keep getting decode errors (receive) when sending a message
     if(dev == null) {
@@ -172,13 +195,16 @@ const generate_command = (to, command, args) => {
             // TODO: change to DROP_PADA
             message.setCommandsList([ Message.Command.DROP_GLIDERS ]);
             break;
+
         case 'SERVO_CONFIG':
             if(!args) {
-                console.log('Error: no args given for servo config')
-                return null;
+                throw "Error: no args given for servo config";
             }
             message.setServosList(args)
             break;
+
+        default:
+            throw `Error: The command ${command} is unsupported`;
     }
 
     return message;
