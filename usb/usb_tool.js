@@ -1,4 +1,5 @@
-const { SerialPort } = require('serialport') 
+const { SerialPort } = require('serialport')
+const { usbDetect } = require('usb-detection');
 const { InterByteTimeoutParser } = require('@serialport/parser-inter-byte-timeout')
 const WebSocket = require('ws');
 require('dotenv').config({ path: '../.env' })
@@ -55,6 +56,7 @@ const on_ws_message = (message) => {
 
 const ws_on_close = (code) => {
     console.log(`CLOSED: ${code}`)
+    usbDetect.stopMonitoring()
 }
 
 const ws_connect = () => {
@@ -63,6 +65,31 @@ const ws_connect = () => {
     ws.on('close', ws_on_close)
 }
 ws_connect()
+
+usbDetect.on('add', function(usb_port) { 
+    const devices = await get_device_list();
+    let potential_devices = []
+
+    if ((usb_port.manufacturer.toLowerCase().includes('arduino')) || 
+            usb_port.manufacturer.toLowerCase().includes('teensyduino')) {
+        devices.forEach(device => {
+            // check to see if the device has a manufacturer property
+            if(device.manufacturer) {
+                if(device.manufacturer.toLowerCase().includes('arduino')) potential_devices.push(device)
+                if(device.manufacturer.toLowerCase().includes('teensyduino')) potential_devices.push(device)
+            }
+        })
+        // if there was a single potential match
+        if(potential_devices.length == 1) {
+            const path = potential_devices[0].path 
+            console.log(`Auto connected to ${path}`)
+            select_device({ path })
+        } else {
+            usbDetect.startMonitoring();
+        }
+        usbDetect.startMonitoring();
+    }
+});
 
 const get_device_list = async() => {
     const list = await SerialPort.list()
@@ -84,6 +111,8 @@ const select_device = async (device_to_connect) => {
     if(PRINT_USB_CONNECTION_MESSAGES) {
         console.log(`Connected to ${device.path}`)
     }
+
+    usbDetect.stopMonitoring()  // No longer need to look for usb connections
 }
 
 // From the backend for the plane
@@ -139,18 +168,9 @@ const handle_message = (buffer) => {
 const handle_close = () => {
     console.log(`Disconnected from ${device.path}`)
     device = null;
+    usbDetect.startMonitoring();
 }
 
-/*
-https://serialport.io/docs/api-stream#write
-Error may be related to the following:
-
-Some devices, like the Arduino, reset when you open a connection to them. In such cases, 
-immediately writing to the device will cause transmitted data to be lost as the devices 
-won't be ready to receive the data. This is often worked around by having the Arduino 
-send a "ready" byte that your Node program awaits before writing. You can also often get 
-away with waiting a set amount, around 400ms. See the ReadyParser for a solution to this.
-*/
 const write_to_device = async(dev, data) => {
     // TODO: keep getting decode errors (receive) when sending a message
     if(dev == null) {
@@ -236,6 +256,8 @@ const startup = async () => {
         const path = potential_devices[0].path 
         console.log(`Auto connected to ${path}`)
         select_device({ path })
+    } else {
+        usbDetect.startMonitoring();
     }
 }
 startup();
