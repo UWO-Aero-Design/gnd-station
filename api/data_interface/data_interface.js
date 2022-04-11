@@ -1,4 +1,5 @@
 const USB_DRIVER = require('./usb_driver')
+const DUMMY_DRIVER = require('./dummy_driver')
 
 /* all drivers should have the following:
  *  - a name string property to be used for driver selection
@@ -10,10 +11,11 @@ const USB_DRIVER = require('./usb_driver')
  *      - error: for any errors that occur
  */
 const drivers = [
-    USB_DRIVER
+    USB_DRIVER,
+    DUMMY_DRIVER
 ]
 let current_driver;
-const DEFAULT_DRIVER = 'USB_DRIVER';
+const DEFAULT_DRIVER = 'DUMMY_DRIVER';
 
 const init = () => {
     current_driver = select_driver('USB_DRIVER');

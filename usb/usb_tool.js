@@ -19,21 +19,20 @@ const ws = new WebSocket(`ws://localhost:${port}`);
 let device = null;
 let parser = null;
 
-ws.on('open', (ws) => {
+const on_ws_open = (ws) => {
     if(PRINT_WS_CONNECTION_MESSAGES) {
         console.log('Connected to backend')
     }
-})
+}
 
-// when a command is received from the backend
-ws.on('message', (message) => {
+const on_ws_message = (message) => {
     message = JSON.parse(message);
     if(message.recipient == 'USB_TOOL') {
         switch(message.type) {
             // message: { recipient: 'USB_TOOL', type: 'LIST_DEVICES' }
             case 'LIST_DEVICES':
-                const message = get_device_list();
-                ws.send(JSON.stringify(message));
+                const devices = get_device_list();
+                ws.send(JSON.stringify({ recipient: 'BACKEND', type: 'LIST_DEVICES', devices }));
                 break;
 
             // message: { recipient: 'USB_TOOL, type: 'SELECT_DEVICE', device: { ... } }
@@ -47,18 +46,22 @@ ws.on('message', (message) => {
                 break;
         }
     }
-})
+}
+
+const ws_on_close = (code) => {
+    console.log(`CLOSED: ${code}`)
+}
+
+const ws_connect = () => {
+    ws.on('open', on_ws_open)
+    ws.on('message', on_ws_message)
+    ws.on('close', ws_on_close)
+}
+ws_connect()
 
 const get_device_list = async() => {
     const list = await SerialPort.list()
-
-    const message = {
-        recipient: 'BACKEND',
-        type: 'LIST_DEVICES',
-        devices: list
-    }
-
-    return message;
+    return list;
 }
 
 const select_device = async (device_to_connect) => {
@@ -100,8 +103,7 @@ const handle_message = (buffer) => {
         return;
     }
     if(PRINT_INCOMING_MESSAGES) {
-        console.log(`Message from ${get_location_name(decoded.getSender())}: Len: ${buffer.length},
-                        RSSI: ${decoded.getRssi()}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `)
+        console.log(`Message from ${get_location_name(decoded.getSender())}: Len: ${buffer.length}, RSSI: ${decoded.getRssi()}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `)
     }
 
     let telemetry = decoded.toObject();
@@ -192,6 +194,22 @@ const get_location_name = (loc) => {
 }
 
 const startup = async () => {
-    select_device({ path: '/dev/tty.usbmodem1432201' })
+    const devices = await get_device_list();
+    let potential_devices = []
+
+    devices.forEach(device => {
+        // check to see if the device has a manufacturer property
+        if(device.manufacturer) {
+            if(device.manufacturer.toLowerCase().includes('arduino')) potential_devices.push(device)
+            if(device.manufacturer.toLowerCase().includes('teensyduino')) potential_devices.push(device)
+        }
+    })
+
+    // if there was a single potential match
+    if(potential_devices.length == 1) {
+        const path = potential_devices[0].path 
+        console.log(`Auto connected to ${path}`)
+        select_device({ path })
+    }
 }
 startup();
