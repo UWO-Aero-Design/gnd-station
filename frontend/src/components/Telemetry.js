@@ -37,8 +37,8 @@ function Telemetry() {
   return(
     // <div>
       <Battery
-        voltage={telemetry.battery?.voltage}
-        current={telemetry.battery?.current}
+      voltage={telemetry === undefined ? 0 : telemetry.battery.voltage}
+      current={telemetry === undefined ? 0 : telemetry.battery.current}
       />
     //   <IMU 
     //     ax = {telemetry.imu.ax}
