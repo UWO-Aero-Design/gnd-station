@@ -1,7 +1,7 @@
 import { Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import React from 'react';
 import Button from './Button';
-import Telemetry from '../TelemetryComponents/Telemetry'
+import Telemetry from './Telemetry'
 
 function Status() {
 
