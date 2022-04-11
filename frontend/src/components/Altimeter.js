@@ -15,7 +15,7 @@ function Altimeter() {
 
     React.useEffect(() => {
         setAltitude(ReadAltitude());
-    });
+    },[]);
 
     const drop = () => {
         if (altitude <= dropHeight) {

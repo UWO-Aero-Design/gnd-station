@@ -1,6 +1,7 @@
 import { Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import React from 'react';
 import Button from './Button';
+import Telemetry from '../TelemetryComponents/Telemetry'
 
 function Status() {
 
@@ -43,6 +44,7 @@ function Status() {
             <Button BackgroundColor = {background} ButtonText = {statusText} 
             Style = {{display:'inline-box',width: '30%', height: '15%',position:'absolute', marginTop:'20px'}}
             />
+            <Telemetry/>
         </Box>
         
         
