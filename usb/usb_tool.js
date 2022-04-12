@@ -13,7 +13,7 @@ const PARSER_TIMEOUT = 300;
 const { Message } = require('./message/message_pb');
 const { ReadyParser } = require('serialport');
 
-const port = process.env.WS_PORT || 5001;
+const port = process.env.API_PORT || 5000;
 const ws = new WebSocket(`ws://localhost:${port}`);
 
 let device = null;
