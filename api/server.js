@@ -2,7 +2,6 @@ const path = require('path');
 
 const express = require('express');
 const morgan = require('morgan');
-// const dotenv = require('dotenv').config({ path: '../.env' })
 const dotenv = require('dotenv').config()
 
 // app configuration
@@ -32,9 +31,8 @@ app.use('/record', require('./routes/RecordRoute'))
 app.use('/ground', require('./routes/GroundRoute'))
 app.use('/command', require('./routes/CommandRoute'))
 
+const data_interface = require('./services/data_interface/data_interface')
+
 const server = app.listen(node_port, () => {
   console.log(`Server started on port ${node_port} in mode ${node_env}`);
 });
-
-// for testing only
-const data_interface = require('./services/data_interface/data_interface')
