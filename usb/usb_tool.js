@@ -67,26 +67,10 @@ const ws_connect = () => {
 ws_connect()
 
 usbDetect.on('add', function(usb_port) { 
-    const devices = await get_device_list();
-    let potential_devices = []
 
     if ((usb_port.manufacturer.toLowerCase().includes('arduino')) || 
             usb_port.manufacturer.toLowerCase().includes('teensyduino')) {
-        devices.forEach(device => {
-            // check to see if the device has a manufacturer property
-            if(device.manufacturer) {
-                if(device.manufacturer.toLowerCase().includes('arduino')) potential_devices.push(device)
-                if(device.manufacturer.toLowerCase().includes('teensyduino')) potential_devices.push(device)
-            }
-        })
-        // if there was a single potential match
-        if(potential_devices.length == 1) {
-            const path = potential_devices[0].path 
-            console.log(`Auto connected to ${path}`)
-            select_device({ path })
-        } else {
-            usbDetect.startMonitoring();
-        }
+        startup();
     }
 });
 
