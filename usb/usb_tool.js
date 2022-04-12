@@ -87,7 +87,6 @@ usbDetect.on('add', function(usb_port) {
         } else {
             usbDetect.startMonitoring();
         }
-        usbDetect.startMonitoring();
     }
 });
 
