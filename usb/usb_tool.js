@@ -70,7 +70,10 @@ usbDetect.on('add', function(usb_port) {
 
     if ((usb_port.manufacturer.toLowerCase().includes('arduino')) || 
             usb_port.manufacturer.toLowerCase().includes('teensyduino')) {
-        startup();
+                // usb-detection seems to discover devices before SerialPort has access to them
+                // not the prettiest solution but adding a small delay resolves these issues on Mac
+                // TODO: test to see if these issues occur on Windows and Linux
+                setTimeout(startup, 500);
     }
 });
 
