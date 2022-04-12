@@ -59,10 +59,14 @@ const init = () => {
         wss.get_websocket().on('connection', (ws) => {
             // when a message is received on that connection...
             ws.on('message', (message) => {
-                const { command, args } = JSON.parse(message)
+                message = JSON.parse(message);
+
+                if(message.sender === 'FRONTEND' && message.type === 'COMMAND') {
+                    const { command, args } = message
                 if(driver.name === current_driver.name) {
                     event.emit('command', JSON.stringify({ command, args }))
                     current_driver.process_command(command, args)
+                    }
                 }
             })
         })
