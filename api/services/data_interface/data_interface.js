@@ -1,5 +1,5 @@
 const WebSocket = require('ws')
-const wss = require('../websocket/ws')
+const wss = require('../websocket/ws').get_websocket();
 const USB_DRIVER = require('./usb_driver')
 const DUMMY_DRIVER = require('./dummy_driver')
 

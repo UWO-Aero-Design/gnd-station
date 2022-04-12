@@ -1,4 +1,6 @@
 const path = require('path');
+const http = require('http')
+const wss = require('./services/websocket/ws')
 
 const express = require('express');
 const morgan = require('morgan');
@@ -10,7 +12,6 @@ require('./config/database.js').connect()
 const node_port = process.env.API_PORT;
 const node_env = process.env.NODE_ENV || 'development';
 const app = express();
-const wss = require('./services/websocket/ws')
 
 // middlewares
 app.use(express.static(path.join(__dirname, 'public')));
@@ -31,8 +32,14 @@ app.use('/record', require('./routes/RecordRoute'))
 app.use('/ground', require('./routes/GroundRoute'))
 app.use('/command', require('./routes/CommandRoute'))
 
-const data_interface = require('./services/data_interface/data_interface')
-
-const server = app.listen(node_port, () => {
+// create an http server out of the express app (so we can attach the websocket to the http server)
+const server = http.createServer(app)
+server.listen(node_port, () => {
   console.log(`Server started on port ${node_port} in mode ${node_env}`);
 });
+
+// pass the http server into the websocket module
+wss.get_websocket(server);
+
+// data interface requires the web socket to be setup
+const data_interface = require('./services/data_interface/data_interface')
