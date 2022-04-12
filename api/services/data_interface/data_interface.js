@@ -63,9 +63,9 @@ const init = () => {
 
                 if(message.sender === 'FRONTEND' && message.type === 'COMMAND') {
                     const { command, args } = message
-                if(driver.name === current_driver.name) {
-                    event.emit('command', JSON.stringify({ command, args }))
-                    current_driver.process_command(command, args)
+                    if(driver.name === current_driver.name) {
+                        event.emit('command', JSON.stringify({ command, args }))
+                        current_driver.process_command(command, args)
                     }
                 }
             })
