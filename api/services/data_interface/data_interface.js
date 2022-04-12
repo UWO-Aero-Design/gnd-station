@@ -1,4 +1,6 @@
 const WebSocket = require('ws')
+const events = require('events');
+
 const wss = require('../websocket/ws')
 const USB_DRIVER = require('./usb_driver')
 const DUMMY_DRIVER = require('./dummy_driver')
@@ -6,13 +8,20 @@ const DUMMY_DRIVER = require('./dummy_driver')
 const PRINT_TELEMETRY_MESSAGES = false;
 const PRINT_DRIVER_MESSAGES = true;
 
+const event = new events.EventEmitter();
+
+/* the data interface has an event emitter with the following event channels
+ *      - telemetry: for data to be sent to the frontend -> { data: { ... } }
+ *      - command: for data to be sent to the aircraft -> { command: '', args: { ... } }
+ *      - error: for any errors that occur -> { error: '', message: '' }
+ */
+
 /* all drivers should have the following:
  *  - a name string property to be used for driver selection
  *  - a init() function to perform any required startup routines
  *  - a process_command(command, args) function that will handle inbound commands from the frontend
  *  - a event emitter called event with the following event channels
  *      - telemetry: for data to be sent to the frontend -> { data: { ... } }
- *      - command: for data to be sent to the aircraft -> { command: '', args: { ... } }
  *      - error: for any errors that occur -> { error: '', message: '' }
  */
 const DEFAULT_DRIVER = DUMMY_DRIVER;
@@ -28,9 +37,9 @@ const init = () => {
         driver.init();
 
         // set up event handling on each driver
-        // event: { data: { ... } }
-        driver.event.on('telemetry', (event) => {
-            const data = JSON.parse(event).data
+        // telemetry: { data: { ... } }
+        driver.event.on('telemetry', (telemetry) => {
+            const data = JSON.parse(telemetry).data
             if(PRINT_TELEMETRY_MESSAGES) {
                 console.log(`Received telemetry from ${driver.name} (packet #: ${data.packet_number})`)
             }
@@ -39,6 +48,7 @@ const init = () => {
             if(driver.name === current_driver.name) {
                 wss.get_websocket().clients.forEach(client => {
                     if (client.readyState === WebSocket.OPEN) {
+                        event.emit('telemetry', JSON.stringify({ data }))
                         client.send(JSON.stringify(data))
                     }
                 })
@@ -48,18 +58,20 @@ const init = () => {
         // for each web socket connection...
         wss.get_websocket().on('connection', (ws) => {
             // when a message is received on that connection...
-            ws.on('message', (event) => {
-                const { command, args } = JSON.parse(event)
+            ws.on('message', (message) => {
+                const { command, args } = JSON.parse(message)
                 if(driver.name === current_driver.name) {
+                    event.emit('command', JSON.stringify({ command, args }))
                     current_driver.process_command(command, args)
                 }
             })
         })
 
-        // event: { error: '', message: '' }
-        driver.event.on('error', (event) => {
-            event = JSON.parse(event)
-            console.log(`Received error from ${driver.name}: ${event.error} - ${event.message}`)
+        // error: { error: '', message: '' }
+        driver.event.on('error', (err) => {
+            const { error, message } = JSON.parse(err)
+            console.log(`Received error from ${driver.name}: ${error} - ${message}`)
+            event.emit('error', JSON.stringify({ error, message }))
         })
     })
 }
@@ -112,5 +124,6 @@ module.exports = {
     select_current_driver,
     get_current_driver,
     process_command,
-    init
+    init,
+    event
 }
