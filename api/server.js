@@ -31,6 +31,7 @@ app.use('/onboardconfig', require('./routes/OnboardRoute'))
 app.use('/record', require('./routes/RecordRoute'))
 app.use('/ground', require('./routes/GroundRoute'))
 app.use('/command', require('./routes/CommandRoute'))
+app.use('/driver', require('./routes/DriverRoute'))
 
 // create an http server out of the express app (so we can attach the websocket to the http server)
 const server = http.createServer(app)
@@ -42,4 +43,4 @@ server.listen(node_port, () => {
 wss.get_websocket(server);
 
 // data interface requires the web socket to be setup
-const data_interface = require('./services/data_interface/data_interface')
+const data_interface = require('./services/data_interface/data_interface').init();

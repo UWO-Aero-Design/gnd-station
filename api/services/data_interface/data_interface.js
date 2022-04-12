@@ -1,5 +1,5 @@
 const WebSocket = require('ws')
-const wss = require('../websocket/ws').get_websocket();
+const wss = require('../websocket/ws')
 const USB_DRIVER = require('./usb_driver')
 const DUMMY_DRIVER = require('./dummy_driver')
 
@@ -37,7 +37,7 @@ const init = () => {
 
             // only run code for the selected driver
             if(driver.name === current_driver.name) {
-                wss.clients.forEach(client => {
+                wss.get_websocket().clients.forEach(client => {
                     if (client.readyState === WebSocket.OPEN) {
                         client.send(JSON.stringify(data))
                     }
@@ -46,7 +46,7 @@ const init = () => {
         })
 
         // for each web socket connection...
-        wss.on('connection', (ws) => {
+        wss.get_websocket().on('connection', (ws) => {
             // when a message is received on that connection...
             ws.on('message', (event) => {
                 const { command, args } = JSON.parse(event)
@@ -86,7 +86,19 @@ const get_current_driver = () => {
 }
 
 const select_current_driver = (driver_name) => {
-    current_driver = get_driver(driver_name);
+    const desired_driver = get_driver(driver_name);
+    if(!desired_driver == null) {
+        current_driver = desired_driver;
+    }
+    return desired_driver.name;
+}
+
+const get_all_drivers = () => {
+    let names = [];
+    drivers.forEach(driver => {
+        names.push(driver.name)
+    })
+    return names;
 }
 
 const process_command = (command, args) => {
@@ -96,9 +108,9 @@ const process_command = (command, args) => {
 }
 
 module.exports = {
+    get_all_drivers,
     select_current_driver,
     get_current_driver,
-    process_command
+    process_command,
+    init
 }
-
-init();
