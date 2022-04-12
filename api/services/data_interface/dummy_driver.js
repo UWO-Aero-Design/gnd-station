@@ -17,7 +17,7 @@ const init = () => {
 
 const process_command = (command, args) => {
     // pretend to process a command
-    console.log(`[Dummy driver] Sending command ${command} with args ${args}`)
+    console.log(`[Dummy driver] Sending command ${command} with args ${JSON.stringify(args)}`)
 }
 
 // the following code generates random data
