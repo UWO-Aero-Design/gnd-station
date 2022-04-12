@@ -8,7 +8,7 @@ const dotenv = require('dotenv').config()
 
 // app configuration
 require('dotenv').config({path: path.join(__dirname, '..', '.env')})
-require('./config/database.js').connect()
+require('./services/database/database').connect()
 const node_port = process.env.API_PORT;
 const node_env = process.env.NODE_ENV || 'development';
 const app = express();
