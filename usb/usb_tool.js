@@ -1,4 +1,5 @@
-const { SerialPort } = require('serialport') 
+const { SerialPort } = require('serialport')
+const usbDetect = require('usb-detection');
 const { InterByteTimeoutParser } = require('@serialport/parser-inter-byte-timeout')
 const WebSocket = require('ws');
 require('dotenv').config({ path: '../.env' })
@@ -13,27 +14,26 @@ const PARSER_TIMEOUT = 300;
 const { Message } = require('./message/message_pb');
 const { ReadyParser } = require('serialport');
 
-const port = process.env.WS_PORT || 5001;
+const port = process.env.API_PORT || 5000;
 const ws = new WebSocket(`ws://localhost:${port}`);
 
 let device = null;
 let parser = null;
 
-ws.on('open', (ws) => {
+const on_ws_open = (ws) => {
     if(PRINT_WS_CONNECTION_MESSAGES) {
-        console.log('Connected to backend')
+        console.log(`Connected to backend through port ${port}`)
     }
-})
+}
 
-// when a command is received from the backend
-ws.on('message', (message) => {
+const on_ws_message = (message) => {
     message = JSON.parse(message);
     if(message.recipient == 'USB_TOOL') {
         switch(message.type) {
             // message: { recipient: 'USB_TOOL', type: 'LIST_DEVICES' }
             case 'LIST_DEVICES':
-                const message = get_device_list();
-                ws.send(JSON.stringify(message));
+                const devices = get_device_list();
+                ws.send(JSON.stringify({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'LIST_DEVICES', devices }));
                 break;
 
             // message: { recipient: 'USB_TOOL, type: 'SELECT_DEVICE', device: { ... } }
@@ -45,20 +45,41 @@ ws.on('message', (message) => {
             case 'COMMAND':
                 handle_command(message.command, message.arguments);
                 break;
+
+            // invalid message.type (let the backend know it messed up)
+            default:
+                ws.send(JSON.stringify({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'ERROR', message: 'The command contains an invalid type' }));
+
         }
     }
-})
+}
+
+const ws_on_close = (code) => {
+    console.log(`CLOSED: ${code}`)
+    usbDetect.stopMonitoring()
+}
+
+const ws_connect = () => {
+    ws.on('open', on_ws_open)
+    ws.on('message', on_ws_message)
+    ws.on('close', ws_on_close)
+}
+ws_connect()
+
+usbDetect.on('add', function(usb_port) { 
+
+    if ((usb_port.manufacturer.toLowerCase().includes('arduino')) || 
+            usb_port.manufacturer.toLowerCase().includes('teensyduino')) {
+                // usb-detection seems to discover devices before SerialPort has access to them
+                // not the prettiest solution but adding a small delay resolves these issues on Mac
+                // TODO: test to see if these issues occur on Windows and Linux
+                setTimeout(startup, 500);
+    }
+});
 
 const get_device_list = async() => {
     const list = await SerialPort.list()
-
-    const message = {
-        recipient: 'BACKEND',
-        type: 'LIST_DEVICES',
-        devices: list
-    }
-
-    return message;
+    return list;
 }
 
 const select_device = async (device_to_connect) => {
@@ -76,13 +97,22 @@ const select_device = async (device_to_connect) => {
     if(PRINT_USB_CONNECTION_MESSAGES) {
         console.log(`Connected to ${device.path}`)
     }
+
+    usbDetect.stopMonitoring()  // No longer need to look for usb connections
 }
 
+// From the backend for the plane
 const handle_command = (command, args) => {
     if(PRINT_OUTBOUND_MESSAGE) {
         console.log(`Running command: ${command}`)
     }
-    const message = generate_command(Message.Location.PLANE, command)
+
+    try {
+        var message = generate_command(Message.Location.PLANE, command)
+    } catch(error) {
+        console.log(error);
+    }
+
     if(message == null) {
         console.log('Error generating command!');
         return;
@@ -91,6 +121,7 @@ const handle_command = (command, args) => {
     write_to_device(device, serialized_message)
 }
 
+// Stuff from the plane to the gnd station
 const handle_message = (buffer) => {
     let decoded;
     try {
@@ -100,12 +131,11 @@ const handle_message = (buffer) => {
         return;
     }
     if(PRINT_INCOMING_MESSAGES) {
-        console.log(`Message from ${get_location_name(decoded.getSender())}: Len: ${buffer.length},
-                        RSSI: ${decoded.getRssi()}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `)
+        console.log(`Message from ${get_location_name(decoded.getSender())}: Len: ${buffer.length}, RSSI: ${decoded.getRssi()}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `)
     }
 
     let telemetry = decoded.toObject();
-    ws.send(JSON.stringify(telemetry));
+    ws.send(JSON.stringify({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'TELEMETRY', telemetry }));
 
     if(GENERATE_MESSAGE_ACKS) {
         // send ack
@@ -124,10 +154,10 @@ const handle_message = (buffer) => {
 const handle_close = () => {
     console.log(`Disconnected from ${device.path}`)
     device = null;
+    usbDetect.startMonitoring();
 }
 
 const write_to_device = async(dev, data) => {
-    // TODO: keep getting decode errors (receive) when sending a message
     if(dev == null) {
         console.log('Error writing: no device selected');
         return;
@@ -170,13 +200,16 @@ const generate_command = (to, command, args) => {
             // TODO: change to DROP_PADA
             message.setCommandsList([ Message.Command.DROP_GLIDERS ]);
             break;
+
         case 'SERVO_CONFIG':
             if(!args) {
-                console.log('Error: no args given for servo config')
-                return null;
+                throw "Error: no args given for servo config";
             }
             message.setServosList(args)
             break;
+
+        default:
+            throw `Error: The command ${command} is unsupported`;
     }
 
     return message;
@@ -192,6 +225,24 @@ const get_location_name = (loc) => {
 }
 
 const startup = async () => {
-    select_device({ path: '/dev/tty.usbmodem1432201' })
+    const devices = await get_device_list();
+    let potential_devices = []
+
+    devices.forEach(device => {
+        // check to see if the device has a manufacturer property
+        if(device.manufacturer) {
+            if(device.manufacturer.toLowerCase().includes('arduino')) potential_devices.push(device)
+            if(device.manufacturer.toLowerCase().includes('teensyduino')) potential_devices.push(device)
+        }
+    })
+
+    // if there was a single potential match
+    if(potential_devices.length == 1) {
+        const path = potential_devices[0].path 
+        console.log(`Auto connected to ${path}`)
+        select_device({ path })
+    } else {
+        usbDetect.startMonitoring();
+    }
 }
 startup();
