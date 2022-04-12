@@ -11,7 +11,7 @@ require('./config/database.js').connect()
 const node_port = process.env.API_PORT;
 const node_env = process.env.NODE_ENV || 'development';
 const app = express();
-require('./config/ws')
+const wss = require('./services/websocket/ws')
 
 // middlewares
 app.use(express.static(path.join(__dirname, 'public')));
