@@ -7,7 +7,6 @@ router.get('/current', (req, res) => {
 });
 
 router.post('/current', (req, res) => { 
-    console.log(req.body)
     if(!req.body.driver_name) {
         res.status(400).json({ error: 'NoDriverGiven', message: 'No driver was specified in "driver_name"' });
         return;

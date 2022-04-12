@@ -169,13 +169,24 @@ paths:
         description: Command(s) to send
         content:
           application/json:
-            schema:
-              properties:
-                commands:
-                  type: array
-                  items:
-                    type: string
-                    enum: ["OPEN_DOORS", "CLOSE_DOORS", "DROP_PAYLOAD", "DROP_GLIDERS"]
+              schema:
+                properties:
+                  commands:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        command:
+                          type: string
+                          enum: ["DROP_PADA"]
+                        args:
+                          type: array
+                          items:
+                            type: string
+              example: [
+                command: 'DROP_PADA',
+                args: []
+              ]
       responses:
         200: 
           description: Accepted
