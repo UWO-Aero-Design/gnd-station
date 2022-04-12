@@ -33,7 +33,7 @@ const on_ws_message = (message) => {
             // message: { recipient: 'USB_TOOL', type: 'LIST_DEVICES' }
             case 'LIST_DEVICES':
                 const devices = get_device_list();
-                ws.send(JSON.stringify({ recipient: 'BACKEND', type: 'LIST_DEVICES', devices }));
+                ws.send(JSON.stringify({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'LIST_DEVICES', devices }));
                 break;
 
             // message: { recipient: 'USB_TOOL, type: 'SELECT_DEVICE', device: { ... } }
@@ -48,7 +48,7 @@ const on_ws_message = (message) => {
 
             // invalid message.type (let the backend know it messed up)
             default:
-                ws.send(JSON.stringify({error: "The command contains an invalid type"}));
+                ws.send(JSON.stringify({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'ERROR', message: 'The command contains an invalid type' }));
 
         }
     }
@@ -135,7 +135,7 @@ const handle_message = (buffer) => {
     }
 
     let telemetry = decoded.toObject();
-    ws.send(JSON.stringify(telemetry));
+    ws.send(JSON.stringify({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'TELEMETRY', telemetry }));
 
     if(GENERATE_MESSAGE_ACKS) {
         // send ack
