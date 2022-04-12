@@ -103,7 +103,7 @@ const get_current_driver = () => {
 
 const select_current_driver = (driver_name) => {
     const desired_driver = get_driver(driver_name);
-    if(!desired_driver == null) {
+    if(desired_driver != null) {
         current_driver = desired_driver;
     }
     return desired_driver.name;
