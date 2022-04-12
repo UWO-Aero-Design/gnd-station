@@ -49,7 +49,7 @@ const init = () => {
                 wss.get_websocket().clients.forEach(client => {
                     if (client.readyState === WebSocket.OPEN) {
                         event.emit('telemetry', JSON.stringify({ data }))
-                        client.send(JSON.stringify(data))
+                        client.send(JSON.stringify({ sender: 'BACKEND', recipient: 'FRONTEND', type: 'TELEMETRY', telemetry: data }))
                     }
                 })
             }
