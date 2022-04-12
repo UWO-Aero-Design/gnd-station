@@ -8,7 +8,6 @@ const event = new events.EventEmitter();
 
 
 const init = () => {
-    // TODO: setup event from USB tool websocket
     // for each web socket connection...
     wss.get_websocket().on('connection', (ws) => {
         // when a message is received on that connection...
