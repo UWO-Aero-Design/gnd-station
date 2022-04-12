@@ -158,7 +158,6 @@ const handle_close = () => {
 }
 
 const write_to_device = async(dev, data) => {
-    // TODO: keep getting decode errors (receive) when sending a message
     if(dev == null) {
         console.log('Error writing: no device selected');
         return;
