@@ -1,5 +1,5 @@
 const { SerialPort } = require('serialport')
-const { usbDetect } = require('usb-detection');
+const usbDetect = require('usb-detection');
 const { InterByteTimeoutParser } = require('@serialport/parser-inter-byte-timeout')
 const WebSocket = require('ws');
 require('dotenv').config({ path: '../.env' })
