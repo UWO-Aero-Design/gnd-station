@@ -1,5 +1,5 @@
 import { Typography, Box, List, Grid, ListItem } from '@mui/material';
-// import Brightness1Icon from '@mui/icons-material/Brightness1';
+import Brightness1Icon from '@mui/icons-material/Brightness1';
 import React from 'react';
 import Button from "./Button";
 
@@ -45,7 +45,7 @@ function Altimeter() {
                 </Typography>
                 <Grid container spacing={3} sx={{ display: 'flex' }}>
                     <Grid item sx={2}>
-                        {/* <Brightness1Icon sx={{ color: background }} /> */}
+                        <Brightness1Icon sx={{ color: background }} />
                     </Grid>
                     <Grid item sx={4}>
                         <Typography align='center' lineHeight={0}>
