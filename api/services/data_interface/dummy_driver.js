@@ -30,7 +30,7 @@ const generate_data = () => {
     let data = {
         sender: 1, // plane
         recipient: 0, // ground station
-        packet_number: packet_number,
+        packetNumber: packet_number,
         time: process.uptime(),
         status: 2, // READY
         rssi: -34,

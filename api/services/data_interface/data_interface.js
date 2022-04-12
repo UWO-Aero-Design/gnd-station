@@ -41,7 +41,7 @@ const init = () => {
         driver.event.on('telemetry', (telemetry) => {
             const data = JSON.parse(telemetry).data
             if(PRINT_TELEMETRY_MESSAGES) {
-                console.log(`Received telemetry from ${driver.name} (packet #: ${data.packet_number})`)
+                console.log(`Received telemetry from ${driver.name} (packet #: ${data.packetNumber})`)
             }
 
             // only run code for the selected driver
