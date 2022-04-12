@@ -25,12 +25,12 @@ const create_websocket = (server) => {
     
     wss.on('connection', (ws) => {
         if(PRINT_CONNECT_MESSAGES) {
-            console.log(`Connected to frontend: ${ws._socket.remoteAddress}`)
+            console.log(`Connected to client: ${ws._socket.remoteAddress}`)
         }
 
         ws.on('close', (code) => {
             if(PRINT_DISCONNECT_MESSAGES) {
-                console.log(`Disconnected from frontend: ${ws._socket.remoteAddress} (code: ${code})`)
+                console.log(`Disconnected from client: ${ws._socket.remoteAddress} (code: ${code})`)
             }
         })
     })
