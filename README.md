@@ -5,25 +5,28 @@
 Ground station web application for Western University Aero Design Mega-Team
 
 ## Overview
-The ground station runs a React frontend and a Node.js backend with a Mongo DB database. There is also an option OpenStreetMap container for serving map tiles to the map display.
+The ground station runs a React frontend and a Node.js backend with a Mongo DB database. Data is passed to the Docker containers via a USB tool over a Webscoket. There is also an option OpenStreetMap container for serving map tiles to the map display.
 
 ### Getting Started
 
 ```sh
 git clone https://github.com/UWO-Aero-Design/gnd-station.git
 cp sample.env .env # copies environment variables, modify as necessary
-docker compose up
+docker compose up frontend api db
 ```
-
-The server will be live on [http://localhost:5000](http://localhost:5000).
 
 ~~Note: because of [an issue](https://github.com/protocolbuffers/protobuf/issues/3571#issuecomment-566437265) with Google's Protocol Buffers, a quick patch is automatically run via `npm run patch`, which turns on certain assertions to allow for nested messages.~~ [to be moved to USB driver tool]
 
-The React server will be live on [http://localhost:3000](http://localhost:3000). To view logs from the frontend, backend, or database, instead of all three combined, open a new shell and use `docker compose logs <api|frontend|db> -f`. You can list multiple services to combine outputs (eg. `docker compose logs api frontend -f).
+The backend api is available on [http://localhost:5000](http://localhost:5000) for HTTP requests and Websocket connections. The React server will be live on [http://localhost:3000](http://localhost:3000). To view logs from the frontend, backend, or database, instead of all three combined, open a new shell and use `docker compose logs <api|frontend|db> -f`. You can list multiple services to combine outputs (eg. `docker compose logs api frontend -f`). Alternatively, you can start each service separately by using `docker compose up frontend`, `docker compose up backend`, `docker compose up db` in three separate shells.
 
 When done development, use `docker compose down` to clean everything up.
 
-If required, the Nodejs server is at [http://localhost:5000](http://localhost:5000), and the WebSocket server is at [http://localhost:5001](http://localhost:5001). Note: any container-to-container networking should use the container name for communication (eg. React container accesses Nodejs server via http://api:5000, where the port is the internal port used by the container)
+#### Live Telemetry
+Due to limitations in Docker being able to access USB devices on the host machine, a "usb tool" has been provided which will communicate over the NodeJS server's Websocket to deliver telemetry and send commands to/from the ground station hardware. To begin using this, open a new shell and start the usb tool:
+```sh
+node usb/usb_tool.js
+```
+Once started, the NodeJS internal data driver will have to be switched from the default, sample driver. Send a POST request to [http://localhost:5000/driver/current](http://localhost:5000/driver/current) with a JSON body of `{ "driver_name": "USB_DRIVER" }`. This can be done with [Postman](http://postman.com/), cURL, or the frontend, once it is implemented. Note: you must have the Aero ground station hardware plugged in or some hardware equivalent, otherwise no data will be read from the device (this uses the internal [Aero Message Protocol](https://github.com/UWO-Aero-Design/message/blob/master/proto/message.proto)).
 
 #### Database
 In order to reset the database, bring the containers down with `docker-compose down`, delete the `db` folder and then restart the database with `docker-compose up`.
