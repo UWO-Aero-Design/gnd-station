@@ -5,7 +5,7 @@ import Button from "./Button";
 
 // #00e676 #00c853
 
-function Altimeter() {
+function Altimeter({telemetry}) {
 
     const [dropped, setDropped] = React.useState(false);
     const [dropHeight, setDropHeight] = React.useState(50);
@@ -37,7 +37,7 @@ function Altimeter() {
                         Altitude
                     </h3>
                     <h1>
-                        {altitude} ft
+                        {telemetry === undefined ? 0 : telemetry.enviro.altitude} ft
                     </h1>
                     <h3>
                         PADA Drop Height

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 // const usb_device = require('./usb').device
-const Record = require('../models/RecordingModel')
+const Record = require('../../models/RecordingModel')
 
 const user = process.env.DB_USER;
 const pass = process.env.DB_PASS;

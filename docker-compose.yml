@@ -10,7 +10,6 @@ services:
       - aero-network
     ports:
       - "${API_PORT}:5000"
-      - "${WS_PORT}:5001"
     volumes:
       - ./api:/home/node/app
       - /home/node/app/node_modules

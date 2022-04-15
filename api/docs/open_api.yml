@@ -20,7 +20,9 @@ tags:
 - name: "Ground"
   description: "Adjust configurations on the backend"
 - name: "Commands"
-  description: "Send commands to the aircraft or gliders"
+  description: "Send commands to the aircraft"
+- name: "Driver"
+  description: "Update the driver that is producing telemetry or consuming commands"
   
 paths:
   /onboardconfig/servo:
@@ -167,13 +169,24 @@ paths:
         description: Command(s) to send
         content:
           application/json:
-            schema:
-              properties:
-                commands:
-                  type: array
-                  items:
-                    type: string
-                    enum: ["OPEN_DOORS", "CLOSE_DOORS", "DROP_PAYLOAD", "DROP_GLIDERS"]
+              schema:
+                properties:
+                  commands:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        command:
+                          type: string
+                          enum: ["DROP_PADA"]
+                        args:
+                          type: array
+                          items:
+                            type: string
+              example: [
+                command: 'DROP_PADA',
+                args: []
+              ]
       responses:
         200: 
           description: Accepted
@@ -181,6 +194,87 @@ paths:
           decsription: No command specified
         406:
           description: Invalid Command
+
+  /driver/all:
+    get:
+      tags:
+      - Driver
+      summary: Get all drivers
+      description: returns a list of available data drivers
+      responses:
+        200:
+          description: Success
+          content:
+            application/json: 
+              schema:
+                properties:
+                  drivers: 
+                    type: array
+                    items:
+                      type: string 
+                    example: ["DUMMY_DRIVER", "USB_DRIVER"]
+  /driver/current:
+    get:
+      tags:
+      - Driver
+      summary: Get the current data driver
+      description: returns a string representing the current data driver
+      responses:
+        200:
+          description: Success
+          content:
+            application/json: 
+              schema:
+                properties:
+                  driver: 
+                    type: string
+                    example: "USB_DRIVER"
+    post:
+      tags:
+      - Driver
+      summary: Select the current data driver
+      description: Updates the current driver to the requested data driver
+      parameters:
+      - name: driver_name
+        in: query
+        required: true
+        schema:
+          type: string
+          example: "USB_DRIVER"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json: 
+              schema:
+                properties:
+                  driver: 
+                    type: string 
+                    example: "USB_DRIVER"
+        400:
+          description: No driver specified
+          content:
+            application/json: 
+              schema:
+                properties:
+                  error: 
+                    type: string 
+                    enum: [ NoDriverGiven ]
+                  message: 
+                    type: string
+                    enum: [ "No driver was specified in \"driver_name\"" ]
+        406:
+          description: Invalid data driver string
+          content:
+            application/json: 
+              schema:
+                properties:
+                  error: 
+                    type: string 
+                    enum: [ InvalidDriver ]
+                  message: 
+                    type: string
+                    enum: [ "The specified driver in \"driver_name\" is invalid" ]
               
         
           
