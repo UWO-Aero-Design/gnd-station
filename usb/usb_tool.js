@@ -5,11 +5,12 @@ const WebSocket = require('ws');
 require('dotenv').config({ path: '../.env' })
 
 const PRINT_INCOMING_MESSAGES = true;
-const PRINT_OUTBOUND_MESSAGE = true;
+const PRINT_OUTBOUND_MESSAGE = false;
 const PRINT_USB_CONNECTION_MESSAGES = true;
 const PRINT_WS_CONNECTION_MESSAGES = true;
 const GENERATE_MESSAGE_ACKS = false;
-const PARSER_TIMEOUT = 300;
+const SEND_HEARTBEAT_INTERVAL = 200;
+const PARSER_TIMEOUT = 50;
 
 const { Message } = require('./message/message_pb');
 const { ReadyParser } = require('serialport');
@@ -19,6 +20,8 @@ const ws = new WebSocket(`ws://localhost:${port}`);
 
 let device = null;
 let parser = null;
+let heartbeat_interval = null;
+let packet_number = 0;
 
 const on_ws_open = (ws) => {
     if(PRINT_WS_CONNECTION_MESSAGES) {
@@ -94,6 +97,8 @@ const select_device = async (device_to_connect) => {
     parser.on('data', handle_message);
     device.on('close', handle_close);
 
+    heartbeat_interval = setInterval(send_heartbeat, SEND_HEARTBEAT_INTERVAL);
+
     if(PRINT_USB_CONNECTION_MESSAGES) {
         console.log(`Connected to ${device.path}`)
     }
@@ -136,24 +141,12 @@ const handle_message = (buffer) => {
 
     let telemetry = decoded.toObject();
     ws.send(JSON.stringify({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'TELEMETRY', telemetry }));
-
-    if(GENERATE_MESSAGE_ACKS) {
-        // send ack
-        try {
-            const ack = generate_ack(Message.Location.PLANE);
-            const serialized_message = ack.serializeBinary();
-            write_to_device(device, serialized_message);
-        }
-        catch(error) {
-            console.log("Error sending ack")
-            console.log(error)
-        }
-    }
 }
 
 const handle_close = () => {
     console.log(`Disconnected from ${device.path}`)
     device = null;
+    clearInterval(heartbeat_interval);
     usbDetect.startMonitoring();
 }
 
@@ -176,24 +169,28 @@ const write_to_device = async(dev, data) => {
 }
 
 // generate an ack message
-const generate_ack = (to) => {
+const load_header = (to) => {
     let message = new Message()
     message.setSender(Message.Location.GROUND_STATION)
     message.setRecipient(to)
-    message.setPacketNumber(0);
+    message.setPacketNumber(packet_number++);
     message.setTime(Math.floor(new Date().getTime() / 1000));
     message.setStatus(Message.Status.READY);
     return message;
 }
 
+const send_heartbeat = () => {
+    if(!device) return;
+    let message = load_header(Message.Location.PLANE)
+    const serialized_message = message.serializeBinary();
+    if(!write_to_device(device, serialized_message)) {
+        console.log('Error sending heartbeat')
+    }
+}
+
 // generate a command message
 const generate_command = (to, command, args) => {
-    let message = new Message()
-    message.setSender(Message.Location.GROUND_STATION)
-    message.setRecipient(to)
-    message.setPacketNumber(0);
-    message.setTime(Math.floor(new Date().getTime() / 1000));
-    message.setStatus(Message.Status.READY);
+    let message = load_header(Message.Location.PLANE)
 
     switch(command) {
         case 'DROP_PADA':
