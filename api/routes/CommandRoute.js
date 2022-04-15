@@ -14,6 +14,7 @@ router.post('/', (req, res) => {
     }
 
     commands.forEach(command_item => {
+        if(!command_item.args) command_item.args = [];
         data_interface.process_command(command_item.command, command_item.args)
     })
 
