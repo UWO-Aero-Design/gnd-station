@@ -1,5 +1,6 @@
 const events = require('events');
 
+const WebSocket = require('ws');
 const wss = require('../websocket/ws')
 
 const name = 'USB_DRIVER'
@@ -24,6 +25,11 @@ const init = () => {
 
 const process_command = (command, args) => {
     console.log(`Sending command ${command} with args ${args}`)
+    wss.get_websocket().clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ sender: 'BACKEND', recipient: 'USB_TOOL', type: 'COMMAND', command: command, arguments: args }));
+    }
+    });
 }
 
 module.exports = {
