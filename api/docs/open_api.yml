@@ -191,7 +191,7 @@ paths:
         200: 
           description: Accepted
         400:
-          decsription: No command specified
+          description: No command specified
         406:
           description: Invalid Command
 
