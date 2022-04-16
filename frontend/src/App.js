@@ -15,7 +15,7 @@ function App() {
   const ws = useRef(null);
   
   useEffect(()=>{
-    ws.current= new W3CWebSocket('ws://127.0.0.1:3001');
+    ws.current= new W3CWebSocket('ws://localhost:5000');
     ws.current.onopen=() =>{
       console.log('connected');
     }
@@ -26,8 +26,9 @@ function App() {
 
     ws.current.onmessage = (message)=> {
       const data = JSON.parse(message.data);
-      setTelemetry(data);
-      //console.log(data);
+      const telemetry = data.telemetry
+      setTelemetry(telemetry);
+      console.log(data);
     }
 
   },[]);
