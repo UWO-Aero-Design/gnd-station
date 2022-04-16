@@ -1,7 +1,7 @@
 import { Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import React from 'react';
 import Button from './Button';
-import Telemetry from './Telemetry'
+import TelemetryStatus from './TelemetryStatus'
 
 function Status({telemetryStatus}) {
 
@@ -24,9 +24,9 @@ function Status({telemetryStatus}) {
 
     return(
         <Box sx={{ display: 'flex', justifyContent: 'center', width: 520, height: 224, backgroundColor: '#777772', borderRadius: '16px'}}>
-            <Telemetry
+            <TelemetryStatus
             //passing paramater as prop up the chain
-            telemetryData={telemetryStatus}/>
+            telemetry={telemetryStatus}/>
             <FormControl variant="standard" sx={{ m: 1, minWidth: 250 }}>
                 <InputLabel id="port-box">Select COM Port</InputLabel>
                 <Select

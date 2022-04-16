@@ -28,6 +28,10 @@ function Altimeter({telemetry}) {
         setDropHeight(50);
         setDropped(false);
     }
+    
+    //Declare altitude variable outside to be able to restrain it to 2 decimals per
+    //has to parseFloat, otherwise gives undefined error with toFixed function.
+    let alt = (parseFloat(telemetry.enviro.altitude).toFixed(2));
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', width: 260, height: 258, backgroundColor: '#777772', borderRadius: '16px' }}>
@@ -37,7 +41,7 @@ function Altimeter({telemetry}) {
                         Altitude
                     </h3>
                     <h1>
-                        {telemetry === undefined ? 0 : telemetry.enviro.altitude} ft
+                        {(telemetry === undefined ? 0 : alt)} ft
                     </h1>
                     <h3>
                         PADA Drop Height

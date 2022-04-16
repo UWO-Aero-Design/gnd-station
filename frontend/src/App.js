@@ -27,7 +27,7 @@ function App() {
     ws.current.onmessage = (message)=> {
       const data = JSON.parse(message.data);
       setTelemetry(data);
-      console.log(data);
+      //console.log(data);
     }
 
   },[]);
