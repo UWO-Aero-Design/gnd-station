@@ -13,7 +13,7 @@ function Servo() {
     };
 
     return(
-        <Box sx={{ display: 'flex', justifyContent: 'center', width: 520, height: 224, backgroundColor: '#777772', borderRadius: '16px'}}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '30vh', backgroundColor: '#777772', borderRadius: '16px'}}>
             <FormControl variant="standard" sx={{ m: 1, minWidth: 250 }}>
                 <InputLabel id="servo-box">Select Servo</InputLabel>
                 <Select
