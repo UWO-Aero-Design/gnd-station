@@ -30,13 +30,13 @@ function Servo() {
                     <MenuItem value={2}>Servo 2</MenuItem>
                     <MenuItem value={3}>Servo 3</MenuItem>
                 </Select>
-                <Button  Style = {{height: '18%',width: '70%', position: 'absolute', marginTop: '50%',
-                                marginRight:'30%', display: 'inline-block'}} 
+                <Button  Style = {{height: 35,width: 200, position: 'absolute', marginTop: '50%',
+                                marginRight:'60%', display: 'inline-block'}} 
                                 ButtonText = {`Upload Settings (${servoNum})`}
                                 BackgroundColor ='#00FF00' />
                                 
-                <Button Style = {{height: '18%',width: '30%', position: 'absolute', marginTop: '50%',
-                                marginLeft:'90%', borderRadius:'7px', display: 'flex'}}
+                <Button Style = {{height: 35 ,width: 150, position: 'absolute', marginTop: '50%',
+                                marginLeft:'100%', borderRadius:'7px', display: 'flex'}}
                                  ButtonText = 'Reset'/>
             </FormControl>
         </Box>

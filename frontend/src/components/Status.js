@@ -45,7 +45,7 @@ function Status({telemetryStatus}) {
                 </Select>
             </FormControl>
             <Button BackgroundColor = {background} ButtonText = {statusText} 
-            Style = {{display:'inline-box',width: '30%', height: '15%',position:'absolute', marginTop:'20px'}}
+            Style = {{display:'inline-box', width: 150, height: 35, position:'absolute', marginTop:'20px'}}
             />
             
         </Box>
