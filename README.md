@@ -44,5 +44,10 @@ docker-compose up
 
 The imported files are stored in a docker volume called osm-data and the rendered files in a docker volume called osm-rendered. These will not be deleted when running `docker-compose down` so delete them when you're done using `docker volume rm osm-data osm-rendered`.
 
+### Testing
+Just like the actual groundstation, testing is also run within a docker container. To run the tests, use the command `docker compose up unittest-backend` at the root of this repository.
+
+Currently testing is only done on the backend (api) and is limited to unit tests. The tests also have a problem where they are unable to gracefully shutdown, however, they can still be run as they produce the correct output. In the future we want to expand to unit tests for the frontend, and integration tests (selenium).
+
 ### Documentation
 The API documentation is available at the [http://localhost:5000/docs](http://localhost:5000/docs)`/docs`.
