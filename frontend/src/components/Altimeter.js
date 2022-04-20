@@ -34,7 +34,7 @@ function Altimeter({telemetry}) {
     let alt = (parseFloat(telemetry.enviro.altitude).toFixed(2));
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', width: 260, height: 258, backgroundColor: '#777772', borderRadius: '16px' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '35vh', backgroundColor: '#777772', borderRadius: '16px' }}>
             <List>
                 <Typography align='center' lineHeight={0.5}>
                     <h3>
