@@ -28,7 +28,7 @@ function App() {
       const data = JSON.parse(message.data);
       const telemetry = data.telemetry
       setTelemetry(telemetry);
-      console.log(data);
+      //console.log(data);
     }
 
   },[]);

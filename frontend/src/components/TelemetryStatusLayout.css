@@ -4,43 +4,58 @@
     position: relative;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 100px);
-    gap: 0em 1em;
+    gap: 0em 10em;
+    margin-top: 5em;
+    margin-bottom: 0em;
+    margin-right: -10em;
+    margin-left: 22em;
  }
 .data1{
+    position: absolute;
+   
     grid-column-start: 1;
-    grid-column-end: 1;
+    
     grid-row-start: 1;
-    grid-row-end: 1;
+    
 }
 
 .data2{
+    position: absolute;
+   
     grid-column-start: 2;
-    grid-column-end: 2;
+    
     grid-row-start: 1;
-    grid-row-end: 2;
+    
 }
 
 .data3{
+    position: absolute;
+    
     grid-column-start: 3;
-    grid-column-end: 3;
+    
     grid-row-start: 1;
-    grid-row-end: 1;
+    
 }
 .data4{
+    position: absolute;
+    
     grid-column-start: 1;
-    grid-column-end: 1;
+    
     grid-row-start: 2;
-    grid-row-end: 2;
+    
 }
 .data5{
+    position: absolute;
+    
     grid-column-start: 2;
-    grid-column-end: 2;
+    
     grid-row-start: 2;
-    grid-row-end: 2;
+    
 }
 .data6{
+    position: absolute;
+    
     grid-column-start: 3;
-    grid-column-end: 3;
     grid-row-start: 2;
-    grid-row-end: 2;
+    
 }
