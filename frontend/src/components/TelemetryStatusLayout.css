@@ -1,14 +1,14 @@
 .wrapper {
     display: grid;
     justify-content: center;
-    position: relative;
+    position: absolute;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 100px);
     gap: 0em 10em;
-    margin-top: 5em;
+    margin-top: 4em;
     margin-bottom: 0em;
-    margin-right: -10em;
-    margin-left: 22em;
+    margin-right: 5em;
+    /* margin-left: 22em; */
  }
 .data1{
     position: absolute;
