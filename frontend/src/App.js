@@ -33,6 +33,9 @@ function App() {
 
   },[]);
 
+  //add http request for command to backend
+
+  
   // Note: If there's time, make the sizes dynamic,
   // Otherwise, use values hard coded in the example
 

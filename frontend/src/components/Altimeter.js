@@ -10,21 +10,20 @@ function Altimeter({telemetry}) {
     //has to parseFloat, otherwise gives undefined error with toFixed function.
     let alt = telemetry === undefined ? "---" : (telemetry.enviro.altitude);
     let altDisplay = parseFloat(alt).toFixed(2);
-    console.log(alt);
-
-    //has to be declared before using it in background colour below
-const CanDrop = (dropHeight) => {
-    if(dropped){
-        return true;
-    }
-    else{
-        return (alt >= dropHeight)   
-        }
-    }
 
     const [dropped, setDropped] = React.useState(false);
-    const [dropHeight, setDropHeight] = React.useState(50);
-    const background = CanDrop(dropHeight) ? '#ff1744' : '#00e676';
+    const [dropHeight, setDropHeight] = React.useState();
+
+    //has to be declared before using it in background colour below
+const canDrop = () => {
+    //if statement to return false if already dropped so button does not change colour again
+    if(dropped){
+        return false;
+    }
+    return alt <= 50;
+    }
+
+    const background = canDrop() ?  '#00e676' : '#ff1744';
     // const hover = CanDrop(dropHeight) ?  '#b2102f' : '#00c853';
     
     
@@ -37,14 +36,17 @@ const CanDrop = (dropHeight) => {
     
     
     const drop = () => {
-        if (alt <= dropHeight) {
+        if (canDrop()) {
             setDropHeight(altDisplay);
             setDropped(true);
+            //put backend command here
+            
+
         }
     }
 
     const reset = () => {
-        setDropHeight(150);
+        setDropHeight(null);
         setDropped(false);
     }
     

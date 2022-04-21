@@ -59,7 +59,7 @@ const generate_data = () => {
             date: date.toDateString()
         },
         enviro: {
-            altitude: 100+random_from_interval(-5,5),
+            altitude: 50+random_from_interval(-5,5),
             temperature: 22+random_from_interval(-5,5),
             pressure: 101+random_from_interval(-10,10),
         },
