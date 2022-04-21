@@ -126,7 +126,7 @@ const handle_command = (command, args) => {
         return;
     }
     const serialized_message = message.serializeBinary();
-    write_to_device(device, serialized_message)
+    write_to_device(device, generate_telemetry_message(serialized_message))
 }
 
 // Stuff from the plane to the gnd station
@@ -186,7 +186,7 @@ const send_heartbeat = () => {
     if(!device) return;
     let message = load_header(Message.Location.PLANE)
     const serialized_message = message.serializeBinary();
-    if(!write_to_device(device, serialized_message)) {
+    if(!write_to_device(device, generate_telemetry_message(serialized_message))) {
         console.log('Error sending heartbeat')
     }
 }
