@@ -224,6 +224,23 @@ const get_location_name = (loc) => {
     else return "UNKNOWN";
 }
 
+const merge_arrays = (arr1, arr2) => {
+    const buf = new Uint8Array(arr1.length + arr2.length);
+    buf.set(arr1);
+    buf.set(arr2, arr1.length);
+    return buf;
+}
+
+const generate_telemetry_message = (data) => {
+    const arr = merge_arrays(TELEMETRY_PACKET_HEADER, data);
+    return arr;
+}
+
+const generate_ping_message = (data) => {
+    if(data == undefined) return PING_PACKET_HEADER;
+    return merge_arrays(PING_PACKET_HEADER, data);
+}
+
 const startup = async () => {
     const devices = await get_device_list();
     let potential_devices = []
