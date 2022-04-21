@@ -12,6 +12,9 @@ const GENERATE_MESSAGE_ACKS = false;
 const SEND_HEARTBEAT_INTERVAL = 200;
 const PARSER_TIMEOUT = 50;
 
+const PING_PACKET_HEADER = new Uint8Array([0xAA])
+const TELEMETRY_PACKET_HEADER = new Uint8Array([0xBB])
+
 const { Message } = require('./message/message_pb');
 const { ReadyParser } = require('serialport');
 
