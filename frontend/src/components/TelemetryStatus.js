@@ -3,11 +3,11 @@ import  "./TelemetryStatusLayout.css"
 
 function TelemetryStatus({telemetry}){
 
-    let batteryVoltage = (parseFloat(telemetry.battery.voltage).toFixed(2));
-    let batteryCurrent = (parseFloat(telemetry.battery.current).toFixed(2));
-    let satellite = (parseFloat(telemetry.gps.satellites).toFixed(2));
-    let status = (parseFloat(telemetry.status).toFixed(2));
-    let temperature = (parseFloat(telemetry.enviro.temperature).toFixed(2));
+    let batteryVoltage = (parseFloat(telemetry.battery?.voltage).toFixed(2));
+    let batteryCurrent = (parseFloat(telemetry.battery?.current).toFixed(2));
+    let satellite = (parseFloat(telemetry.gps?.satellites).toFixed(2));
+    let status = (parseFloat(telemetry?.status).toFixed(2));
+    let temperature = (parseFloat(telemetry.enviro?.temperature).toFixed(2));
 
     return(
     
