@@ -65,7 +65,7 @@ const on_ws_message = (message) => {
 
 const ws_on_close = (code) => {
     console.log(`CLOSED: ${code}`)
-    usbDetect.stopMonitoring()
+    // usbDetect.stopMonitoring()
 }
 
 const ws_connect = () => {
@@ -105,7 +105,7 @@ const select_device = async (device_to_connect) => {
         console.log(`Connected to ${device.path}`)
     }
 
-    usbDetect.stopMonitoring()  // No longer need to look for usb connections
+    // usbDetect.stopMonitoring()  // No longer need to look for usb connections
 }
 
 // From the backend for the plane
@@ -149,7 +149,7 @@ const handle_close = () => {
     console.log(`Disconnected from ${device.path}`)
     device = null;
     clearInterval(heartbeat_interval);
-    usbDetect.startMonitoring();
+    // usbDetect.startMonitoring();
 }
 
 const write_to_device = async(dev, data) => {
