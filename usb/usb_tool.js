@@ -11,6 +11,12 @@ const PRINT_WS_CONNECTION_MESSAGES = true;
 const GENERATE_MESSAGE_ACKS = false;
 const SEND_HEARTBEAT_INTERVAL = 200;
 const PARSER_TIMEOUT = 50;
+const AUTO_CONNECT_DELAY = 500;
+const AUTO_CONNECT_TIMEOUT = 100;
+const BAUD_RATE = 115200
+
+const PING_PACKET_HEADER = new Uint8Array([0xAA])
+const TELEMETRY_PACKET_HEADER = new Uint8Array([0xBB])
 
 const { Message } = require('./message/message_pb');
 const { ReadyParser } = require('serialport');
@@ -59,7 +65,7 @@ const on_ws_message = (message) => {
 
 const ws_on_close = (code) => {
     console.log(`CLOSED: ${code}`)
-    usbDetect.stopMonitoring()
+    // usbDetect.stopMonitoring()
 }
 
 const ws_connect = () => {
@@ -69,15 +75,11 @@ const ws_connect = () => {
 }
 ws_connect()
 
-usbDetect.on('add', function(usb_port) { 
-
-    if ((usb_port.manufacturer.toLowerCase().includes('arduino')) || 
-            usb_port.manufacturer.toLowerCase().includes('teensyduino')) {
-                // usb-detection seems to discover devices before SerialPort has access to them
-                // not the prettiest solution but adding a small delay resolves these issues on Mac
-                // TODO: test to see if these issues occur on Windows and Linux
-                setTimeout(startup, 500);
-    }
+usbDetect.on('add', (usb_port) => { 
+    // usb-detection seems to discover devices before SerialPort has access to them
+    // not the prettiest solution but adding a small delay resolves these issues on Mac
+    // TODO: test to see if these issues occur on Windows and Linux
+    if(device == null) setTimeout(auto_connect, AUTO_CONNECT_DELAY);
 });
 
 const get_device_list = async() => {
@@ -92,7 +94,7 @@ const select_device = async (device_to_connect) => {
         await device.close()
     }
 
-    device = new SerialPort({ path: device_to_connect.path, baudRate: 115200 });
+    device = new SerialPort({ path: device_to_connect.path, baudRate: BAUD_RATE });
     parser = device.pipe(new InterByteTimeoutParser({ interval: PARSER_TIMEOUT} ))
     parser.on('data', handle_message);
     device.on('close', handle_close);
@@ -103,7 +105,7 @@ const select_device = async (device_to_connect) => {
         console.log(`Connected to ${device.path}`)
     }
 
-    usbDetect.stopMonitoring()  // No longer need to look for usb connections
+    // usbDetect.stopMonitoring()  // No longer need to look for usb connections
 }
 
 // From the backend for the plane
@@ -123,7 +125,7 @@ const handle_command = (command, args) => {
         return;
     }
     const serialized_message = message.serializeBinary();
-    write_to_device(device, serialized_message)
+    write_to_device(device, generate_telemetry_message(serialized_message))
 }
 
 // Stuff from the plane to the gnd station
@@ -147,7 +149,7 @@ const handle_close = () => {
     console.log(`Disconnected from ${device.path}`)
     device = null;
     clearInterval(heartbeat_interval);
-    usbDetect.startMonitoring();
+    // usbDetect.startMonitoring();
 }
 
 const write_to_device = async(dev, data) => {
@@ -183,7 +185,7 @@ const send_heartbeat = () => {
     if(!device) return;
     let message = load_header(Message.Location.PLANE)
     const serialized_message = message.serializeBinary();
-    if(!write_to_device(device, serialized_message)) {
+    if(!write_to_device(device, generate_telemetry_message(serialized_message))) {
         console.log('Error sending heartbeat')
     }
 }
@@ -221,25 +223,65 @@ const get_location_name = (loc) => {
     else return "UNKNOWN";
 }
 
-const startup = async () => {
+const merge_arrays = (arr1, arr2) => {
+    const buf = new Uint8Array(arr1.length + arr2.length);
+    buf.set(arr1);
+    buf.set(arr2, arr1.length);
+    return buf;
+}
+
+const generate_telemetry_message = (data) => {
+    const arr = merge_arrays(TELEMETRY_PACKET_HEADER, data);
+    return arr;
+}
+
+const generate_ping_message = (data) => {
+    if(data == undefined) return PING_PACKET_HEADER;
+    return merge_arrays(PING_PACKET_HEADER, data);
+}
+
+const auto_connect = async () => {
     const devices = await get_device_list();
-    let potential_devices = []
 
-    devices.forEach(device => {
-        // check to see if the device has a manufacturer property
-        if(device.manufacturer) {
-            if(device.manufacturer.toLowerCase().includes('arduino')) potential_devices.push(device)
-            if(device.manufacturer.toLowerCase().includes('teensyduino')) potential_devices.push(device)
-        }
+    // for each device, attempt to send the ping packet
+    // if a response is received, that must be the correct device
+    // if a response isn't received, close the port and give up
+    devices.forEach(async device => {
+        // connect to device and send message
+        let port_to_try = new SerialPort({ path: device.path, baudRate: BAUD_RATE });
+        port_to_try.write(generate_ping_message());
+        
+        // silently fail since some devices will throw errors if you try to connect to them
+        // could technically be thrown when connecting to the ground station but this is
+        // a "quality of life" feature and there's no other way to effectively detect
+        // that a specfic device is the ground station
+        port_to_try.on('error', (err) => {
+            // do nothing - probably a device we can't connect to
+        })
+        
+        port_to_try.on('data', async (msg) => {
+            // save the path since we'll now disconnect
+            let path_to_connect = port_to_try.settings.path;
+            if(port_to_try.isOpen) await port_to_try.close()
+
+            // if the response is the correct one, connect to the serial port
+            if(msg[0] == PING_PACKET_HEADER) {
+                console.log(`Detected ${port_to_try.settings.path} as ground station`)
+                setTimeout(() => {
+                    select_device({ path: path_to_connect });
+                }, AUTO_CONNECT_DELAY)
+            }
+        })
+        
+        // close the serial port after no response has been received
+        setTimeout(async () => {
+            if(port_to_try.isOpen) await port_to_try.close()
+        }, AUTO_CONNECT_TIMEOUT)
     })
+}
 
-    // if there was a single potential match
-    if(potential_devices.length == 1) {
-        const path = potential_devices[0].path 
-        console.log(`Auto connected to ${path}`)
-        select_device({ path })
-    } else {
-        usbDetect.startMonitoring();
-    }
+const startup = () => {
+    usbDetect.startMonitoring();
+    auto_connect()
 }
 startup();
