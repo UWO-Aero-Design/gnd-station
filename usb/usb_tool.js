@@ -267,7 +267,9 @@ const auto_connect = async () => {
             // if the response is the correct one, connect to the serial port
             if(msg[0] == PING_PACKET_HEADER) {
                 console.log(`Detected ${port_to_try.settings.path} as ground station`)
-                select_device({ path: path_to_connect });
+                setTimeout(() => {
+                    select_device({ path: path_to_connect });
+                }, AUTO_CONNECT_DELAY)
             }
         })
         
