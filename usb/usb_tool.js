@@ -11,6 +11,8 @@ const PRINT_WS_CONNECTION_MESSAGES = true;
 const GENERATE_MESSAGE_ACKS = false;
 const SEND_HEARTBEAT_INTERVAL = 200;
 const PARSER_TIMEOUT = 50;
+const AUTO_CONNECT_TIMEOUT = 100;
+const BAUD_RATE = 115200
 
 const PING_PACKET_HEADER = new Uint8Array([0xAA])
 const TELEMETRY_PACKET_HEADER = new Uint8Array([0xBB])
@@ -95,7 +97,7 @@ const select_device = async (device_to_connect) => {
         await device.close()
     }
 
-    device = new SerialPort({ path: device_to_connect.path, baudRate: 115200 });
+    device = new SerialPort({ path: device_to_connect.path, baudRate: BAUD_RATE });
     parser = device.pipe(new InterByteTimeoutParser({ interval: PARSER_TIMEOUT} ))
     parser.on('data', handle_message);
     device.on('close', handle_close);
@@ -243,23 +245,40 @@ const generate_ping_message = (data) => {
 
 const startup = async () => {
     const devices = await get_device_list();
-    let potential_devices = []
+    usbDetect.startMonitoring();
 
-    devices.forEach(device => {
-        // check to see if the device has a manufacturer property
-        if(device.manufacturer) {
-            if(device.manufacturer.toLowerCase().includes('arduino')) potential_devices.push(device)
-            if(device.manufacturer.toLowerCase().includes('teensyduino')) potential_devices.push(device)
-        }
+    // for each device, attempt to send the ping packet
+    // if a response is received, that must be the correct device
+    // if a response isn't received, close the port and give up
+    devices.forEach(async device => {
+        // connect to device and send message
+        let port_to_try = new SerialPort({ path: device.path, baudRate: BAUD_RATE });
+        port_to_try.write(generate_ping_message());
+        
+        // silently fail since some devices will throw errors if you try to connect to them
+        // could technically be thrown when connecting to the ground station but this is
+        // a "quality of life" feature and there's no other way to effectively detect
+        // that a specfic device is the ground station
+        port_to_try.on('error', (err) => {
+            // do nothing - probably a device we can't connect to
+        })
+        
+        port_to_try.on('data', async (msg) => {
+            // save the path since we'll now disconnect
+            let path_to_connect = port_to_try.settings.path;
+            if(port_to_try.isOpen) await port_to_try.close()
+
+            // if the response is the correct one, connect to the serial port
+            if(msg[0] == PING_PACKET_HEADER) {
+                console.log(`Detected ${port_to_try.settings.path} as ground station`)
+                select_device({ path: path_to_connect });
+            }
+        })
+        
+        // close the serial port after no response has been received
+        setTimeout(async () => {
+            if(port_to_try.isOpen) await port_to_try.close()
+        }, AUTO_CONNECT_TIMEOUT)
     })
-
-    // if there was a single potential match
-    if(potential_devices.length == 1) {
-        const path = potential_devices[0].path 
-        console.log(`Auto connected to ${path}`)
-        select_device({ path })
-    } else {
-        usbDetect.startMonitoring();
-    }
 }
 startup();
