@@ -9,7 +9,8 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 function App() {
   //function that receives data from web socket
   const [telemetry, setTelemetry] = useState({ battery: {}, imu:{}, gps:{}, enviro:{}});
-
+  const [command,setCommand] = useState({command: {}});
+  const [error, setError] = useState(null);
   // https://stackoverflow.com/questions/60152922/proper-way-of-using-react-hooks-websockets
   // https://stackoverflow.com/questions/58432076/websockets-with-functional-components
   const ws = useRef(null);
@@ -34,6 +35,23 @@ function App() {
   },[]);
 
   //add http request for command to backend
+  //Backend call for command using http request
+  useEffect(()=> {
+
+    fetch('http://localhost:5000')
+    .then(res => res.json())
+    .then((command) =>{
+      setCommand(command)
+      console.log(command)
+    },(error)=>{
+      setError(error);
+    })
+
+  },[])
+
+  if(error){
+    console.log(error);
+  }
 
   
   // Note: If there's time, make the sizes dynamic,
@@ -67,7 +85,8 @@ function App() {
             </ListItem>
             <ListItem>
               <Altimeter
-              telemetry={telemetry} />
+              telemetry={telemetry}
+              command = {command} />
             </ListItem>
             <ListItem>
               <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '25vh', backgroundColor: '#777772', borderRadius: '16px'}}>
