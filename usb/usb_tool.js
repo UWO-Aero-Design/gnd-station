@@ -11,6 +11,7 @@ const PRINT_WS_CONNECTION_MESSAGES = true;
 const GENERATE_MESSAGE_ACKS = false;
 const SEND_HEARTBEAT_INTERVAL = 200;
 const PARSER_TIMEOUT = 50;
+const AUTO_CONNECT_DELAY = 500;
 const AUTO_CONNECT_TIMEOUT = 100;
 const BAUD_RATE = 115200
 
@@ -74,15 +75,11 @@ const ws_connect = () => {
 }
 ws_connect()
 
-usbDetect.on('add', function(usb_port) { 
-
-    if ((usb_port.manufacturer.toLowerCase().includes('arduino')) || 
-            usb_port.manufacturer.toLowerCase().includes('teensyduino')) {
-                // usb-detection seems to discover devices before SerialPort has access to them
-                // not the prettiest solution but adding a small delay resolves these issues on Mac
-                // TODO: test to see if these issues occur on Windows and Linux
-                setTimeout(startup, 500);
-    }
+usbDetect.on('add', (usb_port) => { 
+    // usb-detection seems to discover devices before SerialPort has access to them
+    // not the prettiest solution but adding a small delay resolves these issues on Mac
+    // TODO: test to see if these issues occur on Windows and Linux
+    if(device == null) setTimeout(auto_connect, AUTO_CONNECT_DELAY);
 });
 
 const get_device_list = async() => {
@@ -243,9 +240,8 @@ const generate_ping_message = (data) => {
     return merge_arrays(PING_PACKET_HEADER, data);
 }
 
-const startup = async () => {
+const auto_connect = async () => {
     const devices = await get_device_list();
-    usbDetect.startMonitoring();
 
     // for each device, attempt to send the ping packet
     // if a response is received, that must be the correct device
@@ -280,5 +276,10 @@ const startup = async () => {
             if(port_to_try.isOpen) await port_to_try.close()
         }, AUTO_CONNECT_TIMEOUT)
     })
+}
+
+const startup = () => {
+    usbDetect.startMonitoring();
+    auto_connect()
 }
 startup();
