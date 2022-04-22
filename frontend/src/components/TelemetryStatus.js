@@ -12,7 +12,7 @@ function TelemetryStatus({telemetry}){
     return(
     
         <div className ="wrapper">
-        <div className = "data1">Signal Strength {telemetry === undefined ? 0 : telemetry.rssi}</div>
+        <div className = "data1">Signal Strength {telemetry === undefined ? 0 : telemetry?.rssi}</div>
         <div className = "data2">Battery Voltage {telemetry === undefined ? 0 : batteryVoltage}</div>
         <div className = "data3">Battery Percent {telemetry === undefined ? 0 : batteryCurrent}</div>
         <div className = "data4">GPS Status (fix){telemetry === undefined ? 0 : satellite}</div>

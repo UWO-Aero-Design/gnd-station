@@ -8,7 +8,7 @@ import Button from "./Button";
 function Altimeter({telemetry, command}) {
 //Declare altitude variable outside to be able to restrain it to 2 decimals per
     //has to parseFloat, otherwise gives undefined error with toFixed function.
-    let alt = telemetry === undefined ? "---" : (telemetry.enviro.altitude);
+    let alt = telemetry === undefined ? "---" : (telemetry.enviro?.altitude);
     let altDisplay = parseFloat(alt).toFixed(2);
 
     const [dropped, setDropped] = React.useState(false);
@@ -24,7 +24,6 @@ const canDrop = () => {
     }
 
     const background = canDrop() ?  '#00e676' : '#ff1744';
-    // const hover = CanDrop(dropHeight) ?  '#b2102f' : '#00c853';
     
     
 
@@ -40,7 +39,7 @@ const canDrop = () => {
             setDropHeight(altDisplay);
             setDropped(true);
             //put backend command here
-            command = "DROP_PADA";
+           return command;
         }
     }
 

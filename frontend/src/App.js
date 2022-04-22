@@ -36,22 +36,18 @@ function App() {
 
   //add http request for command to backend
   //Backend call for command using http request
-  useEffect(()=> {
+  const getCommand = async() => {
 
-    fetch('http://localhost:5000')
-    .then(res => res.json())
-    .then((command) =>{
-      setCommand(command)
-      console.log(command)
-    },(error)=>{
-      setError(error);
+    fetch('http://localhost:5000/command', {
+      method: 'POST',
+      headers: {"Content-Type" : "application/json"},
+      body: JSON.stringify(command)
+    }).then(()=>{
+      console.log("Drop Pada Request")
+    }).then(()=>{setCommand(command)
     })
-
-  },[])
-
-  if(error){
-    console.log(error);
-  }
+    
+}
 
   
   // Note: If there's time, make the sizes dynamic,
@@ -86,7 +82,7 @@ function App() {
             <ListItem>
               <Altimeter
               telemetry={telemetry}
-              command = {command} />
+              command = {getCommand} />
             </ListItem>
             <ListItem>
               <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '25vh', backgroundColor: '#777772', borderRadius: '16px'}}>
