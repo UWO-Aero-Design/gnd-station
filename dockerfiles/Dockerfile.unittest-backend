@@ -4,9 +4,6 @@ WORKDIR /home/node/app
 
 COPY api/package*.json ./
 
-# Install nodemon for hot reload (Probably not neccessary)
-# RUN npm install -g nodemon
-
 RUN npm install
 
 # run nodemon for hot reload
