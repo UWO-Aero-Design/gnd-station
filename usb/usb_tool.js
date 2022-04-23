@@ -6,10 +6,11 @@ require('dotenv').config({ path: '../.env' })
 
 const PRINT_INCOMING_MESSAGES = true;
 const PRINT_OUTBOUND_MESSAGE = false;
+const PRINT_OUTBOUND_COMMAND = true;
 const PRINT_USB_CONNECTION_MESSAGES = true;
 const PRINT_WS_CONNECTION_MESSAGES = true;
 const GENERATE_MESSAGE_ACKS = false;
-const SEND_HEARTBEAT_INTERVAL = 200;
+const SEND_HEARTBEAT_INTERVAL = 500;
 const PARSER_TIMEOUT = 50;
 const AUTO_CONNECT_DELAY = 500;
 const AUTO_CONNECT_TIMEOUT = 100;
@@ -110,8 +111,8 @@ const select_device = async (device_to_connect) => {
 
 // From the backend for the plane
 const handle_command = (command, args) => {
-    if(PRINT_OUTBOUND_MESSAGE) {
-        console.log(`Running command: ${command}`)
+    if(PRINT_OUTBOUND_COMMAND) {
+        console.log(`Running command: ${command} with args ${args}`)
     }
 
     try {

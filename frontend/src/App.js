@@ -9,7 +9,6 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 function App() {
   //function that receives data from web socket
   const [telemetry, setTelemetry] = useState({ battery: {}, imu:{}, gps:{}, enviro:{}});
-
   // https://stackoverflow.com/questions/60152922/proper-way-of-using-react-hooks-websockets
   // https://stackoverflow.com/questions/58432076/websockets-with-functional-components
   const ws = useRef(null);
@@ -28,59 +27,91 @@ function App() {
       const data = JSON.parse(message.data);
       const telemetry = data.telemetry
       setTelemetry(telemetry);
-      console.log(data);
+      //console.log(data);
     }
 
   },[]);
 
+  const success = () =>{
+    //Add overlay to show success message
+  }
+  const errorMessage = () =>{
+    //Add overlay to show error message
+  }
+
+  //add http request for command to backend
+  //Backend call for command using http request
+  const getCommand = async(command, args) => {
+    console.log("drop pada function")
+
+    fetch('http://localhost:5000/command', {
+       method: 'POST',
+        headers: { 'Content-Type': 'application/json '},
+         body: JSON.stringify({ commands: [{ command: command, args: args }] })
+        }).then(response => {
+          if(response.status === 200) {
+            
+            console.log(`Post request using parameter: ${command}`);
+          }
+          else{
+            console.log(`Error: ${response.status}`);
+          }
+        }).catch(error => {
+          console.log(error)
+        })
+    
+}
+
+  
   // Note: If there's time, make the sizes dynamic,
   // Otherwise, use values hard coded in the example
 
   return (
-    <Container maxWidth={'l'} sx={{backgroundColor: '#000000' }}>
+    <Container sx={{ backgroundColor: '#000000', minHeight: '100vh', minWidth: '100vw' }}>
       <Header />
-      <Grid container spacing={0} sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Grid container spacing={0} sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '100%' }}>
         {/* This is a template for the ground station. Will need to be adapted as components are added */}
-        <Grid item sx={2}>
+        <Grid item sx={{ width: '40%', height: '95vh' }}>
           <List>
             <ListItem>
-              <Box sx={{ display: 'flex', justifyContent: 'center', width: 520, height: 340, backgroundColor: '#777772', borderRadius: '16px'}}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '45vh', backgroundColor: '#777772', borderRadius: '16px'}}>
                 Example section
               </Box>
             </ListItem>
             <ListItem>
-              <Box sx={{ display: 'flex', justifyContent: 'center', width: 520, height: 340, backgroundColor: '#777772', borderRadius: '16px'}}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '42vh', backgroundColor: '#777772', borderRadius: '16px'}}>
                 Example section
               </Box>
             </ListItem>
           </List>
         </Grid>
-        <Grid item sx={2}>
+        <Grid item sx={{ width: '20%', height: '95vh' }}>
           <List>
             <ListItem>
-              <Box sx={{ display: 'flex', justifyContent: 'center', width: 260, height: 258, backgroundColor: '#777772', borderRadius: '16px'}}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '25vh', backgroundColor: '#777772', borderRadius: '16px'}}>
                 Example section
               </Box>
             </ListItem>
             <ListItem>
               <Altimeter
-              telemetry={telemetry} />
+              telemetry={telemetry}
+              command = {()=> { getCommand("DROP_PADA",[])}} />
             </ListItem>
             <ListItem>
-              <Box sx={{ display: 'flex', justifyContent: 'center', width: 260, height: 148, backgroundColor: '#777772', borderRadius: '16px'}}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '25vh', backgroundColor: '#777772', borderRadius: '16px'}}>
                 Example section
               </Box>
             </ListItem>
           </List>
         </Grid>
-        <Grid item sx={2}>
+        <Grid item sx={{ width: '40%', height: '95vh'}}>
           <List>
             <ListItem>
               <Status
               telemetryStatus ={telemetry}/>
             </ListItem>
             <ListItem>
-              <Box sx={{ display: 'flex', justifyContent: 'center', width: 520, height: 216, backgroundColor: '#777772', borderRadius: '16px'}}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '25vh', backgroundColor: '#777772', borderRadius: '16px'}}>
                 Example section
               </Box>
             </ListItem>

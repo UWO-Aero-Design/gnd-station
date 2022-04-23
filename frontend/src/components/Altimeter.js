@@ -5,43 +5,60 @@ import Button from "./Button";
 
 // #00e676 #00c853
 
-function Altimeter({telemetry}) {
+function Altimeter({telemetry, command}) {
+//Declare altitude variable outside to be able to restrain it to 2 decimals per
+    //has to parseFloat, otherwise gives undefined error with toFixed function.
+    let alt = telemetry === undefined ? "---" : (telemetry.enviro?.altitude);
+    let altDisplay = parseFloat(alt).toFixed(2);
 
     const [dropped, setDropped] = React.useState(false);
-    const [dropHeight, setDropHeight] = React.useState(50);
-    const [altitude, setAltitude] = React.useState();
-    const background = CanDrop(dropHeight) ? '#ff1744' : '#00e676';
-    // const hover = CanDrop(dropHeight) ?  '#b2102f' : '#00c853';
+    const [dropHeight, setDropHeight] = React.useState();
 
-    React.useEffect(() => {
-        setAltitude(ReadAltitude());
-    },[]);
+    //has to be declared before using it in background colour below
+const canDrop = () => {
+    //if statement to return false if already dropped so button does not change colour again
+    if(dropped){
+        return false;
+    }
+    return alt <= 50;
+    }
 
+    const background = canDrop() ?  '#00e676' : '#ff1744';
+    
+    
+
+    // const ReadAltitude = () => {
+    //     // This will be where the function occurs to read the altitude from the sensor
+    //     // Can also be connected to a potential function for reading simulated altitude
+    //     return alt;
+    // }
+    
+    
     const drop = () => {
-        if (altitude <= dropHeight) {
-            setDropHeight(altitude);
+        if (canDrop()) {
+            setDropHeight(altDisplay);
             setDropped(true);
+            //put backend command here
+            command();
         }
     }
 
     const reset = () => {
-        setDropHeight(50);
+        setDropHeight(null);
         setDropped(false);
     }
     
-    //Declare altitude variable outside to be able to restrain it to 2 decimals per
-    //has to parseFloat, otherwise gives undefined error with toFixed function.
-    let alt = (parseFloat(telemetry.enviro.altitude).toFixed(2));
+    
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', width: 260, height: 258, backgroundColor: '#777772', borderRadius: '16px' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '35vh', backgroundColor: '#777772', borderRadius: '16px' }}>
             <List>
                 <Typography align='center' lineHeight={0.5}>
                     <h3>
                         Altitude
                     </h3>
                     <h1>
-                        {(telemetry === undefined ? 0 : alt)} ft
+                        {telemetry === undefined ? "---" : altDisplay} ft
                     </h1>
                     <h3>
                         PADA Drop Height
@@ -70,16 +87,6 @@ function Altimeter({telemetry}) {
             </List>
         </Box>
     )
-}
-
-function ReadAltitude() {
-    // This will be where the function occurs to read the altitude from the sensor
-    // Can also be connected to a potential function for reading simulated altitude
-    return 40;
-}
-
-function CanDrop(dropHeight) {
-    return (ReadAltitude() >= dropHeight)   
 }
 
 export default Altimeter;
