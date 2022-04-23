@@ -39,7 +39,7 @@ const canDrop = () => {
             setDropHeight(altDisplay);
             setDropped(true);
             //put backend command here
-           return command;
+            command();
         }
     }
 

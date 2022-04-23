@@ -9,8 +9,6 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 function App() {
   //function that receives data from web socket
   const [telemetry, setTelemetry] = useState({ battery: {}, imu:{}, gps:{}, enviro:{}});
-  const [command,setCommand] = useState({command: {}});
-  const [error, setError] = useState(null);
   // https://stackoverflow.com/questions/60152922/proper-way-of-using-react-hooks-websockets
   // https://stackoverflow.com/questions/58432076/websockets-with-functional-components
   const ws = useRef(null);
@@ -34,18 +32,33 @@ function App() {
 
   },[]);
 
+  const success = () =>{
+    //Add overlay to show success message
+  }
+  const errorMessage = () =>{
+    //Add overlay to show error message
+  }
+
   //add http request for command to backend
   //Backend call for command using http request
-  const getCommand = async() => {
+  const getCommand = async(command, args) => {
+    console.log("drop pada function")
 
     fetch('http://localhost:5000/command', {
-      method: 'POST',
-      headers: {"Content-Type" : "application/json"},
-      body: JSON.stringify(command)
-    }).then(()=>{
-      console.log("Drop Pada Request")
-    }).then(()=>{setCommand(command)
-    })
+       method: 'POST',
+        headers: { 'Content-Type': 'application/json '},
+         body: JSON.stringify({ commands: [{ command: command, args: args }] })
+        }).then(response => {
+          if(response.status === 200) {
+            
+            console.log(`Post request using parameter: ${command}`);
+          }
+          else{
+            console.log(`Error: ${response.status}`);
+          }
+        }).catch(error => {
+          console.log(error)
+        })
     
 }
 
@@ -82,7 +95,7 @@ function App() {
             <ListItem>
               <Altimeter
               telemetry={telemetry}
-              command = {getCommand} />
+              command = {()=> { getCommand("DROP_PADA",[])}} />
             </ListItem>
             <ListItem>
               <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '25vh', backgroundColor: '#777772', borderRadius: '16px'}}>
