@@ -1,6 +1,8 @@
 const path = require('path');
 const http = require('http')
 const wss = require('./services/websocket/ws')
+const cors = require('cors');
+
 
 const express = require('express');
 const morgan = require('morgan');
@@ -14,10 +16,12 @@ const node_env = process.env.NODE_ENV || 'development';
 const app = express();
 
 // middlewares
+app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan('dev'));
+
 
 // ejs registration
 app.set('view engine', 'ejs');
