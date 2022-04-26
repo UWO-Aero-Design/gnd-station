@@ -109,7 +109,6 @@ const select_device = async (device_to_connect) => {
         console.log(`Connected to ${device.path}`)
     }
 
-    // usbDetect.stopMonitoring()  // No longer need to look for usb connections
 }
 
 // From the backend for the plane
@@ -128,6 +127,7 @@ const handle_command = (command, args) => {
         console.log('Error generating command!');
         return;
     }
+
     const serialized_command = command.serializeBinary();
     write_to_device(device, generate_telemetry_message(serialized_command))
 }
@@ -135,16 +135,15 @@ const handle_command = (command, args) => {
 // Stuff from the plane to the gnd station
 const handle_message = (buffer) => {
     let decoded_telemetry;
-    // console.log(buffer)
+
     try {
-        decoded = Telemetry.deserializeBinary(buffer);
+        decoded_telemetry = Telemetry.deserializeBinary(buffer);
     } catch(error) {
         console.log('Error decoding: ' + error);
         return;
     }
 
-    let telemetry = decoded.toObject();
-    console.log(telemetry)
+    let telemetry = decoded_telemetry.toObject();
 
     if(PRINT_INCOMING_MESSAGES) {
         console.log(`Message from ${get_location_name(telemetry.header.sender)}, Len: ${buffer.length}, Packet: ${telemetry.header.packetNumber}, Time: ${telemetry.header.time} `)
