@@ -28,12 +28,13 @@ const generate_data = () => {
     const date = new Date();
 
     let data = {
-        sender: 1, // plane
-        recipient: 0, // ground station
-        packetNumber: packet_number,
-        time: process.uptime(),
-        status: 2, // READY
-        rssi: -34,
+        header: {
+            sender: 1,
+            receiver: 0,
+            packetNumber: packet_number,
+            time: process.uptime(),
+            status: 0 // READY
+        },
         imu: {
             ax: random_from_interval(-1,1),
             ay: random_from_interval(-1,1),
@@ -56,7 +57,9 @@ const generate_data = () => {
             satellites: 14+random_int_from_interval(-2,2),
             altitude: 100+random_from_interval(-5,5),
             time: date.toTimeString(),
-            date: date.toDateString()
+            date: date.toDateString(),
+            hdop: 3+random_int_from_interval(-1,1),
+            quality: 1, // Standalone
         },
         enviro: {
             altitude: 50+random_from_interval(-5,5),
@@ -67,6 +70,16 @@ const generate_data = () => {
             voltage: 22+random_from_interval(-0.2,0.2),
             current: 1+random_from_interval(-0.5,0.5)
         },
+        planeRadio: { 
+            rssi: -108+random_int_from_interval(-5,5), 
+            frequencyError: -6803+random_int_from_interval(-15,15), 
+            snr: 8+random_from_irandom_int_from_intervalnterval(3,3)
+        },
+        gndRadio: {
+            rssi: -40+random_int_from_interval(-5,5), 
+            frequencyError: 6685+random_int_from_interval(-15,15), 
+            snr: 10+random_from_irandom_int_from_intervalnterval(3,3)
+        }
     }
 
     return data;
