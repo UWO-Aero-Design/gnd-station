@@ -19,8 +19,11 @@ const BAUD_RATE = 115200
 const PING_PACKET_HEADER = new Uint8Array([0xAA])
 const TELEMETRY_PACKET_HEADER = new Uint8Array([0xBB])
 
-const { Message } = require('./message/message_pb');
+const { Telemetry } = require('./message/telemetry_pb');
+const { Command } = require('./message/command_pb');
+const { Header, Location, Status } = require('./message/header_pb');
 const { ReadyParser } = require('serialport');
+
 
 const port = process.env.API_PORT || 5000;
 const ws = new WebSocket(`ws://localhost:${port}`);
@@ -116,33 +119,37 @@ const handle_command = (command, args) => {
     }
 
     try {
-        var message = generate_command(Message.Location.PLANE, command)
+        const command = generate_command(Location.PLANE, command)
     } catch(error) {
         console.log(error);
     }
 
-    if(message == null) {
+    if(command == null) {
         console.log('Error generating command!');
         return;
     }
-    const serialized_message = message.serializeBinary();
-    write_to_device(device, generate_telemetry_message(serialized_message))
+    const serialized_command = command.serializeBinary();
+    write_to_device(device, generate_telemetry_message(serialized_command))
 }
 
 // Stuff from the plane to the gnd station
 const handle_message = (buffer) => {
-    let decoded;
+    let decoded_telemetry;
+    // console.log(buffer)
     try {
-        decoded = Message.deserializeBinary(buffer);
+        decoded = Telemetry.deserializeBinary(buffer);
     } catch(error) {
         console.log('Error decoding: ' + error);
         return;
     }
-    if(PRINT_INCOMING_MESSAGES) {
-        console.log(`Message from ${get_location_name(decoded.getSender())}: Len: ${buffer.length}, RSSI: ${decoded.getRssi()}, Packet: ${decoded.getPacketNumber()} Time: ${decoded.getTime()} `)
-    }
 
     let telemetry = decoded.toObject();
+    console.log(telemetry)
+
+    if(PRINT_INCOMING_MESSAGES) {
+        console.log(`Message from ${get_location_name(telemetry.header.sender)}, Len: ${buffer.length}, Packet: ${telemetry.header.packetNumber}, Time: ${telemetry.header.time} `)
+    }
+
     ws.send(JSON.stringify({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'TELEMETRY', telemetry }));
 }
 
@@ -172,42 +179,31 @@ const write_to_device = async(dev, data) => {
 }
 
 // generate an ack message
-const load_header = (to) => {
-    let message = new Message()
-    message.setSender(Message.Location.GROUND_STATION)
-    message.setRecipient(to)
-    message.setPacketNumber(packet_number++);
-    message.setTime(Math.floor(new Date().getTime() / 1000));
-    message.setStatus(Message.Status.READY);
-    return message;
+const set_header = (command, to) => {
+    let header = new Header()
+    header.setSender(Location.GROUND_STATION)
+    header.setReceiver(to)
+    header.setPacketNumber(packet_number++);
+    header.setTime(Math.floor(new Date().getTime() / 1000));
+    header.setStatus(Status.READY);
+    command.setHeader(header)
+    return command;
 }
 
 const send_heartbeat = () => {
     if(!device) return;
-    let message = load_header(Message.Location.PLANE)
-    const serialized_message = message.serializeBinary();
-    if(!write_to_device(device, generate_telemetry_message(serialized_message))) {
+    let command = set_header(new Command(), Location.PLANE)
+    const serialized_command = command.serializeBinary();
+    if(!write_to_device(device, generate_telemetry_message(serialized_command))) {
         console.log('Error sending heartbeat')
     }
 }
 
 // generate a command message
-const generate_command = (to, command, args) => {
-    let message = load_header(Message.Location.PLANE)
+const generate_command = (to, command_to_send, args) => {
+    let command = set_header(new Command(), to)
 
-    switch(command) {
-        case 'DROP_PADA':
-            // TODO: change to DROP_PADA
-            message.setCommandsList([ Message.Command.DROP_GLIDERS ]);
-            break;
-
-        case 'SERVO_CONFIG':
-            if(!args) {
-                throw "Error: no args given for servo config";
-            }
-            message.setServosList(args)
-            break;
-
+    switch(command_to_send) {
         default:
             throw `Error: The command ${command} is unsupported`;
     }
@@ -216,11 +212,9 @@ const generate_command = (to, command, args) => {
 }
 
 const get_location_name = (loc) => {
-    if (loc === Message.Location.PLANE) return "PLANE";
-    else if (loc === Message.Location.GROUND_STATION) return "GROUND";
-    else if (loc === Message.Location.GLIDER0) return "GLIDER0";
-    else if (loc === Message.Location.GLIDER0) return "GLIDER1";
-    else if (loc === Message.Location.ANY) return "ANY";
+    if (loc === Location.PLANE) return "PLANE";
+    else if (loc === Location.GROUND_STATION) return "GROUND";
+    else if (loc === Location.ANY) return "ANY";
     else return "UNKNOWN";
 }
 
