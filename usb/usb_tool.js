@@ -4,23 +4,27 @@ const { InterByteTimeoutParser } = require('@serialport/parser-inter-byte-timeou
 const WebSocket = require('ws');
 require('dotenv').config({ path: '../.env' })
 
-const PRINT_INCOMING_MESSAGES = true;
+const PRINT_INCOMING_MESSAGES = false;
 const PRINT_OUTBOUND_MESSAGE = false;
-const PRINT_OUTBOUND_COMMAND = true;
+const PRINT_OUTBOUND_COMMAND = false;
+const PRINT_COMMAND_ADDITIONS = true;
+const PRINT_COMMAND_REMOVALS = true;
+const PRINT_COMMAND_SUCCESS = true;
 const PRINT_USB_CONNECTION_MESSAGES = true;
 const PRINT_WS_CONNECTION_MESSAGES = true;
-const GENERATE_MESSAGE_ACKS = false;
 const SEND_HEARTBEAT_INTERVAL = 500;
 const PARSER_TIMEOUT = 50;
 const AUTO_CONNECT_DELAY = 500;
 const AUTO_CONNECT_TIMEOUT = 100;
 const BAUD_RATE = 115200
+const COMMAD_RETRY_COUNT = 3;
 
 const PING_PACKET_HEADER = new Uint8Array([0xAA])
 const TELEMETRY_PACKET_HEADER = new Uint8Array([0xBB])
 
 const { Telemetry } = require('./message/telemetry_pb');
-const { Command } = require('./message/command_pb');
+const { Command, ActuateGroup, FlightStabilization, ActuateServo,
+        ServoConfig, ServoGroup, ServoState, FlightStabilizationMethods } = require('./message/command_pb');
 const { Header, Location, Status } = require('./message/header_pb');
 const { ReadyParser } = require('serialport');
 
@@ -32,6 +36,7 @@ let device = null;
 let parser = null;
 let heartbeat_interval = null;
 let packet_number = 0;
+let command_queue = [];
 
 const on_ws_open = (ws) => {
     if(PRINT_WS_CONNECTION_MESSAGES) {
@@ -112,24 +117,17 @@ const select_device = async (device_to_connect) => {
 }
 
 // From the backend for the plane
-const handle_command = (command, args) => {
+const handle_command = (command_name, args) => {
     if(PRINT_OUTBOUND_COMMAND) {
-        console.log(`Running command: ${command} with args ${args}`)
+        console.log(`Running command: ${command_name} with args ${JSON.stringify(args)}`)
     }
 
     try {
-        const command = generate_command(Location.PLANE, command)
+        let command = generate_command(command_name, args)
+        command_queue.push({ attempts: 0, packet_numbers: [], type: command_name, command });
     } catch(error) {
         console.log(error);
     }
-
-    if(command == null) {
-        console.log('Error generating command!');
-        return;
-    }
-
-    const serialized_command = command.serializeBinary();
-    write_to_device(device, generate_telemetry_message(serialized_command))
 }
 
 // Stuff from the plane to the gnd station
@@ -144,6 +142,20 @@ const handle_message = (buffer) => {
     }
 
     let telemetry = decoded_telemetry.toObject();
+
+    if(telemetry.responseTo != 0) {
+        command_queue = command_queue.filter(command => {
+            if(command.packet_numbers.includes(telemetry.responseTo)) {
+                if(PRINT_COMMAND_SUCCESS) {
+                    console.log(`Success for command ${command.type} after ${command.attempts} attempt(s)`)
+                }
+                return false;
+            }
+            else {
+                return true;
+            }
+        })
+    }
 
     if(PRINT_INCOMING_MESSAGES) {
         console.log(`Message from ${get_location_name(telemetry.header.sender)}, Len: ${buffer.length}, Packet: ${telemetry.header.packetNumber}, Time: ${telemetry.header.time} `)
@@ -191,20 +203,77 @@ const set_header = (command, to) => {
 
 const send_heartbeat = () => {
     if(!device) return;
-    let command = set_header(new Command(), Location.PLANE)
-    const serialized_command = command.serializeBinary();
-    if(!write_to_device(device, generate_telemetry_message(serialized_command))) {
+    let message = set_header(new Command(), Location.PLANE)
+
+    // check if we have commands to send
+    // update queue to remove old commands
+    command_queue = command_queue.filter(item => {
+        item.attempts++;
+        if(item.attempts <= COMMAD_RETRY_COUNT) {
+            if(PRINT_COMMAND_ADDITIONS) {
+                console.log(`Adding ${item.type} to message (attempt #: ${item.attempts})`)
+            }
+
+            // add the command to the message
+            message = add_command_to_message(message, item.type, item.command);
+            item.packet_numbers.push(message.getHeader().getPacketNumber());
+            return true;
+        }
+        else {
+            if(PRINT_COMMAND_REMOVALS) {
+                console.log(`\x1b[33mRemoving command ${item.type} after ${COMMAD_RETRY_COUNT} attempts.\x1b[0m`);
+            }
+            return false
+        }
+    })
+
+    const serialized_message = message.serializeBinary();
+    if(!write_to_device(device, generate_telemetry_message(serialized_message))) {
         console.log('Error sending heartbeat')
     }
 }
 
 // generate a command message
-const generate_command = (to, command_to_send, args) => {
-    let command = set_header(new Command(), to)
-
-    switch(command_to_send) {
+const generate_command = (command_name, args) => {
+    let command;
+    switch(command_name) {
+        case 'ACTUATE_GROUP':
+            command = generate_actuate_command(args)
+            break;
+        case 'RESET_PROCESSOR':
+        case 'FLIGHT_STABILICARION':
+        case 'ACTUATE_SERVO':
+        case 'SERVO_CONFIG':
         default:
-            throw `Error: The command ${command} is unsupported`;
+            throw `Error: The command ${command_to_send} is unsupported`;
+    }
+
+    return command;
+}
+
+const generate_actuate_command = (args) => {
+    if(args.state.toUpperCase() === 'OPEN') args.state = ServoState.OPEN
+    else if(args.state.toUpperCase() === 'CLOSE') args.state = ServoState.close
+    else throw `Error: The argument ${args.state} is not valid`;
+    if(args.group.toUpperCase() === 'DROP_PADA') args.group = ServoGroup.DROP_PADA;
+    else throw `Error: The argument ${args.group} is not valid`;
+    command = new ActuateGroup();
+    command.setGroup(args.group);
+    command.setState(args.state);
+    return command;
+}
+
+const add_command_to_message = (message, type, command) => {
+    switch(type) {
+        case 'ACTUATE_GROUP':
+            message.setActuateGroup(command);
+            break;
+        case 'RESET_PROCESSOR':
+        case 'FLIGHT_STABILIZARION':
+        case 'ACTUATE_SERVO':
+        case 'SERVO_CONFIG':
+        default:
+            throw `Error: The command ${type} is unsupported`;
     }
 
     return message;
@@ -236,6 +305,8 @@ const generate_ping_message = (data) => {
 
 const auto_connect = async () => {
     const devices = await get_device_list();
+    // select_device({ path: '/dev/tty.usbmodem62634901' })
+    // return
 
     // for each device, attempt to send the ping packet
     // if a response is received, that must be the correct device
