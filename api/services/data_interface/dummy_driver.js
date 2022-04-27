@@ -73,12 +73,12 @@ const generate_data = () => {
         planeRadio: { 
             rssi: -108+random_int_from_interval(-5,5), 
             frequencyError: -6803+random_int_from_interval(-15,15), 
-            snr: 8+random_from_irandom_int_from_intervalnterval(3,3)
+            snr: 8+random_int_from_interval(3,3)
         },
         gndRadio: {
             rssi: -40+random_int_from_interval(-5,5), 
             frequencyError: 6685+random_int_from_interval(-15,15), 
-            snr: 10+random_from_irandom_int_from_intervalnterval(3,3)
+            snr: 10+random_int_from_interval(3,3)
         }
     }
 
