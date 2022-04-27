@@ -41,17 +41,27 @@ function App() {
 
   //add http request for command to backend
   //Backend call for command using http request
-  const getCommand = async(command, args) => {
-    console.log("drop pada function")
-
+  const getCommand = async(command, group, state) => {
     fetch('http://localhost:5000/command', {
        method: 'POST',
         headers: { 'Content-Type': 'application/json '},
-         body: JSON.stringify({ commands: [{ command: command, args: args }] })
+         body: JSON.stringify({
+          commands:
+          [
+              {
+                  command: command,
+                  args:
+                  [
+                      group: group,
+                      state: state 
+                  ]
+              }
+          ]
+      })
         }).then(response => {
           if(response.status === 200) {
             
-            console.log(`Post request using parameter: ${command}`);
+            console.log(`Post request using parameter: ${command}, ${group}, ${state}`);
           }
           else{
             console.log(`Error: ${response.status}`);
@@ -95,7 +105,8 @@ function App() {
             <ListItem>
               <Altimeter
               telemetry={telemetry}
-              command = {()=> { getCommand("DROP_PADA",[])}} />
+            command = {()=> { getCommand("DROP_PADA",['PADA'],['OPEN'])}}
+              resetCommand = {()=> { getCommand("DROP_PADA",['PADA'],['CLOSE'])}} />
             </ListItem>
             <ListItem>
               <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '25vh', backgroundColor: '#777772', borderRadius: '16px'}}>
