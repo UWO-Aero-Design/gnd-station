@@ -35,12 +35,10 @@ const canDrop = () => {
     
     
     const drop = () => {
-        if (canDrop()) {
-            setDropHeight(altDisplay);
-            setDropped(true);
-            //put backend command here
-            command();
-        }
+        setDropHeight(altDisplay);
+        setDropped(true);
+        //put backend command here
+        command();
     }
 
     const reset = () => {
