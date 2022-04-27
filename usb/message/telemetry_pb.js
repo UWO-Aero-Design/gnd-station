@@ -28,7 +28,7 @@ goog.exportSymbol('proto.Telemetry', null, global);
  * @constructor
  */
 proto.Telemetry = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.Telemetry.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.Telemetry, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -38,13 +38,6 @@ if (goog.DEBUG && !COMPILED) {
    */
   proto.Telemetry.displayName = 'proto.Telemetry';
 }
-
-/**
- * List of repeated fields within this message type.
- * @private {!Array<number>}
- * @const
- */
-proto.Telemetry.repeatedFields_ = [8];
 
 
 
@@ -84,7 +77,7 @@ proto.Telemetry.toObject = function(includeInstance, msg) {
     battery: (f = msg.getBattery()) && sensors_pb.BatteryData.toObject(includeInstance, f),
     planeRadio: (f = msg.getPlaneRadio()) && sensors_pb.RadioData.toObject(includeInstance, f),
     gndRadio: (f = msg.getGndRadio()) && sensors_pb.RadioData.toObject(includeInstance, f),
-    ackedCommandsList: (f = jspb.Message.getRepeatedField(msg, 8)) == null ? undefined : f
+    responseTo: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -157,8 +150,8 @@ proto.Telemetry.deserializeBinaryFromReader = function(msg, reader) {
       msg.setGndRadio(value);
       break;
     case 8:
-      var value = /** @type {!Array<number>} */ (reader.readPackedInt32());
-      msg.setAckedCommandsList(value);
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setResponseTo(value);
       break;
     default:
       reader.skipField();
@@ -245,9 +238,9 @@ proto.Telemetry.serializeBinaryToWriter = function(message, writer) {
       sensors_pb.RadioData.serializeBinaryToWriter
     );
   }
-  f = message.getAckedCommandsList();
-  if (f.length > 0) {
-    writer.writePackedInt32(
+  f = message.getResponseTo();
+  if (f !== 0) {
+    writer.writeUint32(
       8,
       f
     );
@@ -515,39 +508,20 @@ proto.Telemetry.prototype.hasGndRadio = function() {
 
 
 /**
- * repeated int32 acked_commands = 8;
- * @return {!Array<number>}
+ * optional uint32 response_to = 8;
+ * @return {number}
  */
-proto.Telemetry.prototype.getAckedCommandsList = function() {
-  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 8));
-};
-
-
-/**
- * @param {!Array<number>} value
- * @return {!proto.Telemetry} returns this
- */
-proto.Telemetry.prototype.setAckedCommandsList = function(value) {
-  return jspb.Message.setField(this, 8, value || []);
+proto.Telemetry.prototype.getResponseTo = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
 
 /**
  * @param {number} value
- * @param {number=} opt_index
  * @return {!proto.Telemetry} returns this
  */
-proto.Telemetry.prototype.addAckedCommands = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 8, value, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.Telemetry} returns this
- */
-proto.Telemetry.prototype.clearAckedCommandsList = function() {
-  return this.setAckedCommandsList([]);
+proto.Telemetry.prototype.setResponseTo = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 
