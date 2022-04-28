@@ -5,7 +5,7 @@ import Button from "./Button";
 
 // #00e676 #00c853
 
-function Altimeter({telemetry, command, resetCommand}) {
+function Altimeter({telemetry, dropCommand, resetCommand}) {
 //Declare altitude variable outside to be able to restrain it to 2 decimals per
     //has to parseFloat, otherwise gives undefined error with toFixed function.
     let alt = telemetry === undefined ? "---" : (telemetry.enviro?.altitude);
