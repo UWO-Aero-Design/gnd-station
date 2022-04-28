@@ -32,16 +32,16 @@ function App() {
 
   },[]);
 
-  const success = () =>{
-    //Add overlay to show success message
-  }
-  const errorMessage = () =>{
-    //Add overlay to show error message
-  }
+  // const success = () =>{
+  //   //Add overlay to show success message
+  // }
+  // const errorMessage = () =>{
+  //   //Add overlay to show error message
+  // }
 
   //add http request for command to backend
   //Backend call for command using http request
-  const getCommand = async(command, group, state) => {
+  const sendCommands = async(command,args) => {
     fetch('http://localhost:5000/command', {
        method: 'POST',
         headers: { 'Content-Type': 'application/json '},
@@ -50,10 +50,8 @@ function App() {
           [
               {
                   command: command,
-                  args:
-                  [
-                      group: group,
-                      state: state 
+                  args:[
+                    args
                   ]
               }
           ]
@@ -61,7 +59,7 @@ function App() {
         }).then(response => {
           if(response.status === 200) {
             
-            console.log(`Post request using parameter: ${command}, ${group}, ${state}`);
+            console.log(`Post request using parameter: ${command}, and args: ${args}`);
           }
           else{
             console.log(`Error: ${response.status}`);
@@ -105,8 +103,8 @@ function App() {
             <ListItem>
               <Altimeter
               telemetry={telemetry}
-            command = {()=> { getCommand("DROP_PADA",['PADA'],['OPEN'])}}
-              resetCommand = {()=> { getCommand("DROP_PADA",['PADA'],['CLOSE'])}} />
+            dropCommand = {()=> { sendCommands(`ACTUATE_GROUP`,['PADA','OPEN'])}}
+              resetCommand = {()=> { sendCommands(`ACTUATE_GROUP`,['PADA','CLOSE'])}} />
             </ListItem>
             <ListItem>
               <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '25vh', backgroundColor: '#777772', borderRadius: '16px'}}>
