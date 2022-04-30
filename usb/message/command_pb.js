@@ -134,7 +134,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<number>}
  * @const
  */
-proto.Command.repeatedFields_ = [5,6];
+proto.Command.repeatedFields_ = [3,5,6];
 
 
 
@@ -169,7 +169,8 @@ proto.Command.toObject = function(includeInstance, msg) {
   var f, obj = {
     header: (f = msg.getHeader()) && header_pb.Header.toObject(includeInstance, f),
     resetProcessor: jspb.Message.getBooleanFieldWithDefault(msg, 2, false),
-    actuateGroup: (f = msg.getActuateGroup()) && proto.ActuateGroup.toObject(includeInstance, f),
+    actuateGroupList: jspb.Message.toObjectList(msg.getActuateGroupList(),
+    proto.ActuateGroup.toObject, includeInstance),
     flightStabilization: (f = msg.getFlightStabilization()) && proto.FlightStabilization.toObject(includeInstance, f),
     actuateServoList: jspb.Message.toObjectList(msg.getActuateServoList(),
     proto.ActuateServo.toObject, includeInstance),
@@ -223,7 +224,7 @@ proto.Command.deserializeBinaryFromReader = function(msg, reader) {
     case 3:
       var value = new proto.ActuateGroup;
       reader.readMessage(value,proto.ActuateGroup.deserializeBinaryFromReader);
-      msg.setActuateGroup(value);
+      msg.addActuateGroup(value);
       break;
     case 4:
       var value = new proto.FlightStabilization;
@@ -284,9 +285,9 @@ proto.Command.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getActuateGroup();
-  if (f != null) {
-    writer.writeMessage(
+  f = message.getActuateGroupList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
       3,
       f,
       proto.ActuateGroup.serializeBinaryToWriter
@@ -375,39 +376,40 @@ proto.Command.prototype.setResetProcessor = function(value) {
 
 
 /**
- * optional ActuateGroup actuate_group = 3;
- * @return {?proto.ActuateGroup}
+ * repeated ActuateGroup actuate_group = 3;
+ * @return {!Array<!proto.ActuateGroup>}
  */
-proto.Command.prototype.getActuateGroup = function() {
-  return /** @type{?proto.ActuateGroup} */ (
-    jspb.Message.getWrapperField(this, proto.ActuateGroup, 3));
+proto.Command.prototype.getActuateGroupList = function() {
+  return /** @type{!Array<!proto.ActuateGroup>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.ActuateGroup, 3));
 };
 
 
 /**
- * @param {?proto.ActuateGroup|undefined} value
+ * @param {!Array<!proto.ActuateGroup>} value
  * @return {!proto.Command} returns this
 */
-proto.Command.prototype.setActuateGroup = function(value) {
-  return jspb.Message.setWrapperField(this, 3, value);
+proto.Command.prototype.setActuateGroupList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 3, value);
 };
 
 
 /**
- * Clears the message field making it undefined.
+ * @param {!proto.ActuateGroup=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.ActuateGroup}
+ */
+proto.Command.prototype.addActuateGroup = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 3, opt_value, proto.ActuateGroup, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
  * @return {!proto.Command} returns this
  */
-proto.Command.prototype.clearActuateGroup = function() {
-  return this.setActuateGroup(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.Command.prototype.hasActuateGroup = function() {
-  return jspb.Message.getField(this, 3) != null;
+proto.Command.prototype.clearActuateGroupList = function() {
+  return this.setActuateGroupList([]);
 };
 
 
