@@ -4,7 +4,7 @@ const { InterByteTimeoutParser } = require('@serialport/parser-inter-byte-timeou
 const WebSocket = require('ws');
 require('dotenv').config({ path: '../.env' })
 
-const PRINT_INCOMING_MESSAGES = false;
+const PRINT_INCOMING_MESSAGES = true;
 const PRINT_OUTBOUND_MESSAGE = false;
 const PRINT_OUTBOUND_COMMAND = false;
 const PRINT_COMMAND_ADDITIONS = true;
@@ -217,6 +217,11 @@ const send_heartbeat = () => {
             // add the command to the message
             message = add_command_to_message(message, item.type, item.command);
             item.packet_numbers.push(message.getHeader().getPacketNumber());
+
+            if(item.type === 'RESET_PROCESSOR') {
+                return false;
+            }
+
             return true;
         }
         else {
@@ -238,40 +243,64 @@ const generate_command = (command_name, args) => {
     let command;
     switch(command_name) {
         case 'ACTUATE_GROUP':
-            command = generate_actuate_command(args)
+            command = generate_actuate_group(args)
+            break;
+        case 'ACTUATE_SERVO':
+            command = generate_actuate_servo(args);
             break;
         case 'RESET_PROCESSOR':
+            command = generate_processor_reset(args);
+            break;
         case 'FLIGHT_STABILICARION':
-        case 'ACTUATE_SERVO':
         case 'SERVO_CONFIG':
         default:
-            throw `Error: The command ${command_to_send} is unsupported`;
+            throw `Error: The command ${command_name} is unsupported`;
     }
 
     return command;
 }
 
-const generate_actuate_command = (args) => {
+const generate_actuate_group = (args) => {
     if(args.state.toUpperCase() === 'OPEN') args.state = ServoState.OPEN
-    else if(args.state.toUpperCase() === 'CLOSE') args.state = ServoState.close
+    else if(args.state.toUpperCase() === 'CLOSE') args.state = ServoState.CLOSE
     else throw `Error: The argument ${args.state} is not valid`;
     if(args.group.toUpperCase() === 'DROP_PADA') args.group = ServoGroup.DROP_PADA;
     else throw `Error: The argument ${args.group} is not valid`;
-    command = new ActuateGroup();
+    let command = new ActuateGroup();
     command.setGroup(args.group);
     command.setState(args.state);
     return command;
 }
 
+const generate_actuate_servo = (args) => {
+    let command = new ActuateServo();
+    command.setServoNumber(args.servo_number);
+    if(args.value) command.setValue(args.value);
+    else {
+        if(args.state.toUpperCase() === 'OPEN') command.setServoState(ServoState.OPEN)
+        else if(args.state.toUpperCase() === 'CLOSE') command.setServoState(ServoState.CLOSE)
+        else throw `Error: The argument ${args.state} is not valid`;
+    }
+    return command;
+}
+
+const generate_processor_reset = (args) => {
+    return true;
+}
+
 const add_command_to_message = (message, type, command) => {
     switch(type) {
         case 'ACTUATE_GROUP':
-            message.setActuateGroup(command);
+            message.addActuateGroup(command);
+            break;
+        case 'ACTUATE_SERVO':
+            message.addActuateServo(command);
             break;
         case 'RESET_PROCESSOR':
-        case 'FLIGHT_STABILIZARION':
-        case 'ACTUATE_SERVO':
+            message.setResetProcessor(true);
+            break;
         case 'SERVO_CONFIG':
+        case 'FLIGHT_STABILIZARION':
         default:
             throw `Error: The command ${type} is unsupported`;
     }
