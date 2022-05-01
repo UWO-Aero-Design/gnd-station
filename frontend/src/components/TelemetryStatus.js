@@ -1,23 +1,33 @@
-import React from "react";
+import { React, useEffect } from "react";
 import  "./TelemetryStatusLayout.css"
 
-function TelemetryStatus({telemetry}){
+let packet_rate = 0;
+let now = new Date().getTime();
+let last_packet = now;
 
-    let batteryVoltage = (parseFloat(telemetry?.battery?.voltage).toFixed(2));
-    let batteryCurrent = (parseFloat(telemetry?.battery?.current).toFixed(2));
-    let satellite = (parseFloat(telemetry?.gps?.satellites).toFixed(2));
-    let status = (parseFloat(telemetry?.status).toFixed(2));
-    let temperature = (parseFloat(telemetry?.enviro?.temperature).toFixed(2));
+function TelemetryStatus({telemetry}) {
+
+    // every telemetry packet, calculate the since last packet
+    useEffect(() => {
+        now = new Date().getTime();
+        packet_rate = 1/((now - last_packet)/1000);
+        last_packet = now;
+    }, [telemetry])
+
+    // telemetry = undefined
+
+    let pressure;
+    if(telemetry?.enviro?.pressure) pressure = telemetry.enviro.pressure / 1000;
 
     return(
     
         <div className ="wrapper">
-        <div className = "data1">Signal Strength {telemetry === undefined ? 0 : telemetry?.rssi}</div>
-        <div className = "data2">Battery Voltage {telemetry === undefined ? 0 : batteryVoltage}</div>
-        <div className = "data3">Battery Percent {telemetry === undefined ? 0 : batteryCurrent}</div>
-        <div className = "data4">GPS Status (fix){telemetry === undefined ? 0 : satellite}</div>
-        <div className = "data5">Telemetry {telemetry === undefined ? 0 : status}</div>
-        <div className = "data6">Temperature {telemetry === undefined ? 0 : temperature}</div>
+            <div className = "data1">Rate: { packet_rate.toFixed(1) } Hz</div>
+            <div className = "data2">RX RSSI: { telemetry?.gndRadio?.rssi ?? '-' }</div>
+            <div className = "data3">TX RSSI: { telemetry?.planeRadio?.rssi ?? '-' }</div>
+            <div className = "data4">GPS Sats: { telemetry?.gps?.satellites ?? '-' }</div>
+            <div className = "data5">Pressure: { pressure?.toFixed(2) ?? '-' } KPa</div>
+            <div className = "data6">Temp: { telemetry?.enviro?.temperature?.toFixed(2) ?? '-' } °C</div>
         </div>
     )
 }
