@@ -41,28 +41,22 @@ function App() {
 
   //add http request for command to backend
   //Backend call for command using http request
-  const sendCommands = async(command,args) => {
+
+  const sendCommands = async(commands) => {
     fetch('http://localhost:5000/command', {
-       method: 'POST',
-        headers: { 'Content-Type': 'application/json '},
-         body: JSON.stringify({
-          commands:
-          [
-              {
-                  command: command,
-                  args:args
-                  
-              }
-          ]
-      })
-        }).then(response => {
-          if(response.status === 200) {
-            
-            console.log(`Post request using parameter: ${command}, and args: ${JSON.stringify(args)}`);
-          }
-          else{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json '},
+      body: JSON.stringify({ commands })
+
+      }).then(response => {
+        if(response.status === 200) {
+          commands.forEach(item => {
+            console.log(`Post request using parameter: ${item.command}, and args: ${JSON.stringify(item.args)}`);
+          })
+        }
+        else {
             console.log(`Error: ${response.status}`);
-          }
+        }
         }).catch(error => {
           console.log(error)
         })
@@ -102,8 +96,8 @@ function App() {
             <ListItem>
               <Altimeter
               telemetry={telemetry}
-            dropCommand = {()=> { sendCommands(`ACTUATE_GROUP`,['PADA','OPEN'])}}
-              resetCommand = {()=> { sendCommands(`ACTUATE_GROUP`,['PADA','CLOSE'])}} />
+              dropCommand = {()=> { sendCommands([{ command:'ACTUATE_GROUP', args:{ group: 'DROP_PADA', state: 'OPEN' } }])}}
+              resetCommand = {()=> { sendCommands([{ command:'ACTUATE_GROUP', args:{ group: 'DROP_PADA', state: 'CLOSE' } }])}} />
             </ListItem>
             <ListItem>
               <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '25vh', backgroundColor: '#777772', borderRadius: '16px'}}>
