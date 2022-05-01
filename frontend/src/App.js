@@ -50,16 +50,15 @@ function App() {
           [
               {
                   command: command,
-                  args:[
-                    args
-                  ]
+                  args:args
+                  
               }
           ]
       })
         }).then(response => {
           if(response.status === 200) {
             
-            console.log(`Post request using parameter: ${command}, and args: ${args}`);
+            console.log(`Post request using parameter: ${command}, and args: ${JSON.stringify(args)}`);
           }
           else{
             console.log(`Error: ${response.status}`);
