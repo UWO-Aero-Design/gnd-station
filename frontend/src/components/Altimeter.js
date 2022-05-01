@@ -3,47 +3,38 @@ import Brightness1Icon from '@mui/icons-material/Brightness1';
 import React from 'react';
 import Button from "./Button";
 
-// #00e676 #00c853
+const MAX_ALTITUDE = 50;
+const GREEN = '#00e676';
+const RED = '#ff1744';
+let OFFSET = 0;
 
-function Altimeter({telemetry, command}) {
-//Declare altitude variable outside to be able to restrain it to 2 decimals per
-    //has to parseFloat, otherwise gives undefined error with toFixed function.
-    let alt = telemetry === undefined ? "---" : (telemetry.enviro?.altitude);
-    let altDisplay = parseFloat(alt).toFixed(2);
+function Altimeter({telemetry, dropCommand, resetCommand}) {
+    let alt = telemetry?.enviro?.altitude - OFFSET;
 
-    const [dropped, setDropped] = React.useState(false);
-    const [dropHeight, setDropHeight] = React.useState();
+    // Declare altitude variable outside to be able to restrain it to 2 decimals per
+    let altDisplay = (telemetry === undefined) ? '---' : parseFloat(alt).toFixed(2);
+
+    // const [dropped, setDropped] = React.useState(false);
+    const [dropHeight, setDropHeight] = React.useState(null);
 
     //has to be declared before using it in background colour below
 const canDrop = () => {
-    //if statement to return false if already dropped so button does not change colour again
-    if(dropped){
-        return false;
-    }
-    return alt <= 50;
-    }
+    return alt <= MAX_ALTITUDE;
+}
 
-    const background = canDrop() ?  '#00e676' : '#ff1744';
-    
-    
-
-    // const ReadAltitude = () => {
-    //     // This will be where the function occurs to read the altitude from the sensor
-    //     // Can also be connected to a potential function for reading simulated altitude
-    //     return alt;
-    // }
+    const background = canDrop() ?  GREEN : RED;
     
     
     const drop = () => {
         setDropHeight(altDisplay);
-        setDropped(true);
-        //put backend command here
-        command();
+        // setDropped(true);
+        dropCommand();
     }
 
     const reset = () => {
         setDropHeight(null);
-        setDropped(false);
+        // setDropped(false);
+        resetCommand();
     }
     
     
@@ -56,7 +47,7 @@ const canDrop = () => {
                         Altitude
                     </h3>
                     <h1>
-                        {telemetry === undefined ? "---" : altDisplay} ft
+                        { altDisplay } ft
                     </h1>
                     <h3>
                         PADA Drop Height
@@ -69,7 +60,7 @@ const canDrop = () => {
                     <Grid item sx={4}>
                         <Typography align='center' lineHeight={0}>
                             <h1>
-                                {dropped ? dropHeight : '----'} ft
+                                {dropHeight != null ? dropHeight : '----'} ft
                             </h1>
                         </Typography>
                     </Grid>
