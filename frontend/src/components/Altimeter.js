@@ -3,13 +3,13 @@ import Brightness1Icon from '@mui/icons-material/Brightness1';
 import React from 'react';
 import Button from "./Button";
 
-// #00e676 #00c853
 const MAX_ALTITUDE = 50;
 const GREEN = '#00e676';
 const RED = '#ff1744';
+let OFFSET = 0;
 
 function Altimeter({telemetry, dropCommand, resetCommand}) {
-    let alt = telemetry?.enviro?.altitude;
+    let alt = telemetry?.enviro?.altitude - OFFSET;
 
     // Declare altitude variable outside to be able to restrain it to 2 decimals per
     let altDisplay = (telemetry === undefined) ? '---' : parseFloat(alt).toFixed(2);
