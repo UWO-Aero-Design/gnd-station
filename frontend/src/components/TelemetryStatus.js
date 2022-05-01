@@ -25,8 +25,8 @@ function TelemetryStatus({telemetry}) {
             <div className = "data1">Rate: { packet_rate.toFixed(1) } Hz</div>
             <div className = "data2">RX RSSI: { telemetry?.gndRadio?.rssi ?? '-' }</div>
             <div className = "data3">TX RSSI: { telemetry?.planeRadio?.rssi ?? '-' }</div>
-            <div className = "data4">GPS Sats: { telemetry?.gps?.satellites ?? '-' }</div>
-            <div className = "data5">Pressure: { pressure?.toFixed(2) ?? '-' } KPa</div>
+            <div className = "data4">Packet: { telemetry?.header?.packetNumber ?? '-' }</div>
+            <div className = "data5">GPS Sats: { telemetry?.gps?.satellites ?? '-' }</div>
             <div className = "data6">Temp: { telemetry?.enviro?.temperature?.toFixed(2) ?? '-' } °C</div>
         </div>
     )
