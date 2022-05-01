@@ -25,9 +25,11 @@ function App() {
 
     ws.current.onmessage = (message)=> {
       const data = JSON.parse(message.data);
-      const telemetry = data.telemetry
-      setTelemetry(telemetry);
-      //console.log(data);
+
+      if(data.recipient.toUpperCase() === 'FRONTEND' && data.type.toUpperCase() === 'TELEMETRY') {
+        const telemetry = data.telemetry
+        setTelemetry(telemetry);
+      }
     }
 
   },[]);
