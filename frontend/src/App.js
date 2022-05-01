@@ -7,8 +7,9 @@ import Altimeter from './components/Altimeter';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 function App() {
-  //function that receives data from web socket
-  const [telemetry, setTelemetry] = useState({ battery: {}, imu:{}, gps:{}, enviro:{}});
+  // function that receives data from web socket
+  const [telemetry, setTelemetry] = useState({});
+
   // https://stackoverflow.com/questions/60152922/proper-way-of-using-react-hooks-websockets
   // https://stackoverflow.com/questions/58432076/websockets-with-functional-components
   const ws = useRef(null);
@@ -34,23 +35,14 @@ function App() {
 
   },[]);
 
-  // const success = () =>{
-  //   //Add overlay to show success message
-  // }
-  // const errorMessage = () =>{
-  //   //Add overlay to show error message
-  // }
-
-  //add http request for command to backend
-  //Backend call for command using http request
-
   const sendCommands = async(commands) => {
     fetch('http://localhost:5000/command', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json '},
       body: JSON.stringify({ commands })
 
-      }).then(response => {
+      })
+      .then(response => {
         if(response.status === 200) {
           commands.forEach(item => {
             console.log(`Post request using parameter: ${item.command}, and args: ${JSON.stringify(item.args)}`);
@@ -59,9 +51,10 @@ function App() {
         else {
             console.log(`Error: ${response.status}`);
         }
-        }).catch(error => {
-          console.log(error)
         })
+      .catch(error => {
+        console.log(error)
+      })
     
 }
 
