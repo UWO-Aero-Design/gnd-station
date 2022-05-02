@@ -30,18 +30,26 @@ const { ReadyParser } = require('serialport');
 
 
 const port = process.env.API_PORT || 5000;
-const ws = new WebSocket(`ws://localhost:${port}`);
+let ws;
 
 let device = null;
 let parser = null;
 let heartbeat_interval = null;
 let packet_number = 0;
 let command_queue = [];
+let ws_reconnect_interval;
 
-const on_ws_open = (ws) => {
+const ws_send = (data) => {
+    if(ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(data));
+    }
+}
+
+const on_ws_open = () => {
     if(PRINT_WS_CONNECTION_MESSAGES) {
         console.log(`Connected to backend through port ${port}`)
     }
+    clearInterval(ws_reconnect_interval)
 }
 
 const on_ws_message = (message) => {
@@ -51,7 +59,7 @@ const on_ws_message = (message) => {
             // message: { recipient: 'USB_TOOL', type: 'LIST_DEVICES' }
             case 'LIST_DEVICES':
                 const devices = get_device_list();
-                ws.send(JSON.stringify({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'LIST_DEVICES', devices }));
+                ws_send({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'LIST_DEVICES', devices });
                 break;
 
             // message: { recipient: 'USB_TOOL, type: 'SELECT_DEVICE', device: { ... } }
@@ -66,21 +74,29 @@ const on_ws_message = (message) => {
 
             // invalid message.type (let the backend know it messed up)
             default:
-                ws.send(JSON.stringify({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'ERROR', message: 'The command contains an invalid type' }));
+                ws_send({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'ERROR', message: 'The command contains an invalid type' });
 
         }
     }
 }
 
 const ws_on_close = (code) => {
-    console.log(`CLOSED: ${code}`)
-    // usbDetect.stopMonitoring()
+    // console.log(`CLOSED: ${code}`)
+    setTimeout(ws_connect, 1000)
+}
+
+const ws_on_error = (error) => {
+    if(error.code !== 'ECONNREFUSED' && error.code !== 'ECONNRESET') {
+        console.log(error)
+    }
 }
 
 const ws_connect = () => {
+    ws = new WebSocket(`ws://localhost:${port}`);
     ws.on('open', on_ws_open)
     ws.on('message', on_ws_message)
     ws.on('close', ws_on_close)
+    ws.on('error', ws_on_error)
 }
 ws_connect()
 
@@ -161,7 +177,7 @@ const handle_message = (buffer) => {
         console.log(`Message from ${get_location_name(telemetry.header.sender)}, Len: ${buffer.length}, Packet: ${telemetry.header.packetNumber}, Time: ${telemetry.header.time} `)
     }
 
-    ws.send(JSON.stringify({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'TELEMETRY', telemetry }));
+    ws_send({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'TELEMETRY', telemetry });
 }
 
 const handle_close = () => {
