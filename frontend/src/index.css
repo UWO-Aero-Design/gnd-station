@@ -5,10 +5,42 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
+  background: black;
+  color: white;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.full-screen {
+  --padding: 20px;
+  height: calc((100vh - 2*var(--padding)));
+  width: calc((100vw - 2*var(--padding)));
+  padding: var(--padding);
+}
+
+.gnd-grid {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+}
+  
+.map-item { grid-area: 1 / 1 / 4 / 3; }
+.camera-item { grid-area: 4 / 1 / 7 / 3; }
+.timer-item { grid-area: 1 / 3 / 3 / 4; }
+.altitude-item { grid-area: 3 / 3 / 6 / 4; }
+.record-item { grid-area: 6 / 3 / 7 / 4; }
+.status-item { grid-area: 1 / 4 / 3 / 6; }
+.hud-item { grid-area: 3 / 4 / 5 / 6; }
+.settings-item { grid-area: 5 / 4 / 7 / 6; }
+
+.record-item {
+  margin-top: 50px;
+  margin-left: 80px;
 }

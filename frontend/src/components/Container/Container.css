@@ -1,0 +1,15 @@
+.grid-item-container {
+    height: 100%;
+    width: 100%;
+    background-color: rgba(198, 223, 238, 0.774);
+    border: 2px solid #ffffff; 
+    border-radius: 20px;
+    color: black;
+}
+
+.grid-item-content {
+    margin: 5px;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}

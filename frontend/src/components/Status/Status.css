@@ -1,0 +1,28 @@
+.status-com-form {
+    width: 90%;
+    margin: 20px auto;
+}
+
+.status-com-form, form {
+    text-align: center;
+}
+
+.status-label {
+    width: 400px;
+    border: 1px black solid;
+    border-radius: 10px;
+    text-align: center;
+    margin: 20px auto;
+    padding: 7px 0;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.status-com-form select {
+ min-width: 300px;
+}
+
+.status-container p {
+    text-align: center;
+    font-size: 0.5em;
+}

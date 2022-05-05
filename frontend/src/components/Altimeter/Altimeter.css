@@ -1,0 +1,22 @@
+.altimeter {
+    text-align: center;
+}
+
+.altimeter-label {
+    margin: 15px 25px auto auto;
+    font-size: 1.5em;
+}
+
+.inch-text {
+    font-size: 0.75in;
+    margin: 5px;
+    font-variant-numeric: tabular-nums; /* remove variable font width */
+}
+
+.altimeter-button {
+    margin: 15px 5px;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 5px 20px;
+}
