@@ -25,7 +25,7 @@ function Altimeter({ telemetry, dropCommand, resetCommand, offset, zeroAlt, rese
     }
 
     const alt = telemetry?.enviro?.altitude*METRES_TO_FEET - offset*METRES_TO_FEET;
-    const altDisplay = (telemetry === undefined) ? '---' : parseFloat(alt).toFixed(2);
+    const altDisplay = (telemetry?.enviro?.altitude === undefined) ? '---' : parseFloat(alt).toFixed(2);
     const padaAltDisplay = dropHeight != null ? dropHeight : '----'
     const background_colour = can_drop() ?  GREEN : RED;
 
@@ -33,16 +33,20 @@ function Altimeter({ telemetry, dropCommand, resetCommand, offset, zeroAlt, rese
 
     return(
         <div className='altimeter'>
-            <button className='altimeter-button' onClick={zeroAlt}>Zero Alt</button>
-            <button className='altimeter-button' onClick={resetAlt}>Reset Alt</button>
-            <h3 className='altimeter-label'>Altitude</h3>
-            <p className='inch-text'>{ altDisplay } ft</p>
-            <h3 className='altimeter-label'>PADA Drop Height</h3>
-            <p className='inch-text'>{ padaAltDisplay } ft</p>
-            <button className='altimeter-button' onClick={drop} style={{ backgroundColor: background_colour }}>Drop PADA</button>
-            <button className='altimeter-button' onClick={reset}>Reset PADA</button>
-            {/* <Button className='altimeter-button' clickFn={drop} BackgroundColor={ background_colour } ButtonText='Drop Pada'></Button>
-            <Button className='altimeter-button' clickFn={reset} BackgroundColor={ RED } ButtonText='Reset'></Button> */}
+            <div className='altimeter-button-top'>
+                <button className='altimeter-button' onClick={zeroAlt}>Zero Alt</button>
+                <button className='altimeter-button' onClick={resetAlt}>Reset Alt</button>
+            </div>
+            <div className='altimeter-altitude'>
+                <h3 className='altimeter-label'>Altitude</h3>
+                <p className='inch-text'>{ altDisplay } ft</p>
+                <h3 className='altimeter-label'>PADA Drop Height</h3>
+                <p className='inch-text'>{ padaAltDisplay } ft</p>
+            </div>
+            <div className='altimeter-button-bottom'>
+                <button className='altimeter-button' onClick={drop} style={{ backgroundColor: background_colour }}>Drop PADA</button>
+                <button className='altimeter-button' onClick={reset}>Reset PADA</button>
+            </div>
         </div>
     )
 }
