@@ -24,6 +24,7 @@ function App() {
   const [ports, setPorts] = useState([])
   const [currentPort, setCurrentPort] = useState(null)
   const [isFlying, setIsFlying] = useState(false);
+  const [currentStream, setCurrentStream] = useState(null);
 
   // https://stackoverflow.com/questions/60152922/proper-way-of-using-react-hooks-websockets
   // https://stackoverflow.com/questions/58432076/websockets-with-functional-components
@@ -57,6 +58,7 @@ function App() {
     if(data.recipient.toUpperCase() === 'FRONTEND' && data.type.toUpperCase() === 'TELEMETRY') {
       const telemetry = data.telemetry
       setTelemetry(telemetry);
+      if(currentStream != data.stream) setCurrentStream(data.stream)
 
       let now = new Date().getTime();
       packet_rate = packet_rate = 1/((now - last_packet)/1000);
@@ -195,10 +197,10 @@ function App() {
         <Container className="camera-item" content={
           <Status telemetry={ telemetry } status={ status } ports={ ports } updateComPorts={ update_com_ports }
                   selectComPort={ select_com_port } currentPort={ currentPort } packetRate={ packet_rate } sendCommands={ sendCommands }
+                  currentStream={ currentStream }
           ></Status> }>
         </Container>
         </div>
-        <div className="hud-item"></div>
         <div className="settings-item"></div>
       </div>
     </div>
