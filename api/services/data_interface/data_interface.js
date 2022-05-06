@@ -24,7 +24,7 @@ const event = new events.EventEmitter();
  *      - telemetry: for data to be sent to the frontend -> { data: { ... } }
  *      - error: for any errors that occur -> { error: '', message: '' }
  */
-const DEFAULT_DRIVER = USB_DRIVER;
+const DEFAULT_DRIVER = DUMMY_DRIVER;
 const drivers = [ USB_DRIVER, DUMMY_DRIVER ];
 let current_driver;
 
