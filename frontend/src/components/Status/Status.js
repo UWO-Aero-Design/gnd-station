@@ -7,7 +7,7 @@ const PADA_ARMED_LABEL_COLOUR = '#9b59b6'
 const SERVER_DISCONNECTED_LABEL_COLOUR = '#e17055'
 const NO_TELEMETRY_LABEL_COLOUR = '#e74c3c'
 
-function Status({ telemetry, status, ports, updateComPorts, selectComPort, currentPort, packetRate, sendCommands }) {
+function Status({ telemetry, status, ports, updateComPorts, selectComPort, currentPort, packetRate, sendCommands, currentStream }) {
     const get_label_colour = (status) => {
         status = status.toUpperCase();
         switch(status) {
@@ -55,6 +55,7 @@ function Status({ telemetry, status, ports, updateComPorts, selectComPort, curre
                 <button onClick={ handle_com_select }>Select</button>
             </div>
             <p>Current port: {currentPort}</p>
+            <p>Current stream: {currentStream}</p>
             <button onClick={() => { sendCommands([ { command: 'RESET_PROCESSOR' } ]) }}>Reset Processor</button>
         </div>
         
