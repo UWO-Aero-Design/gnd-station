@@ -36,8 +36,7 @@ code {
 .timer-item { grid-area: 1 / 3 / 3 / 4; }
 .altitude-item { grid-area: 3 / 3 / 6 / 4; }
 .record-item { grid-area: 6 / 3 / 7 / 4; }
-.status-item { grid-area: 1 / 4 / 3 / 6; }
-.hud-item { grid-area: 3 / 4 / 5 / 6; }
+.status-item { grid-area: 1 / 4 / 5 / 6; }
 .settings-item { grid-area: 5 / 4 / 7 / 6; }
 
 .record-item {
