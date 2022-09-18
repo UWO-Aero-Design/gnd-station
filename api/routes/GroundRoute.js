@@ -1,56 +1,53 @@
 const router = require('express').Router();
+const WebSocket = require('ws')
+const wss = require('../services/websocket/ws')
+const alt_offset = require('../services/telemetry/alt_offset')
 
-const SerialPort = require('serialport') 
-// const usb = require('../config/usb')
-
-router.get('/com', async (req, res) => {
-    let get_all = req.query.all;
-    // usb.list()
-    //     .then(devices => {
-    //         if(get_all != undefined) {
-    //             return res.status(200).json(devices)
-    //         }
-    //         else {
-    //             let filtered_devices = [];
-    //             devices.forEach(device => {
-    //                 if(device.manufacturer !== undefined) {
-    //                     filtered_devices.push(device)
-    //                 }
-    //             })
-    //             return res.status(200).json(filtered_devices)
-    //         }
-    //     })
-    //     .catch(error => {
-    //         return res.status(500).json(error)
-    //     })
+router.post('/com', async (req, res) => {
+    wss.get_websocket().clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ sender: 'BACKEND', recipient: 'USB_TOOL', type: 'LIST_DEVICES' }))
+        }
+    })
+    return res.status(200).send();
 });
 
-router.post('/com', async (req, res) => { 
-    const com = req.body;
-    if(!com.path) {
-        return res.status(400).send('Invalid COM device')
-    }
-    else {
-        usb.select(com.path)
-            .then(() => {
-                console.log(`Connected to ${com.path}`)
-                return res.status(200).send();
-            })
-            .catch(error => {
-                console.log(error)
-                return res.status(500).json(error);
-            })
-    }
+router.post('/com/current', async (req, res) => {
+    wss.get_websocket().clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ sender: 'BACKEND', recipient: 'USB_TOOL', type: 'GET_DEVICE' }))
+        }
+    })
+    return res.status(200);
 });
 
-router.post('/com/test', (req, res) => { 
-    // usb.write('hello')
-    //     .then(() => {
-    //         return res.status(200).send();
-    //     })
-    //     .catch(error => {
-    //         return res.status(500).json(error);
-    //     })
+router.post('/com/select', async (req, res) => { 
+    let path = req.body.path;
+    if(!path) {
+        return res.status(400).send('No path specified')
+    }
+
+    wss.get_websocket().clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ sender: 'BACKEND', recipient: 'USB_TOOL', type: 'SELECT_DEVICE', path: path }))
+        }
+    })
+
+    return res.status(200).send();
+});
+
+router.post('/offset/alt', async (req, res) => {
+    let offset = req.body.offset;
+    if(!offset) {
+        return res.status(400).send('No offset specified')
+    }
+    
+    alt_offset.set(offset)
+    return res.status(200).send();
+});
+
+router.get('/offset/alt', async (req, res) => {
+    return res.status(200).json({ alt_offset: alt_offset.get() });
 });
 
 router.get('/mapkey', (req, res) => {

@@ -19,6 +19,24 @@ const init = () => {
                 const { telemetry } = message
                 event.emit('telemetry', JSON.stringify({ data: telemetry }))
             }
+
+            if(message.sender === 'USB_TOOL' && message.type === 'DEVICE_LIST') {
+                const { devices } = message
+                wss.get_websocket().clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({ sender: 'BACKEND', recipient: 'FRONTEND', type: 'DEVICE_LIST', devices }));
+                    }
+                });
+            }
+
+            if(message.sender === 'USB_TOOL' && message.type === 'CURRENT_DEVICE') {
+                const { path } = message
+                wss.get_websocket().clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({ sender: 'BACKEND', recipient: 'FRONTEND', type: 'CURRENT_DEVICE', path }));
+                    }
+                });
+            }
         })
     })
 }
@@ -26,9 +44,9 @@ const init = () => {
 const process_command = (command, args) => {
     console.log(`Sending command ${command} with args ${args}`)
     wss.get_websocket().clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ sender: 'BACKEND', recipient: 'USB_TOOL', type: 'COMMAND', command: command, arguments: args }));
-    }
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ sender: 'BACKEND', recipient: 'USB_TOOL', type: 'COMMAND', command: command, arguments: args }));
+        }
     });
 }
 

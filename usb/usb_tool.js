@@ -1,5 +1,6 @@
 const { SerialPort } = require('serialport')
 const usbDetect = require('usb-detection');
+const { findByIds } = require('usb');
 const { InterByteTimeoutParser } = require('@serialport/parser-inter-byte-timeout')
 const WebSocket = require('ws');
 require('dotenv').config({ path: '../.env' })
@@ -45,26 +46,31 @@ const ws_send = (data) => {
     }
 }
 
-const on_ws_open = () => {
+const ws_on_open = () => {
     if(PRINT_WS_CONNECTION_MESSAGES) {
         console.log(`Connected to backend through port ${port}`)
     }
     clearInterval(ws_reconnect_interval)
 }
 
-const on_ws_message = (message) => {
+const ws_on_message = async (message) => {
     message = JSON.parse(message);
     if(message.recipient == 'USB_TOOL') {
         switch(message.type) {
             // message: { recipient: 'USB_TOOL', type: 'LIST_DEVICES' }
             case 'LIST_DEVICES':
-                const devices = get_device_list();
-                ws_send({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'LIST_DEVICES', devices });
+                const devices = await get_device_list();
+                ws_send({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'DEVICE_LIST', devices });
                 break;
 
-            // message: { recipient: 'USB_TOOL, type: 'SELECT_DEVICE', device: { ... } }
+            // message: { recipient: 'USB_TOOL, type: 'GET_DEVICE' }
+            case 'GET_DEVICE':
+                ws_send({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'CURRENT_DEVICE', path: device?.path });
+                break;
+
+            // message: { recipient: 'USB_TOOL, type: 'SELECT_DEVICE', path: '...' }
             case 'SELECT_DEVICE':
-                select_device(message.device);
+                select_device({ path: message.path });
                 break;
 
             // message: { recipient: 'USB_TOOL, type: 'COMMAND', command: '...', arguments: { ... } }
@@ -81,8 +87,7 @@ const on_ws_message = (message) => {
 }
 
 const ws_on_close = (code) => {
-    // console.log(`CLOSED: ${code}`)
-    setTimeout(ws_connect, 1000)
+    ws_reconnect_interval = setTimeout(ws_connect, 1000)
 }
 
 const ws_on_error = (error) => {
@@ -93,8 +98,8 @@ const ws_on_error = (error) => {
 
 const ws_connect = () => {
     ws = new WebSocket(`ws://localhost:${port}`);
-    ws.on('open', on_ws_open)
-    ws.on('message', on_ws_message)
+    ws.on('open', ws_on_open)
+    ws.on('message', ws_on_message)
     ws.on('close', ws_on_close)
     ws.on('error', ws_on_error)
 }
@@ -125,6 +130,7 @@ const select_device = async (device_to_connect) => {
     device.on('close', handle_close);
 
     heartbeat_interval = setInterval(send_heartbeat, SEND_HEARTBEAT_INTERVAL);
+    usbDetect.stopMonitoring();
 
     if(PRINT_USB_CONNECTION_MESSAGES) {
         console.log(`Connected to ${device.path}`)
@@ -184,7 +190,7 @@ const handle_close = () => {
     console.log(`Disconnected from ${device.path}`)
     device = null;
     clearInterval(heartbeat_interval);
-    // usbDetect.startMonitoring();
+    usbDetect.startMonitoring();
 }
 
 const write_to_device = async(dev, data) => {
