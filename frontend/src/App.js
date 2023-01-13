@@ -1,10 +1,11 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Container from './components/Container/Container';
-import Map from './components/Map/Map';
 import Camera from './components/Camera/Camera';
 import Timer from './components/Timer/Timer';
 import Altimeter from './components/Altimeter/Altimeter';
 import Status from './components/Status/Status'
+import Servo from './components/Servo'
+import CreateRecording from './components/Record/CreateRecording';
 
 const API_HOSTNAME = 'localhost:5000'
 const WS_HOST = `ws://${API_HOSTNAME}`
@@ -172,9 +173,6 @@ function App() {
   return (
     <div className="full-screen">
       <div className="gnd-grid">
-        <div className="map-item">
-          <Container className="map-item" content={ <Map></Map> }></Container>
-        </div>
         <div className="camera-item">
           <Container className="camera-item" content={ <Camera></Camera> }></Container>
         </div>
@@ -191,7 +189,10 @@ function App() {
           </Container>
         </div>
         <div className="record-item">
-          
+          <Container>
+           
+          </Container>
+           <CreateRecording></CreateRecording>
         </div>
         <div className="status-item">
         <Container className="camera-item" content={
@@ -201,7 +202,11 @@ function App() {
           ></Status> }>
         </Container>
         </div>
-        <div className="settings-item"></div>
+        <div className="record-list-item">
+          <Container>
+          <Servo></Servo>
+          </Container>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import * as React from 'react';
-import Button from './Button';
+import Button from './Button/Button'
 
 function Servo() {
 
@@ -13,8 +13,8 @@ function Servo() {
     };
 
     return(
-        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '30vh', backgroundColor: '#777772', borderRadius: '16px'}}>
-            <FormControl variant="standard" sx={{ m: 1, minWidth: 250 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '20%', height: '5vh', backgroundColor: '#777772', borderRadius: '16px'}}>
+            <FormControl variant="standard" sx={{ m: 1, minWidth: 10 }}>
                 <InputLabel id="servo-box">Select Servo</InputLabel>
                 <Select
                     labelId="servo-box"
@@ -30,12 +30,12 @@ function Servo() {
                     <MenuItem value={2}>Servo 2</MenuItem>
                     <MenuItem value={3}>Servo 3</MenuItem>
                 </Select>
-                <Button  Style = {{height: 35,width: 200, position: 'absolute', marginTop: '50%',
+                <Button  Style = {{height: 5,width: 10, position: 'absolute', marginTop: '50%',
                                 marginRight:'60%', display: 'inline-block'}} 
                                 ButtonText = {`Upload Settings (${servoNum})`}
                                 BackgroundColor ='#00FF00' />
                                 
-                <Button Style = {{height: 35 ,width: 150, position: 'absolute', marginTop: '50%',
+                <Button Style = {{height: 5 ,width: 15, position: 'absolute', marginTop: '50%',
                                 marginLeft:'100%', borderRadius:'7px', display: 'flex'}}
                                  ButtonText = 'Reset'/>
             </FormControl>
