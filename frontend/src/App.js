@@ -6,6 +6,7 @@ import Altimeter from './components/Altimeter/Altimeter';
 import Status from './components/Status/Status'
 import Servo from './components/Servo'
 import CreateRecording from './components/Record/CreateRecording';
+import DisplayRecording from './components/Record/DisplayRecording';
 
 const API_HOSTNAME = 'localhost:5000'
 const WS_HOST = `ws://${API_HOSTNAME}`
@@ -180,7 +181,7 @@ function App() {
           <Timer telemetry={telemetry} isFlying={ isFlying }></Timer>
         </div>
         <div className="altitude-item">
-          <Container className="map-item" content={
+          <Container className="altitude-item" content={
             <Altimeter telemetry={telemetry} dropCommand = {()=> { sendCommands([{ command:'ACTUATE_GROUP', args:{ group: 'DROP_PADA', state: 'OPEN' } }])}}
                         resetCommand = {()=> { sendCommands([{ command:'ACTUATE_GROUP', args:{ group: 'DROP_PADA', state: 'CLOSE' } }])}}
                         offset={altOffset} zeroAlt={ zero_alt } resetAlt={ reset_alt }>
@@ -189,10 +190,8 @@ function App() {
           </Container>
         </div>
         <div className="record-item">
-          <Container>
-           
+          <Container content={<CreateRecording/>}> 
           </Container>
-           <CreateRecording></CreateRecording>
         </div>
         <div className="status-item">
         <Container className="camera-item" content={
@@ -204,7 +203,6 @@ function App() {
         </div>
         <div className="record-list-item">
           <Container>
-          <Servo></Servo>
           </Container>
         </div>
       </div>

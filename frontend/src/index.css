@@ -15,7 +15,7 @@ code {
 }
 
 .full-screen {
-  --padding: 20px;
+  --padding: 5vh;
   height: calc((100vh - 2*var(--padding)));
   width: calc((100vw - 2*var(--padding)));
   padding: var(--padding);

@@ -22,6 +22,7 @@ const connect = () => {
   mongoose.set('useCreateIndex', true);
   mongoose.set('useUnifiedTopology', true);
 
+
   console.log(`Connecting to database at mongodb://${user}:${pass}@${host}:${port}`)
 
   mongoose.connect(`mongodb://${user}:${pass}@${host}:${port}`, options)
