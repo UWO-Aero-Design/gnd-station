@@ -1,5 +1,10 @@
 .webcam-video {
     height: 100%;
     width: 100%;
-    border-radius: 30px;
 }
+.select-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }

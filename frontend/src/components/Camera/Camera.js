@@ -1,25 +1,68 @@
-import React from "react";
+import React,{useState, useEffect, useRef} from "react";
 import "./Camera.css";
 
 const Camera = () => {
-  if (!navigator.mediaDevices?.enumerateDevices) {
-    console.log("enumerateDevices() not supported.");
-  // } else {
-  //   // List cameras and microphones.
-  //   navigator.mediaDevices.enumerateDevices()
-  //     .then((devices) => {
-  //       devices.forEach((device) => {
-  //         console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       console.error(`${err.name}: ${err.message}`);
-  //     });
-  }  
+  const [devices, setDevices] = useState([]);
+  const [selectedDevice, setSelectedDevice] = useState(null);
+  const videoRef = useRef(null);
+  const videoWidth = 1990;
+  const videoHeight = 550;
+
+
+  useEffect(() => {
+    async function getDevices() {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(device => device.kind === 'videoinput');
+      setDevices(videoDevices);
+      setSelectedDevice(videoDevices[0]);
+    }
+    getDevices();
+  }, []);
+
+  useEffect(() => {
+    if (selectedDevice) {
+      const constraints = { 
+        video: {
+        deviceId: selectedDevice.deviceId,
+        width: videoWidth,
+        height: videoHeight
+      } };
+      navigator.mediaDevices.getUserMedia(constraints)
+        .then(stream => {
+          videoRef.current.srcObject = stream;
+        })
+        .catch(err => console.log(err));
+    } else {
+      videoRef.current.srcObject = null;
+    }
+  }, [selectedDevice, videoWidth, videoHeight]);
+
+  function handleDeviceChange(event) {
+    const deviceId = event.target.value;
+    if (deviceId) {
+      const selected = devices.find(device => device.deviceId === deviceId);
+      setSelectedDevice(selected);
+    } else {
+      setSelectedDevice(null);
+    }
+  }
+  
+
   return (
-      <div className="webcam-video">
-        <img src = {'sample_camera.png'} alt = "sample_camera"/>
-      </div>
+    <div style={{ display:"flex",position: 'relative', justifyContent:"center" }}>
+    <div className="select-container">
+    <select value={selectedDevice?.deviceId} onChange={handleDeviceChange}>
+  <option value={null}>Disable Camera</option>
+  {devices.map(device => (
+    <option key={device.deviceId} value={device.deviceId}>
+      {device.label}
+    </option>
+  ))}
+    </select>
+
+    </div>
+    <video ref={videoRef} autoPlay playsInline />
+  </div>
   );
 };
 

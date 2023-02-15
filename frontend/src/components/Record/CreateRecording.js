@@ -11,19 +11,23 @@ const CreateRecording = () =>{
     const [isRecording, setIsRecording] = useState(false);
     const [recordingName,setRecordingName] = useState('');
     const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({ screen: true, blobPropertyBag:{type:"video/MOV"} });
+    useReactMediaRecorder({ screen: true,audio:false, blobPropertyBag:{type:'video/mp4'} });
+
+    let Recordings = [];
 
     const downloadRecording = () => {
-        const pathName = `${recordingName}.mov`;
+        const pathName = `${recordingName}.mp4`;
         try {
           if (window.navigator && window.navigator.msSaveOrOpenBlob) {
             // for IE
             window.navigator.msSaveOrOpenBlob(mediaBlobUrl, pathName);
+            Recordings.push(mediaBlobUrl)
           } else {
             // for Chrome
             const link = document.createElement("a");
             link.href = mediaBlobUrl;
             link.download = pathName;
+            Recordings.push(mediaBlobUrl)
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -56,7 +60,7 @@ const CreateRecording = () =>{
 
     return(
         <div className='create-recording'>
-        <div className='altimeter-input-top'>
+        <div >
             <input className='altimeter-button' 
             placeholder="Recording Name..."
             type="text"
@@ -65,9 +69,10 @@ const CreateRecording = () =>{
             ></input>
          </div>
         <div className='recording-button-bottom'>
-            <p>{status}</p>
+            
             <button className='recording-button' onClick = {triggerRecord} style={{ backgroundColor: background_color }}>{isRecording ? 'Stop Recording':'Start Recording'}</button>
-            {isRecording ? '':<button onClick = {viewRecording}> View Recording</button>}
+            {isRecording ? '':<button  className = 'recording-button'onClick = {viewRecording}> View Recording</button>}
+            <p>{status}</p>
         </div>
         </div>
     )

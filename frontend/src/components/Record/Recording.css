@@ -15,13 +15,13 @@
 
 .recording-input-top {
     width: 100%;
-    margin: 3vh auto;
+    margin: 3vh 1vh 1vh 1vh;
     position: absolute;
     top: 1vh;
 }
 
 .recording-button-bottom {
     width: 100%;
-    margin: 23vh auto 2vh auto;
-    bottom: 1vh;
+    margin: 20vh auto 2vh auto;
+    bottom: 4vh;
 }
