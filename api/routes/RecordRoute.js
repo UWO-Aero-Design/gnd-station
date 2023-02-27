@@ -79,7 +79,7 @@ router.delete('/:record_id', async (req, res) => {
         console.log('Stopped recording')
     }
     const recording = await Recording.findByIdAndDelete(_id)
-    return res.status(200).send()
+    return res.status(200).send("Recording Deleted")
 });
 
 router.delete('/', async (req, res) => { 

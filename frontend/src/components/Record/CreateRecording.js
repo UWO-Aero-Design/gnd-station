@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import Button from '../Button/Button';
 import './Recording.css';
 import { useReactMediaRecorder } from "react-media-recorder";
 
@@ -12,6 +11,22 @@ const CreateRecording = () =>{
     const [recordingName,setRecordingName] = useState('');
     const { status, startRecording, stopRecording, mediaBlobUrl } =
     useReactMediaRecorder({ screen: true,audio:false, blobPropertyBag:{type:'video/mp4'} });
+
+
+    const startRecordingDB = async()=>{
+      await fetch ('http://localhost:5000/record',{ method: 'POST', 
+      headers: { 'Content-Type': 'application/json '},
+       body: JSON.stringify({ action: "start" }) })
+    }
+
+    const stopRecordingDB = async()=>{
+      await fetch ('http://localhost:5000/record',{ method: 'POST', 
+      headers: { 'Content-Type': 'application/json '},
+       body: JSON.stringify({ action: "stop" }) })
+    }
+    
+    
+
 
     let Recordings = [];
 
@@ -49,11 +64,13 @@ const CreateRecording = () =>{
         setIsRecording(!isRecording);
         if(isRecording){
            stopRecording();
+           stopRecordingDB()
            downloadRecording();
            setRecordingName('');
         }
         else{
             startRecording();
+            startRecordingDB();
         }
     }
  const background_color = isRecording ? RED:GREEN;
@@ -69,7 +86,6 @@ const CreateRecording = () =>{
             ></input>
          </div>
         <div className='recording-button-bottom'>
-            
             <button className='recording-button' onClick = {triggerRecord} style={{ backgroundColor: background_color }}>{isRecording ? 'Stop Recording':'Start Recording'}</button>
             {isRecording ? '':<button  className = 'recording-button'onClick = {viewRecording}> View Recording</button>}
             <p>{status}</p>
