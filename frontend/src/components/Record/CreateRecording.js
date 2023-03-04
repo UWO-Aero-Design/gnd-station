@@ -25,9 +25,6 @@ const CreateRecording = () =>{
        body: JSON.stringify({ action: "stop" }) })
     }
     
-    
-
-
     let Recordings = [];
 
     const downloadRecording = () => {
@@ -52,6 +49,7 @@ const CreateRecording = () =>{
         }
       };
       const viewRecording = () => {
+        console.log(Recordings)
         window.open(mediaBlobUrl, "_blank").focus();
       };
 
