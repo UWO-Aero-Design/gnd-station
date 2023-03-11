@@ -4,17 +4,42 @@ import "./Camera.css";
 const Camera = () => {
   const [devices, setDevices] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState(null);
-  const videoRef = useRef(null);
-  const videoWidth = 1990;
+  const videoRef = useRef(null); 
+  const canvasRef = useRef(null);
+  const videoWidth = 1000;
   const videoHeight = 550;
+
+  const [webcamActive, setWebcamActive] = useState(false);
+
+ 
+  const handleCapture = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const data = canvas.toDataURL("image/png");
+
+    // Do something with the captured image data, such as display it in an <img> element or upload it to a server
+  };
 
 
   useEffect(() => {
     async function getDevices() {
       const devices = await navigator.mediaDevices.enumerateDevices();
+      
       const videoDevices = devices.filter(device => device.kind === 'videoinput');
       setDevices(videoDevices);
-      setSelectedDevice(videoDevices[0]);
+      const fpvReceiver = videoDevices.filter(device =>
+        device.label === "USB2.0 PC CAMERA (18ec:5850)"
+        )
+        console.log(fpvReceiver)
+      if(fpvReceiver.length == 1){
+        setSelectedDevice(fpvReceiver);
+      }
+      else{
+        return "No FPV Receiver Connected"
+      }
     }
     getDevices();
   }, []);
@@ -39,13 +64,18 @@ const Camera = () => {
 
   function handleDeviceChange(event) {
     const deviceId = event.target.value;
-    if (deviceId) {
+    if (deviceId !== "Disable Camera") {
       const selected = devices.find(device => device.deviceId === deviceId);
       setSelectedDevice(selected);
+      console.log(deviceId);
+      setWebcamActive(true);
     } else {
       setSelectedDevice(null);
+      setWebcamActive(false);
     }
+    
   }
+
   
 
   return (

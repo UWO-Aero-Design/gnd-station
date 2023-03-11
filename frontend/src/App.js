@@ -6,7 +6,7 @@ import Altimeter from './components/Altimeter/Altimeter';
 import Status from './components/Status/Status'
 import Servo from './components/Servo'
 import CreateRecording from './components/Record/CreateRecording';
-import DisplayRecording from './components/Record/DisplayRecording';
+import WebcamCapture from './components/Record/WebcamCapture';
 
 const API_HOSTNAME = 'localhost:5000'
 const WS_HOST = `ws://${API_HOSTNAME}`
@@ -167,6 +167,19 @@ function App() {
       .catch(error => console.log(error))
   }
 
+  const set_driver = (driver) =>{
+    fetch(`${HTTP_HOST}/driver/current`, { method: 'POST', headers: { 'Content-Type': 'application/json '}, body: JSON.stringify({ driver_name: driver}) })
+      .catch(error => console.log(error))
+  }
+
+  const stabilize_mav = ()=>{
+    fetch(`${HTTP_HOST}/command/mav/stabilize`, { method: 'POST' }).catch(error => { console.log(error) })
+  }
+
+  const automate_mav = ()=>{
+    fetch(`${HTTP_HOST}/command/mav/autonomous`, { method: 'POST' }).catch(error => { console.log(error) })
+  }
+
   
   // Note: If there's time, make the sizes dynamic,
   // Otherwise, use values hard coded in the example
@@ -184,7 +197,7 @@ function App() {
           <Container className="altitude-item" content={
             <Altimeter telemetry={telemetry} dropCommand = {()=> { sendCommands([{ command:'ACTUATE_GROUP', args:{ group: 'DROP_PADA', state: 'OPEN' } }])}}
                         resetCommand = {()=> { sendCommands([{ command:'ACTUATE_GROUP', args:{ group: 'DROP_PADA', state: 'CLOSE' } }])}}
-                        offset={altOffset} zeroAlt={ zero_alt } resetAlt={ reset_alt }>
+                        offset={altOffset} zeroAlt={ zero_alt } resetAlt={ reset_alt } stabilize = {stabilize_mav} autonomous = {automate_mav}>
             </Altimeter>
           }>
           </Container>
@@ -197,12 +210,12 @@ function App() {
         <Container className="camera-item" content={
           <Status telemetry={ telemetry } status={ status } ports={ ports } updateComPorts={ update_com_ports }
                   selectComPort={ select_com_port } currentPort={ currentPort } packetRate={ packet_rate } sendCommands={ sendCommands }
-                  currentStream={ currentStream }
+                  currentStream={ currentStream } usb_driver = {()=>set_driver("USB_DRIVER")} dummy_driver={()=>set_driver("DUMMY_DRIVER")}
           ></Status> }>
         </Container>
         </div>
         <div className="record-list-item">
-          <Container>
+          <Container content={<WebcamCapture/>}>
           </Container>
         </div>
       </div>
