@@ -19,6 +19,7 @@ code {
   height: calc((100vh - 2*var(--padding)));
   width: calc((100vw - 2*var(--padding)));
   padding: var(--padding);
+  background-color: rgba(255, 255, 255, 0.766);
 }
 
 .gnd-grid {
@@ -31,10 +32,10 @@ code {
   grid-row-gap: 20px;
 }
 
-.camera-item { grid-area: 1 / 1 / 5 / 5; }
-.timer-item { grid-area: 6 / 3 / 7 / 4; }
-.altitude-item { grid-area: 1 / 5 / 5 / 7; }
-.record-item { grid-area: 5 / 4 / 7 / 5; }
-.status-item { grid-area: 5 / 1 / 8 / 3; }
-.record-list-item { grid-area: 5 / 5 / 7 / 6; }
+.camera-item { grid-area: 1 / 1 / 5 / 4; }
+.timer-item { grid-area: 5 / 3 / 6 / 4; }
+.altitude-item { grid-area: 1 / 4 / 5 / 7; }
+.record-item { grid-area: 5 / 1 / 7 / 3; }
+.status-item { grid-area: 5 / 4 / 8 /7; }
+.record-list-item { grid-area: 5 / 1 / 7 / 2; }
 

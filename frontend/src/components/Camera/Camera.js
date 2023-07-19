@@ -7,7 +7,7 @@ const Camera = () => {
   const videoRef = useRef(null); 
   const canvasRef = useRef(null);
   const videoWidth = 1000;
-  const videoHeight = 550;
+  const videoHeight = 700;
 
   const [webcamActive, setWebcamActive] = useState(false);
 

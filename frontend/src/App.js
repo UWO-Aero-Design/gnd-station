@@ -12,7 +12,7 @@ const API_HOSTNAME = 'localhost:5000'
 const WS_HOST = `ws://${API_HOSTNAME}`
 const HTTP_HOST = `http://${API_HOSTNAME}`
 
-const TELEMETRY_TIMEOUT = 1000;
+const TELEMETRY_TIMEOUT = 10000;
 let statusTelemetryTimeout;
 let packet_rate = 0;
 let last_packet = new Date().getTime();
@@ -35,7 +35,7 @@ function App() {
   const ws_on_open = () => {
     console.log('connected');
     statusTelemetryTimeout = setTimeout(() => {
-      setStatus('No Telemetry')
+      setStatus('No Telemetry');
     }, TELEMETRY_TIMEOUT)
     update_com_ports();
     get_current_com_port();
@@ -180,6 +180,7 @@ function App() {
     fetch(`${HTTP_HOST}/command/mav/autonomous`, { method: 'POST' }).catch(error => { console.log(error) })
   }
 
+
   
   // Note: If there's time, make the sizes dynamic,
   // Otherwise, use values hard coded in the example
@@ -214,10 +215,10 @@ function App() {
           ></Status> }>
         </Container>
         </div>
-        <div className="record-list-item">
+        {/* <div className="record-list-item">
           <Container content={<WebcamCapture/>}>
           </Container>
-        </div>
+        </div> */}
       </div>
     </div>
   );
