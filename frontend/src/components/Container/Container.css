@@ -1,8 +1,8 @@
 .grid-item-container {
     height: 100%;
     width: 100%;
-    background-color: rgba(198, 223, 238, 0.774);
-    border: 2px solid #ffffff; 
+    background-color: rgba(255, 255, 255, 0.704);
+    border: 2px solid hsl(0, 0%, 83%); 
     border-radius: 20px;
     color: black;
 }

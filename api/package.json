@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "jest",
+    "start":"nodemon server.js",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "patch": "node ./node_modules/replace-in-file/bin/cli.js goog.DEBUG=!0 goog.DEBUG=!1 ./node_modules/google-protobuf/google-protobuf.js"
@@ -20,6 +21,7 @@
     "google-protobuf": "^3.14.0",
     "mongoose": "^5.11.11",
     "morgan": "^1.10.0",
+    "node-mavlink": "^1.5.1",
     "replace-in-file": "^6.2.0",
     "serialport": "^9.0.4",
     "ws": "^7.4.0"

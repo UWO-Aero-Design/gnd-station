@@ -12,6 +12,7 @@ function Telemetry({ telemetry, packetRate }) {
 
     let pressure;
     if(telemetry?.enviro?.pressure) pressure = telemetry.enviro.pressure / 1000;
+    //console.log(telemetry);
 
     return(
     

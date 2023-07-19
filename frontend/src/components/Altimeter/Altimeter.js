@@ -7,7 +7,7 @@ const GREEN = '#00e676';
 const RED = '#ff1744';
 const METRES_TO_FEET = 3.28084;
 
-function Altimeter({ telemetry, dropCommand, resetCommand, offset, zeroAlt, resetAlt }) {
+function Altimeter({ telemetry, dropCommand, resetCommand, offset, zeroAlt, resetAlt, stabilize, autonomous }) {
     const [dropHeight, setDropHeight] = React.useState(null);
 
     const can_drop = () => {
@@ -44,6 +44,8 @@ function Altimeter({ telemetry, dropCommand, resetCommand, offset, zeroAlt, rese
                 <p className='inch-text'>{ padaAltDisplay } ft</p>
             </div>
             <div className='altimeter-button-bottom'>
+                <button className='altimeter-button' onClick={stabilize}>Stabilize PADA</button>
+                <button className='altimeter-button' onClick={autonomous}>Autonomous PADA</button>
                 <button className='altimeter-button' onClick={drop} style={{ backgroundColor: background_colour }}>Drop PADA</button>
                 <button className='altimeter-button' onClick={reset}>Reset PADA</button>
             </div>

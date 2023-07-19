@@ -1,0 +1,27 @@
+.create-recording{
+    text-align: center;
+    height: 100%;
+    position: relative;
+    top: 1vh;
+}
+
+.recording-button{
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 5px 20px;
+}
+
+.recording-input-top {
+    width: 100%;
+    margin: 3vh 1vh 1vh 1vh;
+    position: absolute;
+    top: 1vh;
+}
+
+.recording-button-bottom {
+    width: 100%;
+    margin: 20vh auto 2vh auto;
+    bottom: 4vh;
+}

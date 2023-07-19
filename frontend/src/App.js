@@ -1,16 +1,18 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Container from './components/Container/Container';
-import Map from './components/Map/Map';
 import Camera from './components/Camera/Camera';
 import Timer from './components/Timer/Timer';
 import Altimeter from './components/Altimeter/Altimeter';
 import Status from './components/Status/Status'
+import Servo from './components/Servo'
+import CreateRecording from './components/Record/CreateRecording';
+import WebcamCapture from './components/Record/WebcamCapture';
 
 const API_HOSTNAME = 'localhost:5000'
 const WS_HOST = `ws://${API_HOSTNAME}`
 const HTTP_HOST = `http://${API_HOSTNAME}`
 
-const TELEMETRY_TIMEOUT = 1000;
+const TELEMETRY_TIMEOUT = 10000;
 let statusTelemetryTimeout;
 let packet_rate = 0;
 let last_packet = new Date().getTime();
@@ -33,7 +35,7 @@ function App() {
   const ws_on_open = () => {
     console.log('connected');
     statusTelemetryTimeout = setTimeout(() => {
-      setStatus('No Telemetry')
+      setStatus('No Telemetry');
     }, TELEMETRY_TIMEOUT)
     update_com_ports();
     get_current_com_port();
@@ -165,6 +167,20 @@ function App() {
       .catch(error => console.log(error))
   }
 
+  const set_driver = (driver) =>{
+    fetch(`${HTTP_HOST}/driver/current`, { method: 'POST', headers: { 'Content-Type': 'application/json '}, body: JSON.stringify({ driver_name: driver}) })
+      .catch(error => console.log(error))
+  }
+
+  const stabilize_mav = ()=>{
+    fetch(`${HTTP_HOST}/command/mav/stabilize`, { method: 'POST' }).catch(error => { console.log(error) })
+  }
+
+  const automate_mav = ()=>{
+    fetch(`${HTTP_HOST}/command/mav/autonomous`, { method: 'POST' }).catch(error => { console.log(error) })
+  }
+
+
   
   // Note: If there's time, make the sizes dynamic,
   // Otherwise, use values hard coded in the example
@@ -172,9 +188,6 @@ function App() {
   return (
     <div className="full-screen">
       <div className="gnd-grid">
-        <div className="map-item">
-          <Container className="map-item" content={ <Map></Map> }></Container>
-        </div>
         <div className="camera-item">
           <Container className="camera-item" content={ <Camera></Camera> }></Container>
         </div>
@@ -182,26 +195,30 @@ function App() {
           <Timer telemetry={telemetry} isFlying={ isFlying }></Timer>
         </div>
         <div className="altitude-item">
-          <Container className="map-item" content={
+          <Container className="altitude-item" content={
             <Altimeter telemetry={telemetry} dropCommand = {()=> { sendCommands([{ command:'ACTUATE_GROUP', args:{ group: 'DROP_PADA', state: 'OPEN' } }])}}
                         resetCommand = {()=> { sendCommands([{ command:'ACTUATE_GROUP', args:{ group: 'DROP_PADA', state: 'CLOSE' } }])}}
-                        offset={altOffset} zeroAlt={ zero_alt } resetAlt={ reset_alt }>
+                        offset={altOffset} zeroAlt={ zero_alt } resetAlt={ reset_alt } stabilize = {stabilize_mav} autonomous = {automate_mav}>
             </Altimeter>
           }>
           </Container>
         </div>
         <div className="record-item">
-          
+          <Container content={<CreateRecording/>}> 
+          </Container>
         </div>
         <div className="status-item">
         <Container className="camera-item" content={
           <Status telemetry={ telemetry } status={ status } ports={ ports } updateComPorts={ update_com_ports }
                   selectComPort={ select_com_port } currentPort={ currentPort } packetRate={ packet_rate } sendCommands={ sendCommands }
-                  currentStream={ currentStream }
+                  currentStream={ currentStream } usb_driver = {()=>set_driver("USB_DRIVER")} dummy_driver={()=>set_driver("DUMMY_DRIVER")}
           ></Status> }>
         </Container>
         </div>
-        <div className="settings-item"></div>
+        {/* <div className="record-list-item">
+          <Container content={<WebcamCapture/>}>
+          </Container>
+        </div> */}
       </div>
     </div>
   );
