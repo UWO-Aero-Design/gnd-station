@@ -63,9 +63,11 @@ const CreateRecording = () =>{
         if(isRecording){
            stopRecording();
            downloadRecording();
+           stopRecordingDB();
            setRecordingName('');
         }
         else{
+            startRecordingDB();
             startRecording();
         }
     }

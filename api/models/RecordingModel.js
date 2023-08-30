@@ -17,7 +17,8 @@ const recording_schema = mongoose.Schema({
 
 recording_schema.methods.add_telemetry = async function(data) {
     const recording = this;
-    recording.telemetry.push(new messages.Message());
+    recording.telemetry.push(data);
+    // recording.telemetry.push(new messages.Message());
     await recording.save();
 };
 
