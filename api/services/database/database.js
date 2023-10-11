@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 // const usb_device = require('./usb').device
+const databaseInterface = require("../data_interface/data_interface");
 const Record = require('../../models/RecordingModel')
 
 const user = process.env.DB_USER;
@@ -30,6 +31,13 @@ const connect = () => {
     .catch((err) => { console.log('\x1b[33mUnable to connect to database. Continuing without logging.\x1b[0m'); })
 };
 
+databaseInterface.event.on("telemetry", async (telemetry) => {
+  if (Record.is_recording()) {
+    const data = JSON.parse(telemetry).data
+    const recording = await Record.findById(Record.get_current_recording());
+    await recording.add_telemetry(data);
+  }
+})
 // usb_device.on('data', async (recevived_message) => {
 //   if(Record.is_recording()) {
 //     const recording = await Record.findById(Record.get_current_recording());

@@ -39,7 +39,7 @@ const init = () => {
         // set up event handling on each driver
         // telemetry: { data: { ... } }
         driver.event.on('telemetry', (telemetry) => {
-            const data = JSON.parse(telemetry).data
+            const data = JSON.parse(telemetry).data;
             if(PRINT_TELEMETRY_MESSAGES) {
                 console.log(`Received telemetry from ${driver.name} (packet #: ${data.packetNumber})`)
             }
