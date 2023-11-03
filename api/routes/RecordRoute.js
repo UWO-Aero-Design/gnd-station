@@ -3,7 +3,7 @@ const router = require('express').Router();
 const Recording = require('../models/RecordingModel')
 
 router.get('/', async (req, res) => { 
-    const recordings = await Recording.find({}, '-commands -telemetry');
+    const recordings = await Recording.find({}, '-commands');
     res.status(200).json({
         recordings,
         length: recordings.length

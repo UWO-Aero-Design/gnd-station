@@ -16,8 +16,8 @@ code {
 
 .full-screen {
   --padding: 5vh;
-  height: calc((100vh - 2*var(--padding)));
-  width: calc((100vw - 2*var(--padding)));
+  height: calc((100vh));
+  width: calc((100vw));
   padding: var(--padding);
   background-color: rgba(255, 255, 255, 0.766);
 }
