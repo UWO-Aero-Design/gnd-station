@@ -1,9 +1,10 @@
 const { SerialPort } = require('serialport')
-const usbDetect = require('usb-detection');
-const { findByIds } = require('usb');
+const { usb, findByIds } = require('usb');
 const { InterByteTimeoutParser } = require('@serialport/parser-inter-byte-timeout')
 const WebSocket = require('ws');
 require('dotenv').config({ path: '../.env' })
+const {bufferSerializer} = require('buffer-serializer')
+const v8 = require('node:v8');
 
 const PRINT_INCOMING_MESSAGES = true;
 const PRINT_OUTBOUND_MESSAGE = false;
@@ -105,7 +106,8 @@ const ws_connect = () => {
 }
 ws_connect()
 
-usbDetect.on('add', (usb_port) => { 
+usb.on('attach', (usb_port) => { 
+    console.log('USB attached')
     // usb-detection seems to discover devices before SerialPort has access to them
     // not the prettiest solution but adding a small delay resolves these issues on Mac
     // TODO: test to see if these issues occur on Windows and Linux
@@ -130,7 +132,7 @@ const select_device = async (device_to_connect) => {
     device.on('close', handle_close);
 
     heartbeat_interval = setInterval(send_heartbeat, SEND_HEARTBEAT_INTERVAL);
-    usbDetect.stopMonitoring();
+    usb.unrefHotplugEvents();
 
     if(PRINT_USB_CONNECTION_MESSAGES) {
         console.log(`Connected to ${device.path}`)
@@ -156,9 +158,11 @@ const handle_command = (command_name, args) => {
 const handle_message = (buffer) => {
     let decoded_telemetry;
     try {
-        decoded_telemetry = Telemetry.deserializeBinary(buffer);
+         console.log(v8.deserialize(buffer));
+        //decoded_telemetry = Telemetry.deserializeBinary(buffer);
+        //decoded_telemetry = bufferSerializer.fromBuffer(buffer);
     } catch(error) {
-        console.log('Error decoding: ' + error);
+        //console.log('Error decoding: ' + error);
         return;
     }
 
@@ -179,7 +183,8 @@ const handle_message = (buffer) => {
     }
 
     if(PRINT_INCOMING_MESSAGES) {
-        console.log(`Message from ${get_location_name(telemetry.header.sender)}, Len: ${buffer.length}, Packet: ${telemetry.header.packetNumber}, Time: ${telemetry.header.time} `)
+        console.log(telemetry)
+        //console.log(`Message from ${get_location_name(telemetry.header.sender)}, Len: ${buffer.length}, Packet: ${telemetry.header.packetNumber}, Time: ${telemetry.header.time} `)
     }
 
     ws_send({ sender: 'USB_TOOL', recipient: 'BACKEND', type: 'TELEMETRY', telemetry });
@@ -189,7 +194,6 @@ const handle_close = () => {
     console.log(`Disconnected from ${device.path}`)
     device = null;
     clearInterval(heartbeat_interval);
-    usbDetect.startMonitoring();
 }
 
 const write_to_device = async(dev, data) => {
@@ -355,8 +359,9 @@ const generate_ping_message = (data) => {
 
 const auto_connect = async () => {
     const devices = await get_device_list();
-    // select_device({ path: '/dev/tty.usbmodem62634901' })
-    // return
+   // console.log(devices)
+     select_device({ path: '/dev/tty.usbserial-14310' })
+    return;
 
     // for each device, attempt to send the ping packet
     // if a response is received, that must be the correct device
@@ -396,7 +401,7 @@ const auto_connect = async () => {
 }
 
 const startup = () => {
-    usbDetect.startMonitoring();
+    console.log("Starting")
     auto_connect()
 }
 startup();
