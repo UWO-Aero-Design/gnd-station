@@ -17,6 +17,7 @@ function DatabaseViewer() {
 
   useEffect(() => {
     if (isPlaying) {
+      console.log(telemetry);
       if (index < telemetry.length) {
         const interval = setInterval(() => {
           setCurrentTelemetry(telemetry[index])
@@ -26,6 +27,17 @@ function DatabaseViewer() {
       }
     }
   }, [isPlaying, telemetry, index]);
+
+  const handleChange = (e) => {
+    console.log(e.target.value)
+    console.log(data)
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].name === e.target.value) {
+        setTelemetry(data[i].telemetry)
+        break
+      }
+    }
+  }
 
   return (
     <div className="container-fluid text-center">
@@ -48,9 +60,9 @@ function DatabaseViewer() {
                 <button className="btn btn-info col-4" onClick={() => setIndex(0)}>Reset</button>
               </div>
 
-              <h5 className={isPlaying ? "text-success" : "text-dark"}>{currentTelemetry ? (`IMU ax ${currentTelemetry.imu.ax}`) : "Play Telemetry"}</h5>
-              <h5 className={isPlaying ? "text-success" : "text-dark"}>{currentTelemetry ? (`IMU ay ${currentTelemetry.imu.ay}`) : ""}</h5>
-              <h5 className={isPlaying ? "text-success" : "text-dark"}>{currentTelemetry ? (`IMU az ${currentTelemetry.imu.az}`) : ""}</h5>
+              <h5 className={isPlaying ? "text-success" : "text-dark"}>{currentTelemetry ? (`Alt ${currentTelemetry.gps.altitude}`) : "Play Telemetry"}</h5>
+              <h5 className={isPlaying ? "text-success" : "text-dark"}>{currentTelemetry ? (`Drop Heightcd ${currentTelemetry.imu.ay}`) : ""}</h5>
+              {/* <h5 className={isPlaying ? "text-success" : "text-dark"}>{currentTelemetry ? (`IMU az ${currentTelemetry.imu.az}`) : ""}</h5> */}
             </div>
             <div style={{ height: '55vh', overflowY: 'auto' }}>
               <div className="overflow-scroll h-100 py-3">
@@ -66,9 +78,18 @@ function DatabaseViewer() {
             <div className="card-body">
               <button className="btn btn-primary mb-1" onClick={getData}>Load Data</button>
               <div>
-                {data.length > 0 ? data.map((item) => (
+              <h4 className='m-2'>Select a Recording</h4>
+                <form>
+                  <select className="form-select form-select-lg m-4 p-2" onChange={handleChange}>
+                    {data.length > 0 ? data.map((item) => (
+                      <option className="p-2" key={item.id} value={item.name}>{item.name.replace("GMT+0000 (Coordinated Universal Time)", "")}</option>
+                    )) : <option value={""} disabled selected>No data</option>}
+                  </select>
+                </form>
+
+                {/* {data.length > 0 ? data.map((item) => (
                   <button className="m-2 p-1 btn btn-primary" key={item.id} onClick={() => setTelemetry(item.telemetry)}>{item.name}</button>
-                )) : <div>No data</div>}
+                )) : <div>No data</div>} */}
               </div>
 
             </div>

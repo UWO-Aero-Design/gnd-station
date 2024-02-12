@@ -62,11 +62,13 @@ const CreateRecording = () =>{
         setIsRecording(!isRecording);
         if(isRecording){
            stopRecording();
+           stopRecordingDB();
            downloadRecording();
            setRecordingName('');
         }
         else{
             startRecording();
+            startRecordingDB();
         }
     }
  const background_color = isRecording ? RED:GREEN;
