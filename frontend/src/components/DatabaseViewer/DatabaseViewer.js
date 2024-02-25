@@ -60,8 +60,8 @@ function DatabaseViewer() {
                 <button className="btn btn-info col-4" onClick={() => setIndex(0)}>Reset</button>
               </div>
 
-              <h5 className={isPlaying ? "text-success" : "text-dark"}>{currentTelemetry ? (`Alt ${currentTelemetry.gps.altitude}`) : "Play Telemetry"}</h5>
-              <h5 className={isPlaying ? "text-success" : "text-dark"}>{currentTelemetry ? (`Drop Heightcd ${currentTelemetry.imu.ay}`) : ""}</h5>
+              <h5 className={isPlaying ? "text-success" : "text-dark"}>{currentTelemetry ? (`Alt: ${currentTelemetry.gps.altitude}`) : "Play Telemetry"}</h5>
+              {/* <h5 className={isPlaying ? "text-success" : "text-dark"}>{currentTelemetry ? (`Drop Height: ${currentTelemetry.imu.ay}`) : ""}</h5> */}
               {/* <h5 className={isPlaying ? "text-success" : "text-dark"}>{currentTelemetry ? (`IMU az ${currentTelemetry.imu.az}`) : ""}</h5> */}
             </div>
             <div style={{ height: '55vh', overflowY: 'auto' }}>
