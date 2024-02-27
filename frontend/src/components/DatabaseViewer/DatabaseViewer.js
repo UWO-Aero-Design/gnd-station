@@ -67,7 +67,7 @@ function DatabaseViewer() {
             <div style={{ height: '55vh', overflowY: 'auto' }}>
               <div className="overflow-scroll h-100 py-3">
                 {telemetry.length > 0 ? telemetry.map((dataItem) => (
-                  <button className={telemetry.indexOf(dataItem) === index ? "btn text-primary" : "btn text-dark"} key={dataItem.id} style={{ height: "50px" }} onClick={() => setIndex(telemetry.indexOf(dataItem))}>{dataItem.imu.ax}</button>
+                  <button className={telemetry.indexOf(dataItem) === index-1 ? "btn text-primary" : "btn text-dark"} key={dataItem.id} style={{ height: "50px" }} onClick={() => setIndex(telemetry.indexOf(dataItem))}>{dataItem.gps.altitude}</button>
                 )) : <p>Select a recording</p>}
               </div>
             </div>
