@@ -1,8 +1,9 @@
+const fs = require('fs');
 const router = require('express').Router();
 const Recording = require('../models/RecordingModel')
 
 router.get('/', async (req, res) => { 
-    const recordings = await Recording.find({}, '-commands -telemetry');
+    const recordings = await Recording.find({}, '-commands');
     res.status(200).json({
         recordings,
         length: recordings.length
@@ -13,6 +14,14 @@ router.get('/status', async (req, res) => {
     const status = await Recording.is_recording();
     res.status(200).json({ status })
 });
+
+//Make route to save captured fpv image files to folder on local machine, also write to 
+//json object with data:{img: "/data/timestamped_img.png", lat: num, lon: num, imu_data: num} 
+
+router.post('pada',(req,res) => {
+
+    
+})
 
 router.post('/', async (req, res) => { 
     if(!req.body.action) {
@@ -40,7 +49,7 @@ router.post('/', async (req, res) => {
         else {
             const recording = await new Recording().save();
             Recording.set_recording(recording._id)
-            console.log('Started recording')
+            console.log('Started recording');
             return res.status(200).send(`Started recording (${Recording.get_current_recording()})`)
         }
     }
@@ -79,7 +88,7 @@ router.delete('/:record_id', async (req, res) => {
         console.log('Stopped recording')
     }
     const recording = await Recording.findByIdAndDelete(_id)
-    return res.status(200).send()
+    return res.status(200).send("Recording Deleted")
 });
 
 router.delete('/', async (req, res) => { 

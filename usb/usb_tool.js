@@ -17,7 +17,7 @@ const SEND_HEARTBEAT_INTERVAL = 250;
 const PARSER_TIMEOUT = 50;
 const AUTO_CONNECT_DELAY = 500;
 const AUTO_CONNECT_TIMEOUT = 100;
-const BAUD_RATE = 115200
+const BAUD_RATE = 9600;
 const COMMAD_RETRY_COUNT = 3;
 
 const PING_PACKET_HEADER = new Uint8Array([0xAA])
@@ -155,7 +155,6 @@ const handle_command = (command_name, args) => {
 // Stuff from the plane to the gnd station
 const handle_message = (buffer) => {
     let decoded_telemetry;
-
     try {
         decoded_telemetry = Telemetry.deserializeBinary(buffer);
     } catch(error) {

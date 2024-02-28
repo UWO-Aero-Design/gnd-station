@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const databaseInterface = require("../data_interface/data_interface");
 // const usb_device = require('./usb').device
 const Record = require('../../models/RecordingModel')
 
@@ -22,12 +23,21 @@ const connect = () => {
   mongoose.set('useCreateIndex', true);
   mongoose.set('useUnifiedTopology', true);
 
+
   console.log(`Connecting to database at mongodb://${user}:${pass}@${host}:${port}`)
 
   mongoose.connect(`mongodb://${user}:${pass}@${host}:${port}`, options)
     .then(() => { console.log(`Connected to database at mongodb://${user}:<password>@${host}:${port}/${name}`) })
     .catch((err) => { console.log('\x1b[33mUnable to connect to database. Continuing without logging.\x1b[0m'); })
 };
+
+databaseInterface.event.on("telemetry", async (telemetry) => {
+  if (Record.is_recording()) {
+    const data = JSON.parse(telemetry).data
+    const recording = await Record.findById(Record.get_current_recording());
+    await recording.add_telemetry(data);
+  }
+})
 
 // usb_device.on('data', async (recevived_message) => {
 //   if(Record.is_recording()) {

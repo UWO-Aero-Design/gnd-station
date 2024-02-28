@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React} from 'react';
 import Telemetry from '../Telemetry/Telemetry'
 import './Status.css'
 
@@ -7,7 +7,7 @@ const PADA_ARMED_LABEL_COLOUR = '#9b59b6'
 const SERVER_DISCONNECTED_LABEL_COLOUR = '#e17055'
 const NO_TELEMETRY_LABEL_COLOUR = '#e74c3c'
 
-function Status({ telemetry, status, ports, updateComPorts, selectComPort, currentPort, packetRate, sendCommands, currentStream }) {
+function Status({ telemetry, status, ports, updateComPorts, selectComPort, currentPort, packetRate, sendCommands, currentStream, usb_driver, dummy_driver }) {
     const get_label_colour = (status) => {
         status = status.toUpperCase();
         switch(status) {
@@ -25,7 +25,7 @@ function Status({ telemetry, status, ports, updateComPorts, selectComPort, curre
 
     const handle_com_select = () => {
         const path = document.getElementById('com-port-selection').value;
-        if(!path || path == 'DEFAULT') {
+        if(!path || path === 'DEFAULT') {
             return;
         }
         selectComPort(path)
@@ -33,7 +33,7 @@ function Status({ telemetry, status, ports, updateComPorts, selectComPort, curre
 
     const get_options = () => {
         let result;
-        if(ports.length == 0) result = <option value='DEFAULT' disabled >No COM ports</option>
+        if(ports.length === 0) result = <option value='DEFAULT' disabled >No COM ports</option>
         else {
             result = ports.map((port, key) => {
                 return <option key={key} value={port.path} disabled={currentPort===port.path}>{port.path}</option>
@@ -56,7 +56,13 @@ function Status({ telemetry, status, ports, updateComPorts, selectComPort, curre
             </div>
             <p>Current port: {currentPort}</p>
             <p>Current stream: {currentStream}</p>
-            <button onClick={() => { sendCommands([ { command: 'RESET_PROCESSOR' } ]) }}>Reset Processor</button>
+            
+            <div className='driver-select'>
+                <button className = "command-buttons" onClick={() => { sendCommands([ { command: 'RESET_PROCESSOR' } ]) }}>RESET PROCESSOR</button>
+                <button  className = "command-buttons" onClick={usb_driver}>USB DRIVER</button>
+            <button className = "command-buttons"  onClick={dummy_driver}>DUMMY DRIVER</button>
+            </div>
+            
         </div>
         
         
