@@ -92,6 +92,7 @@ const CreateRecording = () => {
         {isRecording ? '' : <button className='recording-button' onClick={viewRecording}> View Recording</button>}
         <p>{status}</p>
       </div>
+      <a href="/database" className="database-viewer-button">Database Viewer</a>
     </div>
   )
 }
